@@ -2,7 +2,7 @@ class Character extends MovableObject {
 
     height = 300;
     y = 130;
-    speed = 10;
+    speed = 1.5; // kleiner = besser für Auto-Run
 
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
@@ -18,38 +18,31 @@ class Character extends MovableObject {
 
     constructor(world) {
         super();
-        this.world = world; // ✔ FIX: world wird korrekt übernommen
+        this.world = world;
 
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
+
         this.animate();
     }
 
     animate() {
 
+        // 🔥 AUTO RUN (wie Chicken)
         setInterval(() => {
-
-            if (this.world && this.world.keyboard.RIGHT) {
-                this.x += this.speed;
-            }
-
-            if (this.world && this.world.keyboard.LEFT) {
-                this.x -= this.speed;
-            }
-
+            this.x += this.speed;
         }, 1000 / 60);
 
-
+        // 🔥 WALK ANIMATION
         setInterval(() => {
 
-            if (this.world && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-                let i = this.currentImage % this.IMAGES_WALKING.length;
-                let path = this.IMAGES_WALKING[i];
-                this.img = this.imageCache[path];
-                this.currentImage++;
-            }
+            let i = this.currentImage % this.IMAGES_WALKING.length;
+            let path = this.IMAGES_WALKING[i];
 
-        }, 50);
+            this.img = this.imageCache[path];
+            this.currentImage++;
+
+        }, 80);
     }
 
     jump() {}
