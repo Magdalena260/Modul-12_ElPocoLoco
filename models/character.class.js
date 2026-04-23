@@ -30,10 +30,12 @@ class Character extends MovableObject {
 
         if (this.world.keyboard.RIGHT) {
             this.x += this.speed;
+            this.otherDirection = false;
         }
 
         if (this.world.keyboard.LEFT) {
             this.x -= this.speed;
+            this.otherDirection = true;
         }
 
         if (this.world.keyboard.SPACE) {
@@ -43,7 +45,6 @@ class Character extends MovableObject {
 
     animate() {
 
-        // Bewegung + Steuerung
         setInterval(() => {
             this.move();
             this.playAnimation();
@@ -62,7 +63,5 @@ class Character extends MovableObject {
         }
     }
 
-    jump() {
-        // kann später Gravity bekommen
-    }
+    jump() {}
 }
