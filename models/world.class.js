@@ -1,28 +1,5 @@
 class World {
 
-    character = new Character();
-
-    enemies = [
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-    ];
-
-    clouds = [
-        new Cloud()
-    ];
-
-    backgroundObjects = [
-        new BackgroundObject('img/5_background/layers/air.png', 0),
-        new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
-        new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
-        new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
-    ];
-
-    canvas;
-    ctx;
-    keyboard;
-
     constructor(canvas, keyboard) {
 
         this.canvas = canvas;
@@ -30,13 +7,26 @@ class World {
 
         this.keyboard = keyboard;
 
-        this.setWorld();
+        this.character = new Character(this); // ✔ FIX korrekt
+
+        this.enemies = [
+            new Chicken(),
+            new Chicken(),
+            new Chicken(),
+        ];
+
+        this.clouds = [
+            new Cloud()
+        ];
+
+        this.backgroundObjects = [
+            new BackgroundObject('img/5_background/layers/air.png', 0),
+            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
+            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
+            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
+        ];
+
         this.draw();
-
-    }
-
-    setWorld() {
-        this.character.world = this;
     }
 
     draw() {
@@ -46,32 +36,16 @@ class World {
         this.addObjectsToMap(this.backgroundObjects);
         this.addObjectsToMap(this.clouds);
         this.addObjectsToMap(this.enemies);
-        this.addObjectsToMap([this.character]);
+        this.addToMap(this.character);
 
-        requestAnimationFrame(() => {
-            this.draw();
-        });
-
+        requestAnimationFrame(() => this.draw());
     }
 
     addObjectsToMap(objects) {
-
-        objects.forEach(o => {
-            this.addToMap(o);
-        });
-
+        objects.forEach(o => this.addToMap(o));
     }
 
     addToMap(mo) {
-
-        this.ctx.drawImage(
-            mo.img,
-            mo.x,
-            mo.y,
-            mo.width,
-            mo.height
-        );
-
+        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
-
 }
