@@ -26,7 +26,7 @@ window.addEventListener("keypress",(e) =>{
 
     }
 
-     if(e.keycode == 32{
+     if(e.keycode == 32){
     keyboard.SPACE = false;
 
     }
