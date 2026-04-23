@@ -3,7 +3,7 @@ class World {
     canvas;
     ctx;
     keyboard;
-    camera_x = -100; // 🔥 oder 100 (Start-Offset)
+    camera_x = 0; // 🔥 oder 100 (Start-Offset)
 
     constructor(canvas, keyboard) {
 
@@ -28,6 +28,10 @@ class World {
             new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
             new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
             new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
+            new BackgroundObject('img/5_background/layers/air.png', 720),
+            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 720),
+            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 720),
+            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 720),
         ];
 
         this.draw();
@@ -38,7 +42,7 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // 🔥 Kamera starten
-        this.ctx.translate(this.camera_x);
+        this.ctx.translate(this.camera_x, 0);
 
         this.addObjectsToMap(this.backgroundObjects);
         this.addObjectsToMap(this.clouds);
@@ -46,7 +50,7 @@ class World {
         this.addToMap(this.character);
 
         // 🔥 Kamera zurücksetzen (WICHTIG!)
-        this.ctx.translate(-this.camera_x);
+        this.ctx.translate(-this.camera_x, 0);
 
         requestAnimationFrame(() => this.draw());
     }
