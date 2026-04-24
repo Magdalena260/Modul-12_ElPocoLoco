@@ -14,24 +14,15 @@ class World {
         this.character = new Character(this);
 
         this.enemies = [
-            new Chicken(),
-            new Chicken(),
-            new Chicken(),
+           
         ];
 
         this.clouds = [
-            new Cloud()
+            
         ];
 
         this.backgroundObjects = [
-            new BackgroundObject('img/5_background/layers/air.png', 0),
-            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
-            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
-            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
-            new BackgroundObject('img/5_background/layers/air.png', 720),
-            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 720),
-            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 720),
-            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 720),
+            
         ];
 
         this.draw();
