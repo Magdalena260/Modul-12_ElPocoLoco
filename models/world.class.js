@@ -1,9 +1,15 @@
 class World {
-
+     character = new Character();
+     level = level1;
     canvas;
     ctx;
     keyboard;
-    camera_x = 0; // 🔥 oder 100 (Start-Offset)
+    camera_x = 0;
+
+    character;
+    enemies;
+    clouds;
+    backgroundObjects;
 
     constructor(canvas, keyboard) {
 
@@ -13,34 +19,30 @@ class World {
 
         this.character = new Character(this);
 
-        this.enemies = [
-           
-        ];
+        this.enemies = level1.enemies;
+        this.clouds = level1.clouds;
+        this.backgroundObjects = level1.backgroundObjects;
 
-        this.clouds = [
-            
-        ];
-
-        this.backgroundObjects = [
-            
-        ];
+        this.setWorld(); // 🔥 WICHTIG
 
         this.draw();
+    }
+
+    setWorld() {
+        this.character.world = this;
     }
 
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 🔥 Kamera starten
         this.ctx.translate(this.camera_x, 0);
 
         this.addObjectsToMap(this.backgroundObjects);
-        this.addObjectsToMap(this.clouds);
+        this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.enemies);
         this.addToMap(this.character);
 
-        // 🔥 Kamera zurücksetzen (WICHTIG!)
         this.ctx.translate(-this.camera_x, 0);
 
         requestAnimationFrame(() => this.draw());
@@ -59,7 +61,13 @@ class World {
             mo.x = mo.x * -1;
         }
 
-        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+        this.ctx.drawImage(
+            mo.img,
+            mo.x,
+            mo.y,
+            mo.width,
+            mo.height
+        );
 
         if (mo.otherDirection) {
             mo.x = mo.x * -1;

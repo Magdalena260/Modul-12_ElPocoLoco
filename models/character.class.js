@@ -4,6 +4,9 @@ class Character extends MovableObject {
     y = 130;
     speed = 10;
 
+    world;
+    currentImage = 0;
+
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -13,11 +16,9 @@ class Character extends MovableObject {
         'img/2_character_pepe/2_walk/W-26.png',
     ];
 
-    world;
-    currentImage = 0;
-
     constructor(world) {
         super();
+
         this.world = world;
 
         this.loadImage(this.IMAGES_WALKING[0]);
@@ -28,12 +29,15 @@ class Character extends MovableObject {
 
     move() {
 
-        if (this.world.keyboard.RIGHT) {
+        // 🔥 Sicherheit falls world kurz fehlt
+        if (!this.world || !this.world.keyboard) return;
+
+        if (this.world.keyboard.RIGHT  && this.x < this.world.level.end_x) {
             this.x += this.speed;
             this.otherDirection = false;
         }
 
-        if (this.world.keyboard.LEFT) {
+        if (this.world.keyboard.LEFT && this.x > 0) {
             this.x -= this.speed;
             this.otherDirection = true;
         }
@@ -41,19 +45,24 @@ class Character extends MovableObject {
         if (this.world.keyboard.SPACE) {
             this.jump();
         }
-        this.world.camera_x = -this.x;
 
+        // Kamera folgt Pepe
+        this.world.camera_x = -this.x +100;
     }
 
     animate() {
 
         setInterval(() => {
+
             this.move();
             this.playAnimation();
+
         }, 1000 / 60);
     }
 
     playAnimation() {
+
+        if (!this.world || !this.world.keyboard) return;
 
         if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
 
@@ -65,5 +74,8 @@ class Character extends MovableObject {
         }
     }
 
-    jump() {}
+    jump() {
+        // aktuell leer — kommt später mit Gravity
+    }
+
 }
