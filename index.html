@@ -4,33 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="icon" href="img/favicon.png">
 <link rel="stylesheet" href="./style.css">
 
-<!-- Models -->
-<script src="models/movable-object.class.js"></script>
-<script src="models/character.class.js"></script>
-<script src="models/chicken.class.js"></script>
-<script src="models/cloud.class.js"></script>
-<script src="models/background-object.class.js"></script>
+<title>El Poco Loco</title>
 
+<!-- BASE -->
+<script src="models/movable-object.class.js"></script>
 <script src="models/level.class.js"></script>
-<script src="models/world.class.js"></script>
 <script src="models/keyboard.class.js"></script>
+
+<!-- OBJECTS -->
+<script src="models/background-object.class.js"></script>
+<script src="models/cloud.class.js"></script>
+<script src="models/chicken.class.js"></script>
 <script src="models/endboss.class.js"></script>
+<script src="models/character.class.js"></script>
+
+<!-- WORLD -->
+<script src="models/world.class.js"></script>
+
+<!-- LEVEL -->
 <script src="levels/level1.js"></script>
 
-<!-- Game -->
+<!-- GAME -->
 <script src="js/game.js"></script>
 
-<title>El Poco Loco</title>
 </head>
 
 <body onload="init()">
-
 <h1>El Poco Loco</h1>
-
 <canvas id="canvas" width="720" height="480"></canvas>
-
 </body>
 </html>

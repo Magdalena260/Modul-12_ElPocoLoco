@@ -3,15 +3,13 @@ class Chicken extends MovableObject {
     y = 340;
     height = 77;
     width = 70;
-    speed = 2.0;
+    speed = 0.8; // 🔥 wichtig: eigene Geschwindigkeit
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
     ];
-
-    currentImage = 0;
 
     constructor() {
         super();
@@ -27,15 +25,11 @@ class Chicken extends MovableObject {
     animate() {
 
         setInterval(() => {
+            this.moveLeft(); // 🔥 DAS war oft das Problem
+        }, 1000 / 60);
 
-            this.x -= this.speed;
-
-            let i = this.currentImage % this.IMAGES_WALKING.length;
-            let path = this.IMAGES_WALKING[i];
-
-            this.img = this.imageCache[path];
-            this.currentImage++;
-
-        }, 100);
+        setInterval(() => {
+            this.playAnimation(this.IMAGES_WALKING);
+        }, 200);
     }
 }

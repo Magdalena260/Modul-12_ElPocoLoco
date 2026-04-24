@@ -1,12 +1,13 @@
 class World {
-     character = new Character();
-     level = level1;
+
+    character;
+    level = level1;
+
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
 
-    character;
     enemies;
     clouds;
     backgroundObjects;
@@ -19,31 +20,26 @@ class World {
 
         this.character = new Character(this);
 
-        this.enemies = level1.enemies;
-        this.clouds = level1.clouds;
-        this.backgroundObjects = level1.backgroundObjects;
-
-        this.setWorld(); // 🔥 WICHTIG
+        this.enemies = this.level.enemies;
+        this.clouds = this.level.clouds;
+        this.backgroundObjects = this.level.backgroundObjects;
 
         this.draw();
-    }
-
-    setWorld() {
-        this.character.world = this;
     }
 
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.ctx.save();
         this.ctx.translate(this.camera_x, 0);
 
         this.addObjectsToMap(this.backgroundObjects);
-        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.clouds);
         this.addObjectsToMap(this.enemies);
         this.addToMap(this.character);
 
-        this.ctx.translate(-this.camera_x, 0);
+        this.ctx.restore();
 
         requestAnimationFrame(() => this.draw());
     }
@@ -56,22 +52,14 @@ class World {
 
         if (mo.otherDirection) {
             this.ctx.save();
-            this.ctx.translate(mo.width, 0);
+            this.ctx.translate(mo.x + mo.width, mo.y);
             this.ctx.scale(-1, 1);
-            mo.x = mo.x * -1;
-        }
 
-        this.ctx.drawImage(
-            mo.img,
-            mo.x,
-            mo.y,
-            mo.width,
-            mo.height
-        );
+            this.ctx.drawImage(mo.img, 0, 0, mo.width, mo.height);
 
-        if (mo.otherDirection) {
-            mo.x = mo.x * -1;
             this.ctx.restore();
+        } else {
+            this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
         }
     }
 }

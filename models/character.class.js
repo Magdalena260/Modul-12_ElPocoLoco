@@ -2,12 +2,12 @@ class Character extends MovableObject {
 
     height = 300;
     y = 130;
-    speed = 10;
+    speed = 15;
 
     world;
     currentImage = 0;
 
-    IMAGES_WALKING = [
+    IMAGES = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
         'img/2_character_pepe/2_walk/W-23.png',
@@ -18,64 +18,37 @@ class Character extends MovableObject {
 
     constructor(world) {
         super();
-
         this.world = world;
 
-        this.loadImage(this.IMAGES_WALKING[0]);
-        this.loadImages(this.IMAGES_WALKING);
+        this.loadImage(this.IMAGES[0]);
+        this.loadImages(this.IMAGES);
 
         this.animate();
     }
 
-    move() {
-
-        // 🔥 Sicherheit falls world kurz fehlt
-        if (!this.world || !this.world.keyboard) return;
-
-        if (this.world.keyboard.RIGHT  && this.x < this.world.level.end_x) {
-            this.x += this.speed;
-            this.otherDirection = false;
-        }
-
-        if (this.world.keyboard.LEFT && this.x > 0) {
-            this.x -= this.speed;
-            this.otherDirection = true;
-        }
-
-        if (this.world.keyboard.SPACE) {
-            this.jump();
-        }
-
-        // Kamera folgt Pepe
-        this.world.camera_x = -this.x +100;
-    }
-
     animate() {
-
         setInterval(() => {
 
-            this.move();
-            this.playAnimation();
+            let moving = false;
+
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+                this.x += this.speed;
+                this.otherDirection = false;
+                moving = true;
+            }
+
+            if (this.world.keyboard.LEFT && this.x > -712) {
+                this.x -= this.speed;
+                this.otherDirection = true;
+                moving = true;
+            }
+
+            this.world.camera_x = -(this.x - 100);
+
+            if (moving) {
+                this.playAnimation(this.IMAGES);
+            }
 
         }, 1000 / 60);
     }
-
-    playAnimation() {
-
-        if (!this.world || !this.world.keyboard) return;
-
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-
-            let i = this.currentImage % this.IMAGES_WALKING.length;
-            let path = this.IMAGES_WALKING[i];
-
-            this.img = this.imageCache[path];
-            this.currentImage++;
-        }
-    }
-
-    jump() {
-        // aktuell leer — kommt später mit Gravity
-    }
-
 }
