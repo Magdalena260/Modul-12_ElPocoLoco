@@ -1,6 +1,6 @@
 class World {
 
-    character;
+    character = new Character();
     level = level1;
 
     canvas;
@@ -8,9 +8,7 @@ class World {
     keyboard;
     camera_x = 0;
 
-    enemies;
-    clouds;
-    backgroundObjects;
+    statusBar = new StatusBar();
 
     constructor(canvas, keyboard) {
 
@@ -18,73 +16,98 @@ class World {
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
 
-        this.character = new Character(this);
-
-        this.enemies = this.level.enemies;
-        this.clouds = this.level.clouds;
-        this.backgroundObjects = this.level.backgroundObjects;
-
+        this.setWorld();
+        this.run();
         this.draw();
+
+    }
+
+    setWorld() {
+
+        this.character.world = this;
+
+    }
+
+    run() {
+
+        setInterval(() => {
+
+            this.checkCollisions();
+
+        }, 200);
+
+    }
+
+    checkCollisions() {
+
+        this.level.enemies.forEach((enemy) => {
+
+            if (this.character.isColliding(enemy)) {
+
+                this.character.hit();
+                this.statusBar.setPercentage(this.character.energy);
+
+                console.log("Collision detected");
+
+            }
+
+        });
+
     }
 
     draw() {
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
 
         this.ctx.save();
         this.ctx.translate(this.camera_x, 0);
 
-        this.addObjectsToMap(this.backgroundObjects);
-        this.addObjectsToMap(this.clouds);
-        this.addObjectsToMap(this.enemies);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.enemies);
         this.addToMap(this.character);
 
         this.ctx.restore();
 
+        this.addToMap(this.statusBar);
+
         requestAnimationFrame(() => this.draw());
+
     }
 
     addObjectsToMap(objects) {
-        objects.forEach(o => this.addToMap(o));
+
+        objects.forEach(o => {
+            this.addToMap(o);
+        });
+
     }
 
     addToMap(mo) {
-        if (mo.otherDirection){
-        this.ctx.save();
-        this.ctx.translate(mo.width, 0);
-        this.ctx.scale (-1, 1);
-        mo.x = mo *-1;
+
+        if (mo.otherDirection) {
+
+            this.ctx.save();
+            this.ctx.translate(mo.width, 0);
+            this.ctx.scale(-1, 1);
+            mo.x = mo.x * -1;
+
         }
 
         mo.draw(this.ctx);
 
         if (mo.otherDirection) {
-            this.flipImage(mo);
-            this.ctx.save();
-            this.ctx.translate(mo.x + mo.width, mo.y);
-            this.ctx.scale(-1, 1);
 
-            this.ctx.drawImage(mo.img, 0, 0, mo.width, mo.height);
-
+            mo.x = mo.x * -1;
             this.ctx.restore();
-        } else {
-            
-        }
-            if(mo.otherDirection){
-            this.flipImageBack();
 
-            }
-
-            mo.draw(this.ctx);
-            mo.drawFrame(this.ctx);
-            
         }
+
     }
 
-    flipImage(mo)}
-    this.ctx.save();
-    this.ctx.translate(mo.width, 0)
-    this.ctx.scale(-1, 1);
-    mo.x = mo.x *1;
-}
 }
