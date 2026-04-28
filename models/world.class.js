@@ -3,12 +3,20 @@ class World {
     canvas;
     ctx;
     keyboard;
+
     camera_x = 0;
 
-    character;
     level;
+    character;
 
     statusBar = new StatusBar();
+    throwableObjects = [];
+
+    level_start_x = -712;
+    level_end_x = 712 * 3;
+
+    lastThrow = 0;
+    gameStopped = false;
 
     constructor(canvas, keyboard) {
 
@@ -22,18 +30,22 @@ class World {
         this.character.world = this;
 
         this.draw();
-        this.checkCollisionsLoop();
+        this.run();
     }
 
-    checkCollisionsLoop() {
+    run() {
+
+        // 🐔 COLLISION
         setInterval(() => {
+
+            if (this.gameStopped) return;
 
             this.level.enemies.forEach(enemy => {
 
-                if (this.character.isColliding(enemy)) {
+                if (!enemy.dead && this.character.isColliding(enemy)) {
 
                     if (this.character.speedY < 0) {
-                        enemy.energy = 0;
+                        enemy.die();
                     } else {
                         this.character.hit();
                         this.statusBar.setPercentage(this.character.energy);
@@ -41,7 +53,59 @@ class World {
                 }
             });
 
-        }, 200);
+        }, 50);
+
+        // 🍾 THROW
+        setInterval(() => {
+
+            if (this.gameStopped) return;
+
+            if (this.keyboard.D) {
+                this.throwBottle();
+            }
+
+        }, 100);
+
+        // 💥 COLLISION SAFE
+        setInterval(() => {
+
+            if (this.gameStopped) return;
+
+            this.throwableObjects.forEach((bottle, i) => {
+
+                if (!bottle) return;
+
+                this.level.enemies.forEach(enemy => {
+
+                    if (!enemy.dead && bottle.isColliding(enemy)) {
+
+                        enemy.die();
+
+                        // 🧠 SAFE REMOVE
+                        setTimeout(() => {
+                            if (bottle.clear) bottle.clear();
+                            this.throwableObjects.splice(i, 1);
+                        }, 0);
+                    }
+                });
+            });
+
+        }, 50);
+    }
+
+    throwBottle() {
+
+        let now = new Date().getTime();
+        if (now - this.lastThrow < 500) return;
+
+        this.lastThrow = now;
+
+        this.throwableObjects.push(
+            new ThrowableObject(
+                this.character.x + 60,
+                this.character.y + 120
+            )
+        );
     }
 
     draw() {
@@ -49,11 +113,20 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.save();
+
+        let maxCam = -(this.level_end_x - this.canvas.width);
+
+        this.camera_x = -this.character.x + 100;
+
+        if (this.camera_x > 0) this.camera_x = 0;
+        if (this.camera_x < maxCam) this.camera_x = maxCam;
+
         this.ctx.translate(this.camera_x, 0);
 
         this.addObjects(this.level.backgroundObjects);
         this.addObjects(this.level.clouds);
         this.addObjects(this.level.enemies);
+        this.addObjects(this.throwableObjects);
 
         this.addToMap(this.character);
 
@@ -64,12 +137,14 @@ class World {
         requestAnimationFrame(() => this.draw());
     }
 
-    addObjects(objects) {
-        objects.forEach(o => this.addToMap(o));
+    addObjects(arr) {
+        arr.forEach(o => this.addToMap(o));
     }
 
     addToMap(mo) {
-        if (!mo) return;
-        mo.draw(this.ctx);
+
+        if (!mo || !mo.img) return;
+
+        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
 }

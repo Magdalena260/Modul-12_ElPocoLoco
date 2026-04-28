@@ -20,7 +20,7 @@ class MovableObject extends DrawableObject {
     }
 
     isAboveGround() {
-        return this.y < 220; // 👈 FIX: gemeinsame Bodenlinie
+        return this.y < 150;
     }
 
     moveRight() {
@@ -39,9 +39,9 @@ class MovableObject extends DrawableObject {
 
     isColliding(mo) {
         return this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height;
+               this.y + this.height > mo.y &&
+               this.x < mo.x + mo.width &&
+               this.y < mo.y + mo.height;
     }
 
     hit() {
@@ -53,10 +53,8 @@ class MovableObject extends DrawableObject {
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
-
         let img = this.imageCache[path];
         if (img) this.img = img;
-
         this.currentImage++;
     }
 }

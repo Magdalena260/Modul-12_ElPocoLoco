@@ -1,9 +1,11 @@
 class Chicken extends MovableObject {
 
-    y = 340; // 👈 bleibt so (leicht höher als Pepe wegen Optik)
+    y = 340;
     height = 77;
     width = 70;
     speed = 0.8;
+
+    dead = false;
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -11,11 +13,16 @@ class Chicken extends MovableObject {
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
     ];
 
+    IMAGES_DEAD = [
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
+    ];
+
     constructor() {
         super();
 
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_DEAD);
 
         this.x = 400 + Math.random() * 800;
 
@@ -25,11 +32,26 @@ class Chicken extends MovableObject {
     animate() {
 
         setInterval(() => {
-            this.moveLeft();
+
+            if (!this.dead) {
+                this.moveLeft();
+            }
+
         }, 1000 / 60);
 
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+
+            if (this.dead) {
+                this.loadImage(this.IMAGES_DEAD[0]);
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+
         }, 200);
+    }
+
+    die() {
+        this.dead = true;
+        this.speed = 0;
     }
 }

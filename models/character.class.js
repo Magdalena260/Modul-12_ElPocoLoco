@@ -1,10 +1,16 @@
 class Character extends MovableObject {
 
     height = 300;
-    y = 220; // 👈 WICHTIG: gleiche Linie wie Hühner-Basis
-    speed = 5;
+    width = 150;
+
+    y = 150;
+    x = 0;
+
+    speed = 8;
 
     world;
+    otherDirection = false;
+
     lastMove = new Date().getTime();
 
     IMAGES_WALKING = [
@@ -29,27 +35,23 @@ class Character extends MovableObject {
 
             if (!this.world) return;
 
-            // ➡️
             if (this.world.keyboard.RIGHT) {
                 this.moveRight();
+                this.otherDirection = false;
+                this.lastMove = new Date().getTime();
             }
 
-            // ⬅️
             if (this.world.keyboard.LEFT) {
                 this.moveLeft();
+                this.otherDirection = true;
+                this.lastMove = new Date().getTime();
             }
 
-            // 🦘
             if (this.world.keyboard.SPACE) {
                 this.jump();
+                this.lastMove = new Date().getTime();
             }
 
-            this.world.camera_x = -this.x + 100;
-
         }, 1000 / 60);
-
-        setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
-        }, 120);
     }
 }
