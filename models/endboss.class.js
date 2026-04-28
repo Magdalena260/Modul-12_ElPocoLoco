@@ -14,9 +14,15 @@ class Endboss extends MovableObject {
 
     constructor() {
         super();
-        this.loadImages(this.images_alert);   // 👈 WICHTIG
-        this.x = 2200;
-        this.loadImage(this.images_alert[0]);
+
+        this.loadImages(this.images_alert);
+
+        // 🔥 FIX 1: nicht zu weit raus
+        this.x = 1600;
+
+        // 🔥 FIX 2: sicher Startbild setzen
+        this.img = new Image();
+        this.img.src = this.images_alert[0];
 
         this.animate();
     }
@@ -28,11 +34,21 @@ class Endboss extends MovableObject {
     }
 
     playAnimation(images) {
+
+        // 🔥 FIX 3: Safety Check
+        if (!this.imageCache || Object.keys(this.imageCache).length === 0) return;
+
         this.currentImage++;
+
         if (this.currentImage >= images.length) {
             this.currentImage = 0;
         }
+
         let path = images[this.currentImage];
-        this.img = this.imageCache[path];
+
+        // 🔥 FIX 4: nur setzen wenn existiert
+        if (this.imageCache[path]) {
+            this.img = this.imageCache[path];
+        }
     }
 }

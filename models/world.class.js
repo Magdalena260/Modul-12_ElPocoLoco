@@ -13,7 +13,7 @@ class World {
     throwableObjects = [];
 
     level_start_x = -712;
-    level_end_x = 712 * 3;
+    level_end_x = 712 * 2.5;
 
     lastThrow = 0;
     gameStopped = false;
@@ -66,7 +66,7 @@ class World {
 
         }, 100);
 
-        // 💥 COLLISION SAFE
+        // 💥 COLLISION
         setInterval(() => {
 
             if (this.gameStopped) return;
@@ -81,7 +81,6 @@ class World {
 
                         enemy.die();
 
-                        // 🧠 SAFE REMOVE
                         setTimeout(() => {
                             if (bottle.clear) bottle.clear();
                             this.throwableObjects.splice(i, 1);
@@ -91,6 +90,17 @@ class World {
             });
 
         }, 50);
+
+        // 👹 END BOSS CHECK
+        setInterval(() => {
+
+            let boss = this.level.enemies.find(e => e instanceof Endboss);
+
+            if (boss && boss.energy <= 0) {
+                this.winGame();
+            }
+
+        }, 200);
     }
 
     throwBottle() {
@@ -108,17 +118,27 @@ class World {
         );
     }
 
+    winGame() {
+        this.gameStopped = true;
+        alert("🎉 YOU WIN!");
+        location.reload();
+    }
+
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.save();
 
+        // 📍 CAMERA LIMIT
         let maxCam = -(this.level_end_x - this.canvas.width);
 
         this.camera_x = -this.character.x + 100;
 
+        // ⛔ links
         if (this.camera_x > 0) this.camera_x = 0;
+
+        // ⛔ rechts (bis Endboss)
         if (this.camera_x < maxCam) this.camera_x = maxCam;
 
         this.ctx.translate(this.camera_x, 0);
@@ -145,6 +165,12 @@ class World {
 
         if (!mo || !mo.img) return;
 
-        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+        this.ctx.drawImage(
+            mo.img,
+            mo.x,
+            mo.y,
+            mo.width,
+            mo.height
+        );
     }
 }

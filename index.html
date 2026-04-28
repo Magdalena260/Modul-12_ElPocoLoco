@@ -9,10 +9,8 @@
 
 <link rel="icon" href="img/favicon.png">
 
-<!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap" rel="stylesheet">
 
-<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 
 <!-- BASE -->
@@ -39,12 +37,24 @@
 
 </head>
 
-<body>
+<body onload="init()">
 
-<h1>El Poco Loco</h1>
+<!-- 🎮 GAME WRAPPER -->
+<div id="gameContainer">
 
-<canvas id="canvas" width="720" height="480"></canvas>
+    <!-- 🟡 STARTSCREEN -->
+    <div id="startScreen">
+
+        <h1>El Pollo Loco</h1>
+
+        <button id="startBtn">START GAME</button>
+
+    </div>
+
+    <!-- 🎮 CANVAS -->
+    <canvas id="canvas" width="720" height="480"></canvas>
+
+</div>
 
 </body>
-
 </html>

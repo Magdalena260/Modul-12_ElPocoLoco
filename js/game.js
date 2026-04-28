@@ -2,22 +2,39 @@ let canvas;
 let world;
 let keyboard;
 
+let gameStarted = false;
+
 function init() {
 
     canvas = document.getElementById('canvas');
     keyboard = new Keyboard();
 
-    world = new World(canvas, keyboard);
-
-    console.log("Game started");
+    // 🎮 Start Button Listener
+    document.getElementById('startBtn').addEventListener('click', startGame);
 }
 
-// 🔥 WICHTIG: global verfügbar machen
-window.init = init;
+function startGame() {
 
+    if (gameStarted) return;
+    gameStarted = true;
 
-// ⌨️ KEY INPUT
+    // 🟡 Startscreen ausblenden
+    let screen = document.getElementById('startScreen');
+    if (screen) screen.style.display = 'none';
+
+    // 🌍 World starten
+    world = new World(canvas, keyboard);
+
+    console.log("🎮 Game started");
+}
+
+/* =========================
+   ⌨️ KEYBOARD INPUT
+========================= */
+
 window.addEventListener("keydown", (e) => {
+
+    if (!keyboard) return;
 
     switch (e.code) {
 
@@ -41,6 +58,8 @@ window.addEventListener("keydown", (e) => {
 
 window.addEventListener("keyup", (e) => {
 
+    if (!keyboard) return;
+
     switch (e.code) {
 
         case "ArrowRight":
@@ -60,5 +79,3 @@ window.addEventListener("keyup", (e) => {
             break;
     }
 });
-
-window.onload = init;
