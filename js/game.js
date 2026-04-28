@@ -5,33 +5,60 @@ let keyboard;
 function init() {
 
     canvas = document.getElementById('canvas');
-
     keyboard = new Keyboard();
 
     world = new World(canvas, keyboard);
 
     console.log("Game started");
-
 }
 
+// 🔥 WICHTIG: global verfügbar machen
+window.init = init;
 
-// KEYDOWN
+
+// ⌨️ KEY INPUT
 window.addEventListener("keydown", (e) => {
 
-    if (e.keyCode == 39) keyboard.RIGHT = true;
-    if (e.keyCode == 37) keyboard.LEFT = true;
-    if (e.keyCode == 32) keyboard.SPACE = true;
-    if (e.keyCode == 68) keyboard.D = true;
+    switch (e.code) {
 
+        case "ArrowRight":
+            keyboard.RIGHT = true;
+            break;
+
+        case "ArrowLeft":
+            keyboard.LEFT = true;
+            break;
+
+        case "Space":
+            keyboard.SPACE = true;
+            break;
+
+        case "KeyD":
+            keyboard.D = true;
+            break;
+    }
 });
 
-
-// KEYUP
 window.addEventListener("keyup", (e) => {
 
-    if (e.keyCode == 39) keyboard.RIGHT = false;
-    if (e.keyCode == 37) keyboard.LEFT = false;
-    if (e.keyCode == 32) keyboard.SPACE = false;
-    if (e.keyCode == 68) keyboard.D = false;
+    switch (e.code) {
 
+        case "ArrowRight":
+            keyboard.RIGHT = false;
+            break;
+
+        case "ArrowLeft":
+            keyboard.LEFT = false;
+            break;
+
+        case "Space":
+            keyboard.SPACE = false;
+            break;
+
+        case "KeyD":
+            keyboard.D = false;
+            break;
+    }
 });
+
+window.onload = init;

@@ -1,26 +1,21 @@
-class ThrowableObject extends MovableObject{
+class ThrowableObject extends MovableObject {
 
-    constructor(x, y){
-       super(). this.loadImage('img/7_statusbars/3_icons/icon_salsa_bottle.png');
+    constructor(x, y) {
+        super();
         this.x = x;
         this.y = y;
+        this.width = 60;
         this.height = 60;
-        this.width = 50;
+
         this.throw();
-       
     }
 
-
-    throw(x,y){
-
-        this.x = x;
-        this.y = y;
+    throw() {
         this.speedY = 30;
         this.applyGravity();
-        setInterval(() =>{
-        this.x += 10;
 
-
-        },25);
+        setInterval(() => {
+            this.x += 10;
+        }, 25);
     }
 }

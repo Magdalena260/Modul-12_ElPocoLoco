@@ -1,9 +1,9 @@
 class Chicken extends MovableObject {
 
-    y = 340;
+    y = 340; // 👈 bleibt so (leicht höher als Pepe wegen Optik)
     height = 77;
     width = 70;
-    speed = 0.8; // 🔥 wichtig: eigene Geschwindigkeit
+    speed = 0.8;
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -17,7 +17,7 @@ class Chicken extends MovableObject {
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
 
-        this.x = 200 + Math.random() * 500;
+        this.x = 400 + Math.random() * 800;
 
         this.animate();
     }
@@ -25,16 +25,11 @@ class Chicken extends MovableObject {
     animate() {
 
         setInterval(() => {
-           this.moveLeft();
+            this.moveLeft();
         }, 1000 / 60);
-         
-         setInterval(() => {
+
+        setInterval(() => {
             this.playAnimation(this.IMAGES_WALKING);
         }, 200);
-    }
-
-    jump(){
-    this.speedY = 30;
-
     }
 }
