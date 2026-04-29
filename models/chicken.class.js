@@ -51,7 +51,15 @@ class Chicken extends MovableObject {
     }
 
     die() {
-        this.dead = true;
-        this.speed = 0;
-    }
+
+    this.dead = true;
+
+    this.speed = 0;
+
+    this.img = new Image();
+    this.img.src =
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
+}
+
+   
 }

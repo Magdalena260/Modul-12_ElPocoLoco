@@ -1,17 +1,21 @@
 class Cloud extends MovableObject {
 
-    y = 50;
+    y = 20;
     width = 500;
-    height = 200;
-    speed = 0.2;
+    height = 250;
+
+    speed = 0.15;
 
     constructor() {
+
         super();
 
-        this.loadImage('img/5_background/layers/4_clouds/1.png');
+        this.loadImage(
+            'img/5_background/layers/4_clouds/1.png'
+        );
 
-        // ☁️ WICHTIG: Start über GANZEN sichtbaren + späteren Bereich verteilen
-        this.x = Math.random() * 3000 - 500;
+        // 🔥 FIX: Wolken starten sichtbar
+        this.x = Math.random() * 712 * 2;
 
         this.animate();
     }
@@ -20,13 +24,16 @@ class Cloud extends MovableObject {
 
         setInterval(() => {
 
-            this.x -= this.speed;
+            this.moveLeft();
 
-            // ☁️ Endlos-Loop (kommt wieder von rechts rein)
-            if (this.x < -600) {
-                this.x = 3000;
+            // 🔁 wenn links raus → wieder rechts rein
+            if (this.x < -500) {
+
+                this.x = 712 * 3;
+
             }
 
         }, 1000 / 60);
+
     }
 }

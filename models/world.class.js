@@ -4,19 +4,14 @@ class World {
     ctx;
     keyboard;
 
+    character;
+    level;
+
     camera_x = 0;
 
-    level;
-    character;
-
     statusBar = new StatusBar();
-    throwableObjects = [];
 
-    level_start_x = -712;
-    level_end_x = 712 * 2.5;
-
-    lastThrow = 0;
-    gameStopped = false;
+    gameOver = false;
 
     constructor(canvas, keyboard) {
 
@@ -27,150 +22,182 @@ class World {
         this.character = new Character();
         this.level = level1;
 
-        this.character.world = this;
+        this.setWorld();
 
-        this.draw();
         this.run();
+        this.draw();
+    }
+
+    setWorld() {
+        this.character.world = this;
     }
 
     run() {
 
-        // 🐔 COLLISION
         setInterval(() => {
 
-            if (this.gameStopped) return;
+            if (!this.gameOver) {
+                this.checkCollisions();
+            }
 
-            this.level.enemies.forEach(enemy => {
+        }, 50);
+    }
 
-                if (!enemy.dead && this.character.isColliding(enemy)) {
+    checkCollisions() {
+
+        this.level.enemies.forEach((enemy) => {
+
+            if (enemy.dead) return;
+
+            if (this.character.isColliding(enemy)) {
+
+                // 🐔 CHICKEN
+                if (enemy instanceof Chicken) {
 
                     if (this.character.speedY < 0) {
+
                         enemy.die();
+                        this.character.speedY = 15;
+
                     } else {
-                        this.character.hit();
-                        this.statusBar.setPercentage(this.character.energy);
+
+                        if (!this.character.isHurt()) {
+
+                            this.character.hit();
+
+                            this.statusBar.setPercentage(
+                                this.character.energy
+                            );
+                        }
                     }
                 }
-            });
 
-        }, 50);
+                // 🐔 ENDBOSS → WIN
+                if (enemy instanceof Endboss) {
 
-        // 🍾 THROW
-        setInterval(() => {
+                    this.showWinScreen();
 
-            if (this.gameStopped) return;
-
-            if (this.keyboard.D) {
-                this.throwBottle();
+                }
             }
-
-        }, 100);
-
-        // 💥 COLLISION
-        setInterval(() => {
-
-            if (this.gameStopped) return;
-
-            this.throwableObjects.forEach((bottle, i) => {
-
-                if (!bottle) return;
-
-                this.level.enemies.forEach(enemy => {
-
-                    if (!enemy.dead && bottle.isColliding(enemy)) {
-
-                        enemy.die();
-
-                        setTimeout(() => {
-                            if (bottle.clear) bottle.clear();
-                            this.throwableObjects.splice(i, 1);
-                        }, 0);
-                    }
-                });
-            });
-
-        }, 50);
-
-        // 👹 END BOSS CHECK
-        setInterval(() => {
-
-            let boss = this.level.enemies.find(e => e instanceof Endboss);
-
-            if (boss && boss.energy <= 0) {
-                this.winGame();
-            }
-
-        }, 200);
+        });
     }
 
-    throwBottle() {
+    // 🏆 WIN SCREEN
+    showWinScreen() {
 
-        let now = new Date().getTime();
-        if (now - this.lastThrow < 500) return;
+        this.gameOver = true;
 
-        this.lastThrow = now;
+        // ❌ Spiel stoppen
+        this.character.speed = 0;
 
-        this.throwableObjects.push(
-            new ThrowableObject(
-                this.character.x + 60,
-                this.character.y + 120
-            )
-        );
+        // 🖼 Overlay
+        let div = document.createElement("div");
+
+        div.style.position = "absolute";
+        div.style.top = "0";
+        div.style.left = "0";
+        div.style.width = "100%";
+        div.style.height = "100%";
+        div.style.display = "flex";
+        div.style.flexDirection = "column";
+        div.style.alignItems = "center";
+        div.style.justifyContent = "center";
+        div.style.background = "rgba(0,0,0,0.85)";
+        div.style.color = "gold";
+        div.style.zIndex = "999";
+
+        // TEXT
+        let text = document.createElement("div");
+        text.innerHTML = "YOU WIN!";
+        text.style.fontFamily = "Rubik Gemstones, Arial";
+        text.style.fontSize = "90px";
+        text.style.marginBottom = "20px";
+
+        // BILD
+        let img = document.createElement("img");
+        img.src = "img/win.png"; // dein Bild folgt noch!!!!
+        img.style.width = "300px";
+
+        div.appendChild(text);
+        div.appendChild(img);
+
+        document.body.appendChild(div);
     }
 
-    winGame() {
-        this.gameStopped = true;
-        alert("🎉 YOU WIN!");
-        location.reload();
-    }
-
+    // DRAW LOOP
     draw() {
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (!this.gameOver) {
 
-        this.ctx.save();
+            this.ctx.clearRect(
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+            );
 
-        // 📍 CAMERA LIMIT
-        let maxCam = -(this.level_end_x - this.canvas.width);
+            this.ctx.save();
 
-        this.camera_x = -this.character.x + 100;
+            this.ctx.translate(
+                this.camera_x,
+                0
+            );
 
-        // ⛔ links
-        if (this.camera_x > 0) this.camera_x = 0;
+            this.addObjectsToMap(this.level.backgroundObjects);
+            this.addObjectsToMap(this.level.clouds);
+            this.addObjectsToMap(this.level.enemies);
 
-        // ⛔ rechts (bis Endboss)
-        if (this.camera_x < maxCam) this.camera_x = maxCam;
+            this.addToMap(this.character);
 
-        this.ctx.translate(this.camera_x, 0);
+            this.ctx.restore();
 
-        this.addObjects(this.level.backgroundObjects);
-        this.addObjects(this.level.clouds);
-        this.addObjects(this.level.enemies);
-        this.addObjects(this.throwableObjects);
+            this.addToMap(this.statusBar);
 
-        this.addToMap(this.character);
-
-        this.ctx.restore();
-
-        this.addToMap(this.statusBar);
+        }
 
         requestAnimationFrame(() => this.draw());
     }
 
-    addObjects(arr) {
-        arr.forEach(o => this.addToMap(o));
+    addObjectsToMap(objects) {
+
+        objects.forEach(o => this.addToMap(o));
+
     }
 
     addToMap(mo) {
 
         if (!mo || !mo.img) return;
 
-        this.ctx.drawImage(
-            mo.img,
-            mo.x,
-            mo.y,
-            mo.width,
-            mo.height
-        );
+        if (mo.otherDirection) {
+
+            this.ctx.save();
+
+            this.ctx.translate(
+                mo.x + mo.width,
+                mo.y
+            );
+
+            this.ctx.scale(-1, 1);
+
+            this.ctx.drawImage(
+                mo.img,
+                0,
+                0,
+                mo.width,
+                mo.height
+            );
+
+            this.ctx.restore();
+
+        } else {
+
+            this.ctx.drawImage(
+                mo.img,
+                mo.x,
+                mo.y,
+                mo.width,
+                mo.height
+            );
+        }
     }
 }

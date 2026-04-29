@@ -13,20 +13,20 @@ body {
     background-position: center;
 }
 
-/* 🎮 GAME WRAPPER */
+/* GAME WRAPPER */
 #gameContainer {
     position: relative;
     width: 720px;
     height: 480px;
 }
 
-/* 🖤 CANVAS */
+/* CANVAS */
 canvas {
     background-color: black;
     display: block;
 }
 
-/* 🟡 STARTSCREEN */
+/* STARTSCREEN */
 #startScreen {
     position: absolute;
     top: 0;
@@ -50,7 +50,7 @@ canvas {
     border-radius: 12px;
 }
 
-/* 🎮 BUTTON */
+/* BUTTON */
 #startScreen button {
     padding: 12px 28px;
     font-size: 20px;
@@ -73,8 +73,24 @@ canvas {
     transform: scale(1.05);
 }
 
-/* 🧠 TITLE FONT */
+/* TITLE FONT */
 h1 {
     font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
+}
+
+
+/*Smartphones*/
+@media only screen and (max-width: 760px){
+    canvas{
+        width: 100%;
+    }
+}
+
+
+/*Smartphones*/
+@media only screen and (max-width: 480px){
+    canvas{
+        height: 100vh;
+    }
 }
