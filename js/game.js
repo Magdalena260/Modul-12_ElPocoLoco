@@ -15,16 +15,34 @@ function startGame() {
 
     document.getElementById('startScreen').style.display = 'none';
 
-    // 🔥 SICHERHEITS-CHECK
+    // 🔥 Sicherheitscheck
     if (!canvas || !keyboard) {
         console.error("Canvas oder Keyboard fehlt!");
         return;
     }
 
-    // 🔥 WORLD START
+    // 🌍 WORLD START
     world = new World(canvas, keyboard);
 
     console.log("🌍 World created");
+
+    // 🔊 AUDIO FIX (WICHTIG!)
+    enableAudio();
+}
+
+// 🎵 AUDIO FREISCHALTUNG (Browser-safe)
+function enableAudio() {
+
+    // einmaliger User-Klick = erlaubt Sound
+    const unlock = () => {
+        AudioHub.startMusic();
+
+        console.log("🔊 Musik gestartet");
+
+        document.removeEventListener("click", unlock);
+    };
+
+    document.addEventListener("click", unlock);
 }
 
 // automatisch init beim Laden
