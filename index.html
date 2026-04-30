@@ -5,54 +5,73 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>El Poco Loco</title>
+<title>El Pollo Loco</title>
 
 <link rel="icon" href="img/favicon.png">
-
 <link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="style.css">
 
-<!-- BASE -->
+<!-- =========================
+     🧱 BASE CLASSES
+========================= -->
 <script src="models/drawable-object.class.js"></script>
 <script src="models/movable-object.class.js"></script>
-<script src="models/level.class.js"></script>
 <script src="models/keyboard.class.js"></script>
+<script src="models/level.class.js"></script>
 
-<!-- OBJECTS -->
+<!-- =========================
+     🎮 GAME OBJECTS
+========================= -->
 <script src="models/background-object.class.js"></script>
 <script src="models/cloud.class.js"></script>
+
 <script src="models/chicken.class.js"></script>
-<script src="models/throwable-object.class.js"></script>
 <script src="models/endboss.class.js"></script>
+
 <script src="models/character.class.js"></script>
+
+<!-- 🪙🍾 COLLECTIBLES -->
+<script src="models/coin.class.js"></script>
+<script src="models/bottle.class.js"></script>
+
+<!-- 💣 THROWABLE -->
+<script src="models/throwable-object.class.js"></script>
+
+<!-- 📊 UI -->
 <script src="models/status-bar.class.js"></script>
+
+<!-- 🌍 WORLD -->
 <script src="models/world.class.js"></script>
 
-<!-- LEVEL -->
+<!-- 📦 LEVEL -->
 <script src="levels/level1.js"></script>
 
-<!-- GAME -->
+<!-- 🎮 GAME START -->
 <script src="js/game.js"></script>
 
 </head>
 
 <body onload="init()">
 
-<!-- GAME WRAPPER -->
-<div id="gameContainer">
+<div id="uiFrame">
 
-    <!-- STARTSCREEN -->
-    <div id="startScreen">
+    <div id="gameContainer">
 
-        <h1>El Pollo Loco</h1>
+        <!-- START SCREEN -->
+        <div id="startScreen">
 
-        <button id="startBtn">START GAME</button>
+            <h1>El Pollo Loco</h1>
+
+            <button id="startBtn" onclick="startGame()">
+                Start Game
+            </button>
+
+        </div>
+
+        <!-- CANVAS -->
+        <canvas id="canvas" width="720" height="480"></canvas>
 
     </div>
-
-    <!-- 🎮 CANVAS -->
-    <canvas id="canvas" width="720" height="480"></canvas>
 
 </div>
 

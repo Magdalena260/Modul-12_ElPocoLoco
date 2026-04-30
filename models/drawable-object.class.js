@@ -10,23 +10,39 @@ class DrawableObject {
     height = 100;
 
     loadImage(path) {
+
         this.img = new Image();
         this.img.src = path;
+
     }
 
-    loadImages(array) {
-        array.forEach(path => {
+    loadImages(arr) {
+
+        arr.forEach(path => {
+
             let img = new Image();
             img.src = path;
+
             this.imageCache[path] = img;
+
         });
+
     }
 
     draw(ctx) {
+
         if (!this.img) return;
         if (!this.img.complete) return;
         if (this.img.naturalWidth === 0) return;
 
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        ctx.drawImage(
+            this.img,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
+
     }
+
 }

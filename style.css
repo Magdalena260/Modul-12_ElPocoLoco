@@ -1,4 +1,3 @@
-
 body {
     margin: 0;
 
@@ -13,20 +12,58 @@ body {
     background-position: center;
 }
 
-/* GAME WRAPPER */
+/* =========================
+   UI FRAME
+========================= */
+#uiFrame {
+    position: relative;
+
+    width: 820px;
+    height: 620px;
+
+    background-image: url('frame1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
+}
+
+/* =========================
+   GAME CONTAINER
+========================= */
 #gameContainer {
     position: relative;
     width: 720px;
     height: 480px;
+    overflow: hidden;
 }
 
-/* CANVAS */
+/* =========================
+   CANVAS (WICHTIG: LAYER 1)
+========================= */
 canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 720px;
+    height: 480px;
+
     background-color: black;
+
     display: block;
+
+    z-index: 1;
 }
 
-/* STARTSCREEN */
+/* =========================
+   STARTSCREEN (LAYER 9999)
+========================= */
 #startScreen {
     position: absolute;
     top: 0;
@@ -35,7 +72,8 @@ canvas {
     width: 720px;
     height: 480px;
 
-    background: rgba(40, 35, 30, 0.88);
+    background-color: rgba(0, 0, 0, 0.95);
+
     color: rgb(230, 200, 60);
 
     display: flex;
@@ -43,14 +81,16 @@ canvas {
     justify-content: center;
     align-items: center;
 
-    z-index: 10;
+    z-index: 9999;
 
     font-family: Arial;
 
     border-radius: 12px;
 }
 
-/* BUTTON */
+/* =========================
+   BUTTON
+========================= */
 #startScreen button {
     padding: 12px 28px;
     font-size: 20px;
@@ -65,6 +105,7 @@ canvas {
 
     font-weight: bold;
     font-family: "Rubik Gemstones", system-ui;
+
     transition: 0.2s;
 }
 
@@ -73,24 +114,34 @@ canvas {
     transform: scale(1.05);
 }
 
-/* TITLE FONT */
+#startScreen {
+    pointer-events: auto;
+    z-index: 9999;
+}
+
+canvas {
+    pointer-events: auto;
+}
+
+/* =========================
+   TITLE
+========================= */
 h1 {
     font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
 }
 
-
-/*Smartphones*/
+/* =========================
+   RESPONSIVE
+========================= */
 @media only screen and (max-width: 760px){
-    canvas{
+    canvas {
         width: 100%;
     }
 }
 
-
-/*Smartphones*/
 @media only screen and (max-width: 480px){
-    canvas{
+    canvas {
         height: 100vh;
     }
 }

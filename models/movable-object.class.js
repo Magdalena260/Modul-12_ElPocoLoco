@@ -19,8 +19,9 @@ class MovableObject extends DrawableObject {
         }, 1000 / 25);
     }
 
+    // ✔ FIX: stabile Ground-Logik
     isAboveGround() {
-        return this.y < 150;
+        return this.y < 180;
     }
 
     moveRight() {
