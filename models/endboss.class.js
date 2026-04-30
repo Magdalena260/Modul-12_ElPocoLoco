@@ -3,52 +3,109 @@ class Endboss extends MovableObject {
     height = 300;
     width = 250;
     y = 50;
-    energy = 100;
 
-    images_alert = [
+    energy = 100;
+    dead = false;
+
+    speed = 1.5;
+
+    lastAttack = 0;
+    attackCooldown = 1500;
+
+    IMAGES_WALKING = [
+        'img/4_enemie_boss_chicken/1_walk/G1.png',
+        'img/4_enemie_boss_chicken/1_walk/G2.png',
+        'img/4_enemie_boss_chicken/1_walk/G3.png',
+        'img/4_enemie_boss_chicken/1_walk/G4.png'
+    ];
+
+    IMAGES_ALERT = [
         'img/4_enemie_boss_chicken/2_alert/G5.png',
         'img/4_enemie_boss_chicken/2_alert/G6.png',
         'img/4_enemie_boss_chicken/2_alert/G7.png',
         'img/4_enemie_boss_chicken/2_alert/G8.png'
     ];
 
+    IMAGES_DEAD = [
+        'img/4_enemie_boss_chicken/5_dead/G24.png'
+    ];
+
     constructor() {
         super();
 
-        this.loadImages(this.images_alert);
+        this.loadImage(this.IMAGES_ALERT[0]);
 
-        // 🔥 FIX 1: nicht zu weit raus
+        this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_ALERT);
+        this.loadImages(this.IMAGES_DEAD);
+
         this.x = 1600;
-
-        // 🔥 FIX 2: sicher Startbild setzen
-        this.img = new Image();
-        this.img.src = this.images_alert[0];
 
         this.animate();
     }
 
     animate() {
+
+        // 👉 BEWEGUNG
         setInterval(() => {
-            this.playAnimation(this.images_alert);
+
+            if (this.dead) return;
+            if (!this.world) return;
+
+            let player = this.world.character;
+
+            let distance = Math.abs(player.x - this.x);
+
+            // 👀 Erst reagieren wenn Spieler nah ist
+            if (distance < 600) {
+
+                if (player.x < this.x) {
+                    this.x -= this.speed;
+                    this.otherDirection = true;
+                } else {
+                    this.x += this.speed;
+                    this.otherDirection = false;
+                }
+            }
+
+        }, 1000 / 60);
+
+        // 🎬 ANIMATION
+        setInterval(() => {
+
+            if (this.dead) {
+                this.loadImage(this.IMAGES_DEAD[0]);
+                return;
+            }
+
+            let player = this.world?.character;
+
+            if (!player) return;
+
+            let distance = Math.abs(player.x - this.x);
+
+            if (distance < 200) {
+                this.playAnimation(this.IMAGES_ALERT);
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+
         }, 200);
     }
 
-    playAnimation(images) {
+    hit() {
+        if (this.dead) return;
 
-        // 🔥 FIX 3: Safety Check
-        if (!this.imageCache || Object.keys(this.imageCache).length === 0) return;
+        this.energy -= 20;
 
-        this.currentImage++;
-
-        if (this.currentImage >= images.length) {
-            this.currentImage = 0;
+        if (this.energy <= 0) {
+            this.energy = 0;
+            this.dead = true;
+            this.speed = 0;
         }
+    }
 
-        let path = images[this.currentImage];
-
-        // 🔥 FIX 4: nur setzen wenn existiert
-        if (this.imageCache[path]) {
-            this.img = this.imageCache[path];
-        }
+    isDead() {
+        return this.dead;
     }
 }

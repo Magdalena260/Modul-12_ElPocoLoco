@@ -12,9 +12,7 @@ body {
     background-position: center;
 }
 
-/* =========================
-   UI FRAME
-========================= */
+/* ================= UI FRAME ================= */
 #uiFrame {
     position: relative;
 
@@ -33,9 +31,6 @@ body {
     filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
 }
 
-/* =========================
-   GAME CONTAINER
-========================= */
 #gameContainer {
     position: relative;
     width: 720px;
@@ -43,9 +38,7 @@ body {
     overflow: hidden;
 }
 
-/* =========================
-   CANVAS (WICHTIG: LAYER 1)
-========================= */
+
 canvas {
     position: absolute;
     top: 0;
@@ -55,15 +48,12 @@ canvas {
     height: 480px;
 
     background-color: black;
-
     display: block;
 
     z-index: 1;
 }
 
-/* =========================
-   STARTSCREEN (LAYER 9999)
-========================= */
+
 #startScreen {
     position: absolute;
     top: 0;
@@ -83,14 +73,10 @@ canvas {
 
     z-index: 9999;
 
-    font-family: Arial;
-
+    font-family: "Rubik Gemstones", system-ui;
     border-radius: 12px;
 }
 
-/* =========================
-   BUTTON
-========================= */
 #startScreen button {
     padding: 12px 28px;
     font-size: 20px;
@@ -114,26 +100,66 @@ canvas {
     transform: scale(1.05);
 }
 
-#startScreen {
-    pointer-events: auto;
-    z-index: 9999;
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 720px;
+    height: 480px;
+
+   background: #000000;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10000;
+
+    color: rgb(230, 200, 60);
+    font-family: "Rubik Gemstones", system-ui ;
+
+    border-radius: 12px;
 }
 
-canvas {
-    pointer-events: auto;
+.overlay h1 {
+    font-family: "Rubik Gemstones", system-ui;
+    font-size: 60px;
+    margin: 0;
 }
 
-/* =========================
-   TITLE
-========================= */
+.overlay button {
+    margin-top: 20px;
+    padding: 12px 28px;
+    font-size: 20px;
+
+    cursor: pointer;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #e6c200;
+    color: black;
+
+    font-weight: bold;
+    font-family: "Rubik Gemstones", system-ui;
+
+    transition: 0.2s;
+}
+
+.overlay button:hover {
+    background-color: #ffdb4d;
+    transform: scale(1.05);
+}
+
+
 h1 {
     font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
 @media only screen and (max-width: 760px){
     canvas {
         width: 100%;

@@ -11,14 +11,19 @@ class ThrowableObject extends MovableObject {
 
         this.direction = direction;
 
+        this.speedX = direction === 'left' ? -12 : 12;
+        this.speedY = 10;
+
         this.loadImage('img/6_salsa_bottle/salsa_bottle.png');
 
-        this.speedY = 25;
         this.applyGravity();
 
+        this.animate();
+    }
+
+    animate() {
         setInterval(() => {
-            if (this.direction === 'left') this.x -= 10;
-            else this.x += 10;
-        }, 25);
+            this.x += this.speedX;
+        }, 20);
     }
 }

@@ -7,6 +7,12 @@ class Character extends MovableObject {
     speed = 6;
 
     world;
+
+    energy = 100;
+
+    lastHit = 0;
+    hitCooldown = 1000;
+
     lastMove = new Date().getTime();
 
     IMAGES_WALKING = [
@@ -37,6 +43,30 @@ class Character extends MovableObject {
         this.animate();
     }
 
+    // ================= DAMAGE SYSTEM =================
+    hit() {
+
+        let now = new Date().getTime();
+
+        // 🔥 Schutz gegen Instant-Damage
+        if (now - this.lastHit < this.hitCooldown) {
+            return;
+        }
+
+        this.lastHit = now;
+
+        this.energy -= 20;
+
+        if (this.energy < 0) {
+            this.energy = 0;
+        }
+    }
+
+    isDead() {
+        return this.energy <= 0;
+    }
+
+    // ================= MOVEMENT + ANIMATION =================
     animate() {
 
         // ================= MOVEMENT =================
@@ -46,7 +76,7 @@ class Character extends MovableObject {
 
             let moving = false;
 
-            // ➡️ RIGHT (mit Level-Limit)
+            // ➡️ RIGHT
             if (
                 this.world.keyboard.RIGHT &&
                 this.x < this.world.level.level_end_x
@@ -56,7 +86,7 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // ⬅️ LEFT (nicht raus aus Map)
+            // ⬅️ LEFT
             if (
                 this.world.keyboard.LEFT &&
                 this.x > 0
@@ -78,38 +108,32 @@ class Character extends MovableObject {
             // 📷 CAMERA
             this.world.camera_x = -this.x + 100;
 
-            // ⏱ last move tracking
             if (moving) {
                 this.lastMove = new Date().getTime();
             }
 
         }, 1000 / 60);
 
-
         // ================= ANIMATION =================
         setInterval(() => {
 
             let time = new Date().getTime() - this.lastMove;
 
-            // 🦘 Jump
             if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
                 return;
             }
 
-            // 🚶 Walk
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.playAnimation(this.IMAGES_WALKING);
                 return;
             }
 
-            // 😴 ZZZ
             if (time > 4000) {
                 this.playAnimation(this.IMAGES_SLEEP);
                 return;
             }
 
-            // 🙂 idle fallback
             this.loadImage(this.IMAGES_WALKING[0]);
 
         }, 120);
