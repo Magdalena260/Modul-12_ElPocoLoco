@@ -11,8 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 
-<script src="models/AudioHub.class.js"></script>
+<script src="models/audiohub.class.js"></script>
 
+
+<button id="muteBtn" onclick="toggleMute()">Sound on</button>
 <!-- BASE -->
 <script src="models/drawable-object.class.js"></script>
 <script src="models/movable-object.class.js"></script>
@@ -66,7 +68,7 @@
 
         <!-- GAME OVER -->
         <div id="gameOverScreen" class="overlay" style="display:none;">
-            <h1>You Lost</h1>
+            <h1>You Lost!</h1>
             <button onclick="location.reload()">Restart</button>
         </div>
 

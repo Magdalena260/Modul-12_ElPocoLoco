@@ -3,65 +3,59 @@ class AudioHub {
     // 🎵 MUSIC
     static MUSIC = new Audio('./assets/background_music.mp3');
 
-    // 👣 PLAYER SOUNDS
+    // 👣 PLAYER
     static STEP = new Audio('./assets/walking_pepe.mp3');
     static JUMP = new Audio('./assets/jump.mp3');
-    static SLEEP = new Audio('./assets/snoring.mp3');
 
-    // 🍾 THROW
-    static THROW = new Audio('./assets/bottle_smash.mp3');
-
-    // 🪙 ITEMS
+    // 🪙 COIN
     static COIN = new Audio('./assets/coin_3.mp3');
 
     // 🐔 ENEMIES
     static CHICKEN = new Audio('./assets/normal_chicken.mp3');
     static ENDBOSS = new Audio('./assets/endboss_chicken.mp3');
 
-    // 📦 ALL SOUNDS
     static allSounds = [
         AudioHub.MUSIC,
         AudioHub.STEP,
         AudioHub.JUMP,
-        AudioHub.SLEEP,
-        AudioHub.THROW,
         AudioHub.COIN,
         AudioHub.CHICKEN,
         AudioHub.ENDBOSS
     ];
 
-    // 🎵 START MUSIC (loop)
+    // 🎵 MUSIC START
     static startMusic() {
         this.MUSIC.loop = true;
         this.MUSIC.volume = 0.2;
-        this.MUSIC.play();
+        this.MUSIC.play().catch(() => {});
     }
 
-    // 🔊 PLAY SOUND ONCE
+    // 🔊 PLAY SOUND
     static play(sound, volume = 0.3) {
         if (!sound) return;
-        sound.volume = volume;
-        sound.currentTime = 0;
-        sound.play();
-    }
 
-    // ⛔ STOP ALL SOUNDS
-    static stopAll() {
-        this.allSounds.forEach(sound => {
-            sound.pause();
+        try {
             sound.currentTime = 0;
+            sound.volume = volume;
+            sound.play().catch(() => {});
+        } catch (e) {}
+    }
+
+    // 🔇 MUTE SYSTEM (WICHTIG)
+    static setMuted(muted) {
+        this.allSounds.forEach(s => {
+            s.muted = muted;
         });
     }
 
-    // 🔇 MUTE ALL
-    static mute() {
-        this.allSounds.forEach(sound => {
-            sound.volume = 0;
+    // 🔄 RESET
+    static resetAll() {
+        this.allSounds.forEach(s => {
+            try {
+                s.pause();
+                s.currentTime = 0;
+                s.muted = false;
+            } catch (e) {}
         });
-    }
-
-    // 🔊 UNMUTE DEFAULT
-    static unmute() {
-        this.MUSIC.volume = 0.2;
     }
 }

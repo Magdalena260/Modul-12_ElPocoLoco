@@ -159,6 +159,27 @@ h1 {
     font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
 }
+#muteBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    padding: 10px 15px;
+    font-size: 16px;
+
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+    z-index: 1000;
+    font-family: "Rubik Gemstones", system-ui;
+}
+
+#muteBtn:hover {
+    background-color: #ffdb4d;
+    transform: scale(1.05);
+}
 
 @media only screen and (max-width: 760px){
     canvas {

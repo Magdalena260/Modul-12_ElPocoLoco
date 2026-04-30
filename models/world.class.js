@@ -24,6 +24,8 @@ class World {
 
     gameOver = false;
 
+    stepCooldown = false;
+
     constructor(canvas, keyboard) {
 
         this.canvas = canvas;
@@ -35,7 +37,6 @@ class World {
 
         this.character.world = this;
 
-        // 🔥 WICHTIG: damit Boss funktioniert
         this.level.enemies.forEach(e => e.world = this);
 
         this.initStatusBars();
@@ -74,14 +75,13 @@ class World {
             'img/7_statusbars/1_statusbar/3_statusbar_bottle/green/100.png'
         ], 20, 140);
 
-        // 👹 Boss Bar
         this.statusBarEndboss = new StatusBar([
-         'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
-         'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
-          'img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
-          'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
-           'img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
         ], 500, 20);
     }
 
@@ -101,10 +101,12 @@ class World {
             this.cleanup();
             this.updateUI();
 
+            this.checkStepSound();
+
         }, 100);
     }
 
-    // ❤️ HEART SPAWN
+    // ================= HEART =================
     spawnHeart(x, y) {
         this.hearts.push({
             x: x,
@@ -120,6 +122,8 @@ class World {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
                 this.coinCount++;
+
+                AudioHub.play(AudioHub.COIN, 0.3);
             }
         });
     }
@@ -153,10 +157,9 @@ class World {
                 e.die();
                 this.character.speedY = 10;
 
-                // ❤️ HEAL
-                this.character.energy = Math.min(100, this.character.energy + 20);
+                AudioHub.play(AudioHub.CHICKEN, 0.3);
 
-                // ❤️ HEART
+                this.character.energy = Math.min(100, this.character.energy + 20);
                 this.spawnHeart(e.x, e.y);
 
             } else {
@@ -188,6 +191,8 @@ class World {
 
             this.bottleCount--;
 
+            AudioHub.play(AudioHub.THROW, 0.3);
+
             setTimeout(() => this.canThrow = true, 300);
         }
     }
@@ -211,6 +216,8 @@ class World {
                 ) {
                     e.die();
 
+                    AudioHub.play(AudioHub.CHICKEN, 0.3);
+
                     this.character.energy = Math.min(100, this.character.energy + 20);
                     this.spawnHeart(e.x, e.y);
 
@@ -227,7 +234,6 @@ class World {
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (!boss) return;
 
-        // 💣 Bottle trifft Boss
         for (let b = this.throwables.length - 1; b >= 0; b--) {
 
             let bottle = this.throwables[b];
@@ -239,13 +245,15 @@ class World {
                 bottle.y + bottle.height > boss.y
             ) {
                 boss.hit();
+
+                AudioHub.play(AudioHub.ENDBOSS, 0.3);
+
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) this.triggerWin();
             }
         }
 
-        // 💥 Boss Angriff
         if (this.character.isColliding(boss) && !boss.dead) {
 
             let now = new Date().getTime();
@@ -256,7 +264,6 @@ class World {
 
                 this.character.hit();
 
-                // 👉 Knockback
                 if (this.character.x < boss.x) {
                     this.character.x -= 50;
                 } else {
@@ -266,6 +273,23 @@ class World {
                 if (this.character.isDead()) {
                     this.triggerGameOver();
                 }
+            }
+        }
+    }
+
+    // ================= STEP SOUND =================
+    checkStepSound() {
+
+        if (this.keyboard.RIGHT || this.keyboard.LEFT) {
+
+            if (!this.stepCooldown) {
+                this.stepCooldown = true;
+
+                AudioHub.play(AudioHub.STEP, 0.1);
+
+                setTimeout(() => {
+                    this.stepCooldown = false;
+                }, 300);
             }
         }
     }
