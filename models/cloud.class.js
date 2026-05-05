@@ -14,7 +14,7 @@ class Cloud extends MovableObject {
             'img/5_background/layers/4_clouds/1.png'
         );
 
-        // 🔥 FIX: Wolken starten sichtbar
+        // Wolken starten sichtbar
         this.x = Math.random() * 712 * 2;
 
         this.animate();
@@ -26,7 +26,7 @@ class Cloud extends MovableObject {
 
             this.moveLeft();
 
-            // 🔁 wenn links raus → wieder rechts rein
+            // wenn links raus → wieder rechts rein
             if (this.x < -500) {
 
                 this.x = 712 * 3;

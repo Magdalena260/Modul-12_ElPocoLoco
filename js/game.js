@@ -12,17 +12,17 @@ function startGame() {
 
     document.getElementById('startScreen').style.display = 'none';
 
+    // World starten
     world = new World(canvas, keyboard);
 
+    // 🔊 Audio sauber starten
     AudioHub.resetAll();
-
-    setTimeout(() => {
-        AudioHub.startMusic();
-    }, 200);
+    AudioHub.startMusic();
 }
 
-// 🔇 MUTE BUTTON
+// 🔊 MUTE BUTTON
 function toggleMute() {
+
     muted = !muted;
 
     AudioHub.setMuted(muted);
@@ -31,4 +31,12 @@ function toggleMute() {
         muted ? '🔊 Sound an' : '🔇 Mute';
 }
 
+// Init beim Laden
 window.addEventListener('load', init);
+function showHowToPlay() {
+    document.getElementById('howToPlayOverlay').style.display = 'flex';
+}
+
+function closeHowToPlay() {
+    document.getElementById('howToPlayOverlay').style.display = 'none';
+}

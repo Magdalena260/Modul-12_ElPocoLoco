@@ -1,36 +1,54 @@
 class AudioHub {
 
-    // 🎵 MUSIC
+    // ================= SOUNDS =================
+
     static MUSIC = new Audio('./assets/background_music.mp3');
-
-    // 👣 PLAYER
-    static STEP = new Audio('./assets/walking_pepe.mp3');
     static JUMP = new Audio('./assets/jump.mp3');
+    static SNORING = new Audio('./assets/snoring.mp3');
 
-    // 🪙 COIN
     static COIN = new Audio('./assets/coin_3.mp3');
 
-    // 🐔 ENEMIES
+
+    static THROW = new Audio('./assets/bottle_smash.mp3');
+
     static CHICKEN = new Audio('./assets/normal_chicken.mp3');
     static ENDBOSS = new Audio('./assets/endboss_chicken.mp3');
 
     static allSounds = [
         AudioHub.MUSIC,
-        AudioHub.STEP,
         AudioHub.JUMP,
+        AudioHub.SNORING,
         AudioHub.COIN,
+        AudioHub.THROW,
         AudioHub.CHICKEN,
         AudioHub.ENDBOSS
     ];
 
-    // 🎵 MUSIC START
+    // ================= AUDIO UNLOCK (WICHTIG!) =================
+    static unlockAudio() {
+        this.allSounds.forEach(sound => {
+            try {
+                sound.volume = 0;
+                sound.play().then(() => {
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.volume = 1;
+                }).catch(() => {});
+            } catch (e) {}
+        });
+    }
+
+    // ================= MUSIC =================
     static startMusic() {
         this.MUSIC.loop = true;
         this.MUSIC.volume = 0.2;
-        this.MUSIC.play().catch(() => {});
+
+        this.MUSIC.play().catch(err => {
+            console.log("Music blocked:", err);
+        });
     }
 
-    // 🔊 PLAY SOUND
+    // ================= PLAY =================
     static play(sound, volume = 0.3) {
         if (!sound) return;
 
@@ -41,14 +59,12 @@ class AudioHub {
         } catch (e) {}
     }
 
-    // 🔇 MUTE SYSTEM (WICHTIG)
+    // ================= MUTE =================
     static setMuted(muted) {
-        this.allSounds.forEach(s => {
-            s.muted = muted;
-        });
+        this.allSounds.forEach(s => s.muted = muted);
     }
 
-    // 🔄 RESET
+    // ================= RESET =================
     static resetAll() {
         this.allSounds.forEach(s => {
             try {

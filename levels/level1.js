@@ -2,17 +2,16 @@ const level1 = new Level(
 
     // ENEMIES
     [
+       
+        new Chicken(),
+        new SmallChicken(),
+        new Chicken(),
+        new SmallChicken(),
+        new SmallChicken(),
+        new SmallChicken(),
         new Chicken(),
         new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
+        new SmallChicken(),
         new Chicken(),
         new Endboss()
     ],
@@ -56,13 +55,15 @@ const level1 = new Level(
         new Coin(200, 300),
         new Coin(400, 600),
         new Coin(600, 300),
-         new Coin(800, 600),
+        new Coin(800, 600),
         new Coin(750, 300),
         new Coin(600, 100),
-         new Coin(150, 700),
+        new Coin(150, 700),
         new Coin(300, 500),
-         new Coin(350, 650),
+        new Coin(350, 650),
         new Coin(250, 800),
+        new Coin(600, 100),
+        new Coin(30, 800),
         new Coin(600, 100),
         new Coin(900, 650),
         new Coin(900, 800),
@@ -73,25 +74,19 @@ const level1 = new Level(
         new Coin(1100, 550),
     ],
 
-    // BOTTLES (NOW VISIBLE)
+    // BOTTLES
     [
         new Bottle(250, 350),
         new Bottle(500, 350),
         new Bottle(650, 350),
         new Bottle(400, 350),
-        new Bottle(750, 350),
-        new Bottle(650, 350),
-        new Bottle(800, 350),
         new Bottle(830, 350),
         new Bottle(950, 350),
         new Bottle(1100, 350),
         new Bottle(1000, 350),
-        new Bottle(1050, 350),
         new Bottle(1200, 350),
-        new Bottle(1250, 350),
-        new Bottle(1210, 350),
-        new Bottle(1230, 350),
+     
     ]
 );
-
+// Levelende definiert!
 level1.level_end_x = 712 * 3;

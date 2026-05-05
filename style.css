@@ -1,3 +1,4 @@
+/* Body mit Hintergrundbild*/
 body {
     margin: 0;
 
@@ -12,7 +13,7 @@ body {
     background-position: center;
 }
 
-/* ================= UI FRAME ================= */
+/* Rahmen, um Spiel von Hintergrund abzugrenzen (in Ai und PS gebaut selbst)*/
 #uiFrame {
     position: relative;
 
@@ -30,15 +31,14 @@ body {
 
     filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
 }
-
+/* Größe Spielbildschirm*/
 #gameContainer {
     position: relative;
     width: 720px;
     height: 480px;
     overflow: hidden;
 }
-
-
+/* Positionierung von Canvas (Spielbildschirm)*/
 canvas {
     position: absolute;
     top: 0;
@@ -52,7 +52,7 @@ canvas {
 
     z-index: 1;
 }
-
+/* Startcreen Fenster: Größe, Farbe, Plazierung*/
 
 #startScreen {
     position: absolute;
@@ -63,7 +63,6 @@ canvas {
     height: 480px;
 
     background-color: rgba(0, 0, 0, 0.95);
-
     color: rgb(230, 200, 60);
 
     display: flex;
@@ -71,12 +70,14 @@ canvas {
     justify-content: center;
     align-items: center;
 
+    gap: 15px; 
     z-index: 9999;
 
     font-family: "Rubik Gemstones", system-ui;
     border-radius: 12px;
 }
 
+/* BUTTONS */
 #startScreen button {
     padding: 12px 28px;
     font-size: 20px;
@@ -94,13 +95,13 @@ canvas {
 
     transition: 0.2s;
 }
-
+/* Startcreen Button Hover */
 #startScreen button:hover {
     background-color: #ffdb4d;
     transform: scale(1.05);
 }
 
-
+/* Overlay (win / lose) */
 .overlay {
     position: absolute;
     top: 0;
@@ -109,29 +110,29 @@ canvas {
     width: 720px;
     height: 480px;
 
-   background: #000000;
+    background: #000000;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
+    gap: 15px; 
+
     z-index: 10000;
 
     color: rgb(230, 200, 60);
-    font-family: "Rubik Gemstones", system-ui ;
+    font-family: "Rubik Gemstones", system-ui;
 
     border-radius: 12px;
 }
-
+/* Überschrift*/
 .overlay h1 {
-    font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
     margin: 0;
 }
-
+/* Button*/
 .overlay button {
-    margin-top: 20px;
     padding: 12px 28px;
     font-size: 20px;
 
@@ -148,17 +149,70 @@ canvas {
 
     transition: 0.2s;
 }
-
+/* Button Hover*/
 .overlay button:hover {
     background-color: #ffdb4d;
     transform: scale(1.05);
 }
 
-
+/* HEADLINE */
 h1 {
-    font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
+    font-family: "Rubik Gemstones", system-ui;
 }
+
+/* HOW TO PLAY */
+#howToPlayOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 720px;
+    height: 480px;
+
+    background: rgba(0,0,0,0.9);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; 
+    padding-left: 50px; 
+    z-index: 9999;
+}
+/* HOW TO PLAY (Bild in Ai erstellt mit einbinden)*/
+#howToPlayOverlay img {
+    width: 90%;
+    object-fit: contain;
+}
+
+
+/* gameButton*/
+.gameButton {
+    padding: 12px 28px;
+    font-size: 20px;
+
+    cursor: pointer;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #e6c200;
+    color: black;
+
+    font-weight: bold;
+    font-family: "Rubik Gemstones", system-ui;
+    margin: 0 auto;   
+    display: block; 
+    transition: 0.2s;
+}
+
+/* gameButton Hover*/
+.gameButton:hover {
+    background-color: #ffdb4d;
+    transform: scale(1.05);
+}
+
+/* mute button */
 #muteBtn {
     position: absolute;
     top: 20px;
@@ -174,19 +228,61 @@ h1 {
     cursor: pointer;
     z-index: 1000;
     font-family: "Rubik Gemstones", system-ui;
+    
 }
-
+/* mute button hover*/
 #muteBtn:hover {
     background-color: #ffdb4d;
     transform: scale(1.05);
 }
 
+/* Impressum */
+footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-family: "Rubik Gemstones", system-ui;
+    color: black;
+    cursor: pointer;
+}
+
+/* Impressum Schriftfarbe & Strich weg*/
+footer a {
+    text-decoration: none;
+    color: black;
+}
+
+
+/* Impressum Untergrund Platzierung*/
+.imprint-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+/* Impressum Untergrund Styling*/
+.imprint-card {
+    background: rgb(245, 228, 184);
+    padding: 30px;
+    max-width: 700px;
+    width: 100%;
+
+    border-radius: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,1.0);
+
+    font-family: "Segoe UI", sans-serif; 
+    line-height: 1.6;
+}
+
+/* RESPONSIVE Tablet*/
 @media only screen and (max-width: 760px){
     canvas {
         width: 100%;
     }
 }
 
+/* RESPONSIVE Handy*/
 @media only screen and (max-width: 480px){
     canvas {
         height: 100vh;

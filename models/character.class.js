@@ -48,7 +48,6 @@ class Character extends MovableObject {
 
         let now = new Date().getTime();
 
-        // 🔥 Schutz gegen Instant-Damage
         if (now - this.lastHit < this.hitCooldown) {
             return;
         }
@@ -69,14 +68,13 @@ class Character extends MovableObject {
     // ================= MOVEMENT + ANIMATION =================
     animate() {
 
-        // ================= MOVEMENT =================
         setInterval(() => {
 
             if (!this.world) return;
 
             let moving = false;
 
-            // ➡️ RIGHT
+            // RIGHT
             if (
                 this.world.keyboard.RIGHT &&
                 this.x < this.world.level.level_end_x
@@ -86,7 +84,7 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // ⬅️ LEFT
+            // LEFT
             if (
                 this.world.keyboard.LEFT &&
                 this.x > 0
@@ -96,16 +94,19 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // 🦘 JUMP
+            // JUMP
             if (
                 this.world.keyboard.SPACE &&
                 !this.isAboveGround()
             ) {
                 this.jump();
                 moving = true;
+
+                // 🔊 JUMP SOUND
+                AudioHub.play(AudioHub.JUMP, 0.3);
             }
 
-            // 📷 CAMERA
+            // CAMERA
             this.world.camera_x = -this.x + 100;
 
             if (moving) {
@@ -114,7 +115,6 @@ class Character extends MovableObject {
 
         }, 1000 / 60);
 
-        // ================= ANIMATION =================
         setInterval(() => {
 
             let time = new Date().getTime() - this.lastMove;
@@ -129,10 +129,22 @@ class Character extends MovableObject {
                 return;
             }
 
-            if (time > 4000) {
-                this.playAnimation(this.IMAGES_SLEEP);
-                return;
-            }
+         if (time > 4000) {
+
+    this.playAnimation(this.IMAGES_SLEEP);
+
+    if (!this.snoreCooldown) {
+        this.snoreCooldown = true;
+
+        AudioHub.play(AudioHub.SNORING, 0.2);
+
+        setTimeout(() => {
+            this.snoreCooldown = false;
+        }, 2000);
+    }
+
+    return;
+}
 
             this.loadImage(this.IMAGES_WALKING[0]);
 
