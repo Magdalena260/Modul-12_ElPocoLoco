@@ -23,9 +23,8 @@ class World {
     hearts = [];
 
     gameOver = false;
-    stepCooldown = false;
 
-    enemyBindInterval;
+    stepCooldown = false;
 
     constructor(canvas, keyboard) {
 
@@ -38,25 +37,12 @@ class World {
 
         this.character.world = this;
 
-        // 🧠 FIX 1: sofort initial verbinden
-        this.bindEnemies();
+        this.level.enemies.forEach(e => e.world = this);
 
         this.initStatusBars();
 
         this.run();
         this.draw();
-
-        // 🧠 FIX 2: dauerhafte Sicherheit für World Binding
-        this.enemyBindInterval = setInterval(() => {
-            this.bindEnemies();
-        }, 500);
-    }
-
-    // 💥 FIX: garantiert WORLD REFERENZ für ALLE Gegner
-    bindEnemies() {
-        this.level.enemies.forEach(e => {
-            e.world = this;
-        });
     }
 
     initStatusBars() {
@@ -112,17 +98,22 @@ class World {
             this.checkEndboss();
             this.cleanup();
             this.updateUI();
+
             this.checkStepSound();
 
         }, 100);
     }
 
     spawnHeart(x, y) {
-        this.hearts.push({ x, y, size: 40, life: 30 });
+        this.hearts.push({
+            x: x,
+            y: y,
+            size: 40,
+            life: 30
+        });
     }
 
     checkCoins() {
-
         this.level.coins.forEach((c, i) => {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
@@ -133,7 +124,6 @@ class World {
     }
 
     checkBottles() {
-
         this.level.bottles.forEach((b, i) => {
             if (this.character.isColliding(b)) {
                 this.level.bottles.splice(i, 1);
@@ -159,6 +149,7 @@ class World {
             if (jumpKill) {
                 e.die();
                 this.character.speedY = 10;
+
                 AudioHub.play(AudioHub.CHICKEN, 0.3);
 
                 this.character.energy = Math.min(100, this.character.energy + 20);
@@ -244,7 +235,9 @@ class World {
                 bottle.y + bottle.height > boss.y
             ) {
                 boss.hit();
+
                 AudioHub.play(AudioHub.ENDBOSS, 0.3);
+
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) this.triggerWin();
@@ -253,7 +246,7 @@ class World {
 
         if (this.character.isColliding(boss) && !boss.dead) {
 
-            let now = Date.now();
+            let now = new Date().getTime();
 
             if (now - boss.lastAttack > boss.attackCooldown) {
 
@@ -261,8 +254,11 @@ class World {
 
                 this.character.hit();
 
-                if (this.character.x < boss.x) this.character.x -= 50;
-                else this.character.x += 50;
+                if (this.character.x < boss.x) {
+                    this.character.x -= 50;
+                } else {
+                    this.character.x += 50;
+                }
 
                 if (this.character.isDead()) {
                     this.triggerGameOver();
@@ -292,13 +288,14 @@ class World {
     }
 
     updateUI() {
-
         this.statusBarHealth.setPercentage(this.character.energy);
         this.statusBarCoins.setPercentage(this.coinCount * 10);
         this.statusBarBottles.setPercentage(this.bottleCount * 10);
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (boss) this.statusBarEndboss.setPercentage(boss.energy);
+        if (boss) {
+            this.statusBarEndboss.setPercentage(boss.energy);
+        }
     }
 
     triggerGameOver() {
@@ -351,7 +348,9 @@ class World {
             h.y -= 1;
             h.life--;
 
-            if (h.life <= 0) this.hearts.splice(i, 1);
+            if (h.life <= 0) {
+                this.hearts.splice(i, 1);
+            }
         });
     }
 
@@ -360,6 +359,7 @@ class World {
         arr.forEach(o => this.addToMap(o));
     }
 
+    // FIX: nur Character wird gespiegelt
     addToMap(mo) {
 
         if (!mo || !mo.img) return;

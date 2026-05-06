@@ -24,6 +24,8 @@ const level1 = new Level(
         new Cloud(),
         new Cloud(),
         new Cloud(),
+        new Cloud(),
+        new Cloud(),
         new Cloud()
     ],
 
@@ -52,6 +54,7 @@ const level1 = new Level(
 
     // COINS (NOW VISIBLE)
     [
+        new Coin(300, 300),
         new Coin(200, 300),
         new Coin(400, 600),
         new Coin(600, 300),
@@ -64,6 +67,8 @@ const level1 = new Level(
         new Coin(250, 800),
         new Coin(600, 100),
         new Coin(30, 800),
+        new Coin(30, 400),
+        new Coin(30, 600),
         new Coin(600, 100),
         new Coin(900, 650),
         new Coin(900, 800),

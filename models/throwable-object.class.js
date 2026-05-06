@@ -12,18 +12,24 @@ class ThrowableObject extends MovableObject {
         this.direction = direction;
 
         this.speedX = direction === 'left' ? -12 : 12;
-        this.speedY = 10;
+        this.speedY = 12;
+
+        this.gravity = 0.5;
 
         this.loadImage('img/6_salsa_bottle/salsa_bottle.png');
 
-        this.applyGravity();
-
-        this.animate();
+        this.throw();
     }
 
-    animate() {
+    throw() {
+
         setInterval(() => {
+
             this.x += this.speedX;
-        }, 20);
+
+            this.y -= this.speedY;
+            this.speedY -= this.gravity;
+
+        }, 1000 / 60);
     }
 }

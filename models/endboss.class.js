@@ -6,6 +6,7 @@ class Endboss extends MovableObject {
 
     energy = 100;
     dead = false;
+    removeFromWorld = false;
 
     speed = 1.5;
 
@@ -73,9 +74,46 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
+    // HIT SYSTEM
+    hit() {
+
+        if (this.dead) return;
+
+        this.energy -= 20;
+        this.state = 'hurt';
+        this.stateLock = true;
+
+        setTimeout(() => {
+            if (!this.dead) {
+                this.stateLock = false;
+                this.state = 'walk';
+            }
+        }, 500);
+
+        if (this.energy <= 0) {
+            this.energy = 0;
+            this.die();
+        }
+    }
+
+    // DIE FIX
+    die() {
+
+        if (this.dead) return;
+
+        this.dead = true;
+        this.speed = 0;
+
+        this.currentImage = 0; 
+    }
+
+    isDead() {
+        return this.dead;
+    }
+
+    // 🎬 MAIN ANIMATION
     animate() {
 
-        // ================= MOVEMENT =================
         this.movementInterval = setInterval(() => {
 
             if (this.dead || !this.world) return;
@@ -112,17 +150,16 @@ class Endboss extends MovableObject {
 
         }, 1000 / 60);
 
-        // ================= ANIMATION =================
         this.animationInterval = setInterval(() => {
 
-            // 💀 DEATH ANIMATION
+            // DEATH FIX (sichtbar + sauber)
             if (this.dead) {
 
                 this.playAnimation(this.IMAGES_DEAD);
 
-                if (this.currentImage >= this.IMAGES_DEAD.length) {
-                    this.currentImage = this.IMAGES_DEAD.length - 1;
-                }
+                setTimeout(() => {
+                    this.removeFromWorld = true;
+                }, 1200);
 
                 return;
             }
@@ -146,48 +183,6 @@ class Endboss extends MovableObject {
                     break;
             }
 
-        }, 120);
-    }
-
-    hit() {
-
-        if (this.dead) return;
-
-        this.energy -= 20;
-        this.state = 'hurt';
-
-        this.stateLock = true;
-
-        setTimeout(() => {
-            if (!this.dead) {
-                this.stateLock = false;
-                this.state = 'walk';
-            }
-        }, 500);
-
-        if (this.energy <= 0) {
-            this.energy = 0;
-            this.die();
-        }
-    }
-
-    die() {
-
-        if (this.dead) return;
-
-        this.dead = true;
-        this.speed = 0;
-        this.state = 'dead';
-
-        this.currentImage = 0;
-
-        clearInterval(this.movementInterval);
-        clearInterval(this.animationInterval);
-
-        AudioHub.ENDBOSS?.pause();
-    }
-
-    isDead() {
-        return this.dead;
+        }, 200);
     }
 }

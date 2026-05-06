@@ -3,11 +3,14 @@ let world;
 let keyboard;
 let muted = false;
 
+ // Funktionsaufruf Keyboard starten (Tastatur wird aktiviert)
 function init() {
     canvas = document.getElementById('canvas');
     keyboard = new Keyboard();
 }
 
+
+ // Funktionsaufruf Keyboard starten (Tastatur wird aktiviert)
 function startGame() {
 
     document.getElementById('startScreen').style.display = 'none';
@@ -20,6 +23,8 @@ function startGame() {
     AudioHub.startMusic();
 }
 
+
+// Mute Button Verknüpfung zu HTML
 // 🔊 MUTE BUTTON
 function toggleMute() {
 

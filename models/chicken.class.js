@@ -8,19 +8,17 @@ class Chicken extends MovableObject {
     dead = false;
     removeFromWorld = false;
 
+    activated = false;   // 
+    activationX = 900;   //etwas später als small chicken
+
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png',
-  
-
     ];
-
-
 
     IMAGES_DEAD = [
         'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
-        
     ];
 
     constructor() {
@@ -39,7 +37,18 @@ class Chicken extends MovableObject {
 
         setInterval(() => {
 
-            if (!this.dead) {
+            if (this.dead) return;
+
+            //Aktivierung erst bei Nähe
+            if (!this.activated && this.world?.character) {
+                let distance = Math.abs(this.world.character.x - this.x);
+
+                if (distance < this.activationX) {
+                    this.activated = true;
+                }
+            }
+
+            if (this.activated) {
                 this.moveLeft();
             }
 
