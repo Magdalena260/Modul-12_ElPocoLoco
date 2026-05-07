@@ -1,4 +1,6 @@
-/* Body mit Hintergrundbild*/
+/* =========================
+   BODY
+========================= */
 body {
     margin: 0;
 
@@ -11,9 +13,13 @@ body {
     background-image: url('img/desert.png');
     background-size: cover;
     background-position: center;
+
+    overflow: hidden;
 }
 
-/* Rahmen, um Spiel von Hintergrund abzugrenzen (in Ai und PS gebaut selbst)*/
+/* =========================
+   FRAME
+========================= */
 #uiFrame {
     position: relative;
 
@@ -31,14 +37,22 @@ body {
 
     filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
 }
-/* Größe Spielbildschirm*/
+
+/* =========================
+   GAME CONTAINER
+========================= */
 #gameContainer {
     position: relative;
+
     width: 720px;
     height: 480px;
+
     overflow: hidden;
 }
-/* Positionierung von Canvas (Spielbildschirm)*/
+
+/* =========================
+   CANVAS
+========================= */
 canvas {
     position: absolute;
     top: 0;
@@ -48,12 +62,14 @@ canvas {
     height: 480px;
 
     background-color: black;
-    display: block;
 
+    display: block;
     z-index: 1;
 }
-/* Startcreen Fenster: Größe, Farbe, Plazierung*/
 
+/* =========================
+   START SCREEN
+========================= */
 #startScreen {
     position: absolute;
     top: 0;
@@ -63,6 +79,7 @@ canvas {
     height: 480px;
 
     background-color: rgba(0, 0, 0, 0.95);
+
     color: rgb(230, 200, 60);
 
     display: flex;
@@ -70,38 +87,16 @@ canvas {
     justify-content: center;
     align-items: center;
 
-    gap: 15px; 
+    gap: 15px;
+
     z-index: 9999;
 
     font-family: "Rubik Gemstones", system-ui;
-    border-radius: 12px;
 }
 
-/* BUTTONS */
-#startScreen button {
-    padding: 12px 28px;
-    font-size: 20px;
-
-    cursor: pointer;
-
-    border: none;
-    border-radius: 8px;
-
-    background-color: #e6c200;
-    color: black;
-
-    font-weight: bold;
-    font-family: "Rubik Gemstones", system-ui;
-
-    transition: 0.2s;
-}
-/* Startcreen Button Hover */
-#startScreen button:hover {
-    background-color: #ffdb4d;
-    transform: scale(1.05);
-}
-
-/* Overlay (win / lose) */
+/* =========================
+   OVERLAYS
+========================= */
 .overlay {
     position: absolute;
     top: 0;
@@ -110,58 +105,24 @@ canvas {
     width: 720px;
     height: 480px;
 
-    background: #000000;
+    background: black;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    gap: 15px; 
+    gap: 15px;
 
     z-index: 10000;
 
     color: rgb(230, 200, 60);
     font-family: "Rubik Gemstones", system-ui;
-
-    border-radius: 12px;
-}
-/* Überschrift*/
-.overlay h1 {
-    font-size: 60px;
-    margin: 0;
-}
-/* Button*/
-.overlay button {
-    padding: 12px 28px;
-    font-size: 20px;
-
-    cursor: pointer;
-
-    border: none;
-    border-radius: 8px;
-
-    background-color: #e6c200;
-    color: black;
-
-    font-weight: bold;
-    font-family: "Rubik Gemstones", system-ui;
-
-    transition: 0.2s;
-}
-/* Button Hover*/
-.overlay button:hover {
-    background-color: #ffdb4d;
-    transform: scale(1.05);
 }
 
-/* HEADLINE */
-h1 {
-    font-size: 60px;
-    font-family: "Rubik Gemstones", system-ui;
-}
-
-/* HOW TO PLAY */
+/* =========================
+   HOW TO PLAY
+========================= */
 #howToPlayOverlay {
     position: absolute;
     top: 0;
@@ -175,20 +136,31 @@ h1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start; 
-    padding-left: 50px; 
+    align-items: center;
+
     z-index: 9999;
 }
-/* HOW TO PLAY (Bild in Ai erstellt mit einbinden)*/
+
 #howToPlayOverlay img {
     width: 90%;
     object-fit: contain;
 }
 
+/* =========================
+   HEADLINE
+========================= */
+h1 {
+    font-size: 60px;
+    font-family: "Rubik Gemstones", system-ui;
+}
 
-/* gameButton*/
+/* =========================
+   BUTTONS
+========================= */
+button,
 .gameButton {
     padding: 12px 28px;
+
     font-size: 20px;
 
     cursor: pointer;
@@ -200,91 +172,212 @@ h1 {
     color: black;
 
     font-weight: bold;
+
     font-family: "Rubik Gemstones", system-ui;
-    margin: 0 auto;   
-    display: block; 
+
     transition: 0.2s;
 }
 
-/* gameButton Hover*/
+button:hover,
 .gameButton:hover {
     background-color: #ffdb4d;
     transform: scale(1.05);
 }
 
-/* mute button */
+/* =========================
+   MUTE BUTTON
+========================= */
 #muteBtn {
-    position: absolute;
+    position: fixed;
+
     top: 20px;
     right: 20px;
 
     padding: 10px 15px;
+
     font-size: 16px;
 
     background-color: #ffcc00;
+
     border: none;
     border-radius: 10px;
 
     cursor: pointer;
-    z-index: 1000;
+
+    z-index: 999999;
+
     font-family: "Rubik Gemstones", system-ui;
-    
-}
-/* mute button hover*/
-#muteBtn:hover {
-    background-color: #ffdb4d;
-    transform: scale(1.05);
 }
 
-/* Impressum */
+#muteBtn:hover {
+    background-color: #ffdb4d;
+}
+
+/* =========================
+   FOOTER
+========================= */
 footer {
     position: absolute;
     bottom: 10px;
     width: 100%;
     text-align: center;
+
     font-family: "Rubik Gemstones", system-ui;
-    color: black;
-    cursor: pointer;
 }
 
-/* Impressum Schriftfarbe & Strich weg*/
 footer a {
     text-decoration: none;
     color: black;
 }
 
+/* =========================
+   ROTATE SCREEN
+========================= */
+#rotateScreen {
+    display: none;
 
-/* Impressum Untergrund Platzierung*/
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: black;
+    color: white;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    font-size: 28px;
+
+    font-family: "Rubik Gemstones", system-ui;
+
+    z-index: 9999999;
+}
+
+/* =========================
+   MOBILE CONTROLS (DEFAULT = HIDDEN)
+========================= */
+#mobileControls {
+    display: none;
+}
+
+.mobileBtn {
+    width: 65px;
+    height: 65px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 204, 0, 0.8);
+
+    font-size: 30px;
+    color: black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =========================
+   IMPRESSUM
+========================= */
 .imprint-wrapper {
     display: flex;
     justify-content: center;
     padding: 50px 20px;
 }
 
-/* Impressum Untergrund Styling*/
 .imprint-card {
     background: rgb(245, 228, 184);
+
     padding: 30px;
+
     max-width: 700px;
     width: 100%;
 
-    border-radius: none;
     box-shadow: 0 10px 25px rgba(0,0,0,1.0);
 
-    font-family: "Segoe UI", sans-serif; 
+    font-family: "Segoe UI", sans-serif;
+
     line-height: 1.6;
 }
 
-/* RESPONSIVE Tablet*/
-@media only screen and (max-width: 760px){
-    canvas {
+/* =========================
+   RESPONSIVE TABLET / HANDY
+========================= */
+@media only screen and (max-width: 950px) {
+
+    body {
+        overflow: hidden;
+    }
+
+    #uiFrame {
+        width: 100vw;
+        height: 100vh;
+        background-image: none;
+    }
+
+    #gameContainer {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    canvas,
+    #startScreen,
+    #howToPlayOverlay,
+    .overlay {
         width: 100%;
+        height: 100%;
+    }
+
+    canvas {
+        object-fit: contain;
+    }
+
+    footer {
+        display: none;
+    }
+
+    /* MOBILE CONTROLS AN */
+    #mobileControls {
+        display: flex;
+
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 0 20px;
+
+        z-index: 999999;
     }
 }
 
-/* RESPONSIVE Handy*/
-@media only screen and (max-width: 480px){
-    canvas {
-        height: 100vh;
+/* =========================
+   PORTRAIT (ROTATE SCREEN)
+========================= */
+@media only screen and (max-width: 950px) and (orientation: portrait) {
+
+    #rotateScreen {
+        display: flex;
+    }
+
+    #uiFrame {
+        display: none;
+    }
+
+    #mobileControls {
+        display: none;
+    }
+
+    footer {
+        display: none;
     }
 }

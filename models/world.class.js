@@ -22,7 +22,7 @@ class World {
 
     hearts = [];
 
-    state = "running"; // ✅ FIX: zentraler Game-State
+    state = "running"; // FIX: zentraler Game-State
 
     stepCooldown = false;
 
