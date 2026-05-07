@@ -18,6 +18,8 @@ class Endboss extends MovableObject {
     state = 'alert';
     stateLock = false;
 
+    currentImage = 0;
+
     movementInterval;
     animationInterval;
 
@@ -74,12 +76,11 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
-    // HIT SYSTEM
     hit() {
-
         if (this.dead) return;
 
         this.energy -= 20;
+
         this.state = 'hurt';
         this.stateLock = true;
 
@@ -96,22 +97,21 @@ class Endboss extends MovableObject {
         }
     }
 
-    // DIE FIX
     die() {
-
         if (this.dead) return;
 
         this.dead = true;
         this.speed = 0;
+        this.stateLock = true;
 
-        this.currentImage = 0; 
+        // 🔥 reset animation
+        this.currentImage = 0;
     }
 
     isDead() {
         return this.dead;
     }
 
-    // 🎬 MAIN ANIMATION
     animate() {
 
         this.movementInterval = setInterval(() => {
@@ -152,37 +152,36 @@ class Endboss extends MovableObject {
 
         this.animationInterval = setInterval(() => {
 
-            // DEATH FIX (sichtbar + sauber)
+            // 💀 FIXED DEATH ANIMATION (JETZT KLAPPTS)
             if (this.dead) {
 
-                this.playAnimation(this.IMAGES_DEAD);
+                let i = this.currentImage % this.IMAGES_DEAD.length;
+                let path = this.IMAGES_DEAD[i];
 
-                setTimeout(() => {
-                    this.removeFromWorld = true;
-                }, 1200);
+                this.img = this.imageCache[path] || new Image();
+
+                if (!this.imageCache[path]) {
+                    this.img.src = path;
+                }
+
+                this.currentImage++;
 
                 return;
             }
 
-            switch (this.state) {
-
-                case 'hurt':
-                    this.playAnimation(this.IMAGES_HURT);
-                    break;
-
-                case 'attack':
-                    this.playAnimation(this.IMAGES_ATTACK);
-                    break;
-
-                case 'walk':
-                    this.playAnimation(this.IMAGES_WALKING);
-                    break;
-
-                default:
-                    this.playAnimation(this.IMAGES_ALERT);
-                    break;
+            if (this.state === 'hurt') {
+                this.playAnimation(this.IMAGES_HURT);
+            }
+            else if (this.state === 'attack') {
+                this.playAnimation(this.IMAGES_ATTACK);
+            }
+            else if (this.state === 'walk') {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+            else {
+                this.playAnimation(this.IMAGES_ALERT);
             }
 
-        }, 200);
+        }, 150);
     }
 }

@@ -240,7 +240,13 @@ class World {
 
                 this.throwables.splice(b, 1);
 
-                if (boss.isDead()) this.triggerWin();
+                // FIX: Win Screen erst nach Death Animation
+                if (boss.isDead()) {
+
+                    setTimeout(() => {
+                        this.triggerWin();
+                    }, 1200);
+                }
             }
         }
 
@@ -284,7 +290,12 @@ class World {
     }
 
     cleanup() {
-        this.level.enemies = this.level.enemies.filter(e => !e.removeFromWorld);
+
+        // SAFE FIX: Endboss wird NIE entfernt
+        this.level.enemies = this.level.enemies.filter(e => {
+            if (e instanceof Endboss) return true;
+            return !e.removeFromWorld;
+        });
     }
 
     updateUI() {
@@ -359,7 +370,6 @@ class World {
         arr.forEach(o => this.addToMap(o));
     }
 
-    // FIX: nur Character wird gespiegelt
     addToMap(mo) {
 
         if (!mo || !mo.img) return;

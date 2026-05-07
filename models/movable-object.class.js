@@ -19,7 +19,7 @@ class MovableObject extends DrawableObject {
         }, 1000 / 25);
     }
 
-    // ✔ FIX: stabile Ground-Logik
+    // ✔ stabile Ground-Logik
     isAboveGround() {
         return this.y < 180;
     }
@@ -51,11 +51,19 @@ class MovableObject extends DrawableObject {
         this.lastHit = new Date().getTime();
     }
 
+    // FIXED ANIMATION SYSTEM
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
-        let img = this.imageCache[path];
-        if (img) this.img = img;
+
+        // 👉 sorgt dafür, dass IMMER ein Bild gesetzt wird
+        this.img = this.imageCache[path] || new Image();
+
+        // 👉 falls Bild noch nicht geladen ist → direkt laden
+        if (!this.imageCache[path]) {
+            this.img.src = path;
+        }
+
         this.currentImage++;
     }
 }

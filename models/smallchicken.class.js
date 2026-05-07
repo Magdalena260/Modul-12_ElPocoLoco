@@ -3,7 +3,7 @@ class SmallChicken extends MovableObject {
     y = 380;
     height = 40;
     width = 35;
-    speed = 1.4;
+    speed = 1.6;
 
     dead = false;
     removeFromWorld = false;
