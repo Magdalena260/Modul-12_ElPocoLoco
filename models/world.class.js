@@ -22,7 +22,7 @@ class World {
 
     hearts = [];
 
-    gameOver = false;
+    state = "running"; // ✅ FIX: zentraler Game-State
 
     stepCooldown = false;
 
@@ -88,7 +88,7 @@ class World {
 
         setInterval(() => {
 
-            if (this.gameOver) return;
+            if (this.state !== "running") return; // ✅ FIX
 
             this.checkCoins();
             this.checkBottles();
@@ -98,19 +98,13 @@ class World {
             this.checkEndboss();
             this.cleanup();
             this.updateUI();
-
             this.checkStepSound();
 
         }, 100);
     }
 
     spawnHeart(x, y) {
-        this.hearts.push({
-            x: x,
-            y: y,
-            size: 40,
-            life: 30
-        });
+        this.hearts.push({ x, y, size: 40, life: 30 });
     }
 
     checkCoins() {
@@ -197,7 +191,7 @@ class World {
 
             for (let e of this.level.enemies) {
 
-                if (e instanceof Endboss) continue;
+                if (e instanceof Endboss || e.dead) continue;
 
                 if (
                     bottle.x < e.x + e.width &&
@@ -240,12 +234,8 @@ class World {
 
                 this.throwables.splice(b, 1);
 
-                // FIX: Win Screen erst nach Death Animation
                 if (boss.isDead()) {
-
-                    setTimeout(() => {
-                        this.triggerWin();
-                    }, 1200);
+                    setTimeout(() => this.triggerWin(), 1200);
                 }
             }
         }
@@ -260,12 +250,6 @@ class World {
 
                 this.character.hit();
 
-                if (this.character.x < boss.x) {
-                    this.character.x -= 50;
-                } else {
-                    this.character.x += 50;
-                }
-
                 if (this.character.isDead()) {
                     this.triggerGameOver();
                 }
@@ -276,22 +260,11 @@ class World {
     checkStepSound() {
 
         if (this.keyboard.RIGHT || this.keyboard.LEFT) {
-
-            if (!this.stepCooldown) {
-                this.stepCooldown = true;
-
-                AudioHub.play(AudioHub.STEP, 0.1);
-
-                setTimeout(() => {
-                    this.stepCooldown = false;
-                }, 300);
-            }
+            AudioHub.play(AudioHub.STEP, 0.1);
         }
     }
 
     cleanup() {
-
-        // SAFE FIX: Endboss wird NIE entfernt
         this.level.enemies = this.level.enemies.filter(e => {
             if (e instanceof Endboss) return true;
             return !e.removeFromWorld;
@@ -304,19 +277,31 @@ class World {
         this.statusBarBottles.setPercentage(this.bottleCount * 10);
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (boss) {
-            this.statusBarEndboss.setPercentage(boss.energy);
-        }
+        if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
     triggerGameOver() {
-        this.gameOver = true;
+        this.state = "gameover";
+        AudioHub.stopMusic?.();
         document.getElementById("gameOverScreen").style.display = "flex";
+        this.stopAll();
     }
 
     triggerWin() {
-        this.gameOver = true;
+        this.state = "win";
+        AudioHub.stopMusic?.();
         document.getElementById("winScreen").style.display = "flex";
+        this.stopAll();
+    }
+
+    stopAll() {
+        this.level.enemies.forEach(e => {
+            if (e.movementInterval) clearInterval(e.movementInterval);
+            if (e.animationInterval) clearInterval(e.animationInterval);
+        });
+
+        this.throwables = [];
+        this.hearts = [];
     }
 
     draw() {
@@ -350,7 +335,6 @@ class World {
     drawHearts() {
 
         this.hearts.forEach((h, i) => {
-
             let img = new Image();
             img.src = 'img/heart_red.png';
 
@@ -359,9 +343,7 @@ class World {
             h.y -= 1;
             h.life--;
 
-            if (h.life <= 0) {
-                this.hearts.splice(i, 1);
-            }
+            if (h.life <= 0) this.hearts.splice(i, 1);
         });
     }
 

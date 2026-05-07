@@ -8,7 +8,6 @@ class AudioHub {
 
     static COIN = new Audio('./assets/coin_3.mp3');
 
-
     static THROW = new Audio('./assets/bottle_smash.mp3');
 
     static CHICKEN = new Audio('./assets/normal_chicken.mp3');
@@ -24,7 +23,7 @@ class AudioHub {
         AudioHub.ENDBOSS
     ];
 
-    // ================= AUDIO UNLOCK (WICHTIG!) =================
+    // ================= AUDIO UNLOCK =================
     static unlockAudio() {
         this.allSounds.forEach(sound => {
             try {
@@ -38,7 +37,7 @@ class AudioHub {
         });
     }
 
-    // ================= MUSIC =================
+    // ================= MUSIC START =================
     static startMusic() {
         this.MUSIC.loop = true;
         this.MUSIC.volume = 0.2;
@@ -46,6 +45,14 @@ class AudioHub {
         this.MUSIC.play().catch(err => {
             console.log("Music blocked:", err);
         });
+    }
+
+    // ================= MUSIC STOP (NEU) =================
+    static stopMusic() {
+        try {
+            this.MUSIC.pause();
+            this.MUSIC.currentTime = 0;
+        } catch (e) {}
     }
 
     // ================= PLAY =================

@@ -43,38 +43,30 @@ class Character extends MovableObject {
         this.animate();
     }
 
-    // ================= DAMAGE SYSTEM =================
     hit() {
-
         let now = new Date().getTime();
 
-        if (now - this.lastHit < this.hitCooldown) {
-            return;
-        }
+        if (now - this.lastHit < this.hitCooldown) return;
 
         this.lastHit = now;
-
         this.energy -= 20;
 
-        if (this.energy < 0) {
-            this.energy = 0;
-        }
+        if (this.energy < 0) this.energy = 0;
     }
 
     isDead() {
         return this.energy <= 0;
     }
 
-    // ================= MOVEMENT + ANIMATION =================
     animate() {
 
         setInterval(() => {
 
-            if (!this.world) return;
+            // ✅ FIX: STOP wenn Spiel vorbei ist
+            if (!this.world || this.world.state !== "running") return;
 
             let moving = false;
 
-            // RIGHT
             if (
                 this.world.keyboard.RIGHT &&
                 this.x < this.world.level.level_end_x
@@ -84,7 +76,6 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // LEFT
             if (
                 this.world.keyboard.LEFT &&
                 this.x > 0
@@ -94,19 +85,14 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // JUMP
             if (
                 this.world.keyboard.SPACE &&
                 !this.isAboveGround()
             ) {
                 this.jump();
-                moving = true;
-
-                // 🔊 JUMP SOUND
                 AudioHub.play(AudioHub.JUMP, 0.3);
             }
 
-            // CAMERA
             this.world.camera_x = -this.x + 100;
 
             if (moving) {
@@ -116,6 +102,9 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
+
+            // ✅ FIX: STOP wenn Spiel vorbei ist
+            if (!this.world || this.world.state !== "running") return;
 
             let time = new Date().getTime() - this.lastMove;
 
@@ -129,22 +118,22 @@ class Character extends MovableObject {
                 return;
             }
 
-         if (time > 4000) {
+            if (time > 4000) {
 
-    this.playAnimation(this.IMAGES_SLEEP);
+                this.playAnimation(this.IMAGES_SLEEP);
 
-    if (!this.snoreCooldown) {
-        this.snoreCooldown = true;
+                if (!this.snoreCooldown) {
+                    this.snoreCooldown = true;
 
-        AudioHub.play(AudioHub.SNORING, 0.2);
+                    AudioHub.play(AudioHub.SNORING, 0.2);
 
-        setTimeout(() => {
-            this.snoreCooldown = false;
-        }, 2000);
-    }
+                    setTimeout(() => {
+                        this.snoreCooldown = false;
+                    }, 2000);
+                }
 
-    return;
-}
+                return;
+            }
 
             this.loadImage(this.IMAGES_WALKING[0]);
 

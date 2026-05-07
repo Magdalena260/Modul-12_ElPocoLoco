@@ -103,8 +103,6 @@ class Endboss extends MovableObject {
         this.dead = true;
         this.speed = 0;
         this.stateLock = true;
-
-        // 🔥 reset animation
         this.currentImage = 0;
     }
 
@@ -116,7 +114,9 @@ class Endboss extends MovableObject {
 
         this.movementInterval = setInterval(() => {
 
-            if (this.dead || !this.world) return;
+            // ✅ FIX: STOP wenn Spiel vorbei ist
+            if (!this.world || this.world.state !== "running") return;
+            if (this.dead) return;
 
             let player = this.world.character;
             let distance = Math.abs(player.x - this.x);
@@ -152,7 +152,9 @@ class Endboss extends MovableObject {
 
         this.animationInterval = setInterval(() => {
 
-            // 💀 FIXED DEATH ANIMATION (JETZT KLAPPTS)
+            // ✅ FIX: STOP wenn Spiel vorbei ist
+            if (!this.world || this.world.state !== "running") return;
+
             if (this.dead) {
 
                 let i = this.currentImage % this.IMAGES_DEAD.length;
@@ -165,22 +167,13 @@ class Endboss extends MovableObject {
                 }
 
                 this.currentImage++;
-
                 return;
             }
 
-            if (this.state === 'hurt') {
-                this.playAnimation(this.IMAGES_HURT);
-            }
-            else if (this.state === 'attack') {
-                this.playAnimation(this.IMAGES_ATTACK);
-            }
-            else if (this.state === 'walk') {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-            else {
-                this.playAnimation(this.IMAGES_ALERT);
-            }
+            if (this.state === 'hurt') this.playAnimation(this.IMAGES_HURT);
+            else if (this.state === 'attack') this.playAnimation(this.IMAGES_ATTACK);
+            else if (this.state === 'walk') this.playAnimation(this.IMAGES_WALKING);
+            else this.playAnimation(this.IMAGES_ALERT);
 
         }, 150);
     }
