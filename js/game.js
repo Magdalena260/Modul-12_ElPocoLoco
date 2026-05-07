@@ -12,32 +12,23 @@ function init() {
 }
 
 function startGame() {
-    // Start Screen ausblenden
     document.getElementById("startScreen").style.display = "none";
-
-    // Overlays verstecken
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("winScreen").style.display = "none";
 
-    // 🧠 WICHTIG: alte World entfernen
     world = new World(canvas, keyboard);
 
-    // 🔊 MUSIK START (FIX)
     AudioHub.startMusic();
 }
 
 function restartGame() {
-    // Reset UI
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("winScreen").style.display = "none";
 
-    // alte Sounds resetten
     AudioHub.resetAll();
 
-    // neue World erstellen
     world = new World(canvas, keyboard);
 
-    // 🔊 MUSIK WIEDER STARTEN (FIX)
     AudioHub.startMusic();
 }
 
@@ -71,7 +62,14 @@ function bindMobileControls() {
     });
 }
 
+/* =========================
+   FIX: HOW TO PLAY MOBILE BLOCK
+========================= */
 function showHowToPlay() {
+
+    // ❌ IM RESPONSIVE NICHT ÖFFNEN
+    if (window.innerWidth <= 950) return;
+
     document.getElementById("howToPlayOverlay").style.display = "flex";
 }
 

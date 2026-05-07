@@ -4,23 +4,18 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- MOBILE RESPONSIVE -->
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>El Pollo Loco</title>
 
-    <!-- FAVICON -->
-   <link rel="icon" href="img/favicon.png">
+    <link rel="icon" href="img/favicon.png">
 
-    <!-- FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap"
         rel="stylesheet">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- SCRIPTS -->
     <script src="models/audiohub.class.js"></script>
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-object.class.js"></script>
@@ -51,22 +46,16 @@
 
 <body onload="init()">
 
-    <!-- ROTATE SCREEN -->
     <div id="rotateScreen">
-   Please turn the device around
+        Please turn the device around
     </div>
 
-    <!-- SOUND BUTTON -->
-    <button id="muteBtn" onclick="toggleMute()">
-        🔊 Sound
-    </button>
+    <button id="muteBtn" onclick="toggleMute()">🔊 Sound</button>
 
-    <!-- FRAME -->
     <div id="uiFrame">
 
         <div id="gameContainer">
 
-            <!-- START SCREEN -->
             <div id="startScreen">
                 <h1>El Pollo Loco</h1>
 
@@ -74,19 +63,13 @@
                 <button onclick="showHowToPlay()">How to Play</button>
             </div>
 
-            <!-- HOW TO PLAY -->
             <div id="howToPlayOverlay" style="display:none;">
                 <img src="img/howtoplay.png" alt="How to Play">
-
-                <button class="gameButton" onclick="closeHowToPlay()">
-                    Back
-                </button>
+                <button class="gameButton" onclick="closeHowToPlay()">Back</button>
             </div>
 
-            <!-- CANVAS -->
             <canvas id="canvas" width="720" height="480"></canvas>
 
-            <!-- MOBILE CONTROLS -->
             <div id="mobileControls">
 
                 <button class="mobileBtn"
@@ -97,24 +80,22 @@
                     ontouchstart="keyboard.RIGHT = true"
                     ontouchend="keyboard.RIGHT = false">➡</button>
 
+                <!-- FIXED JUMP BUTTON -->
                 <button class="mobileBtn"
                     ontouchstart="keyboard.UP = true"
                     ontouchend="keyboard.UP = false">⬆</button>
 
-                <!-- FIXED THROW BUTTON -->
                 <button class="mobileBtn"
                     ontouchstart="keyboard.D = true"
                     ontouchend="keyboard.D = false">D</button>
 
             </div>
 
-            <!-- GAME OVER -->
             <div id="gameOverScreen" class="overlay" style="display:none;">
                 <h1>You Lost!</h1>
                 <button onclick="restartGame()">Restart</button>
             </div>
 
-            <!-- WIN SCREEN -->
             <div id="winScreen" class="overlay" style="display:none;">
                 <h1>You Win!</h1>
                 <button onclick="restartGame()">Play Again</button>
@@ -123,7 +104,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer>
         <a href="impressum.html">Impressum</a>
     </footer>

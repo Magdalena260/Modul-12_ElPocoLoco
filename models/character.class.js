@@ -2,12 +2,10 @@ class Character extends MovableObject {
 
     height = 280;
     width = 150;
-
     y = 150;
     speed = 6;
 
     world;
-
     energy = 100;
 
     lastHit = 0;
@@ -32,13 +30,10 @@ class Character extends MovableObject {
 
     constructor() {
         super();
-
         this.loadImage(this.IMAGES_WALKING[0]);
-
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_SLEEP);
-
         this.applyGravity();
         this.animate();
     }
@@ -62,31 +57,25 @@ class Character extends MovableObject {
 
         setInterval(() => {
 
-            // ✅ FIX: STOP wenn Spiel vorbei ist
             if (!this.world || this.world.state !== "running") return;
 
             let moving = false;
 
-            if (
-                this.world.keyboard.RIGHT &&
-                this.x < this.world.level.level_end_x
-            ) {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.x += this.speed;
                 this.otherDirection = false;
                 moving = true;
             }
 
-            if (
-                this.world.keyboard.LEFT &&
-                this.x > 0
-            ) {
+            if (this.world.keyboard.LEFT && this.x > 0) {
                 this.x -= this.speed;
                 this.otherDirection = true;
                 moving = true;
             }
 
+            // ✅ FIX: JUMP (DESKTOP + MOBILE)
             if (
-                this.world.keyboard.SPACE &&
+                (this.world.keyboard.SPACE || this.world.keyboard.UP) &&
                 !this.isAboveGround()
             ) {
                 this.jump();
@@ -103,7 +92,6 @@ class Character extends MovableObject {
 
         setInterval(() => {
 
-            // ✅ FIX: STOP wenn Spiel vorbei ist
             if (!this.world || this.world.state !== "running") return;
 
             let time = new Date().getTime() - this.lastMove;
@@ -119,19 +107,7 @@ class Character extends MovableObject {
             }
 
             if (time > 4000) {
-
                 this.playAnimation(this.IMAGES_SLEEP);
-
-                if (!this.snoreCooldown) {
-                    this.snoreCooldown = true;
-
-                    AudioHub.play(AudioHub.SNORING, 0.2);
-
-                    setTimeout(() => {
-                        this.snoreCooldown = false;
-                    }, 2000);
-                }
-
                 return;
             }
 

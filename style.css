@@ -1,3 +1,4 @@
+
 /* =========================
    BODY
 ========================= */
@@ -89,7 +90,7 @@ canvas {
 
     gap: 15px;
 
-    z-index: 9999;
+    z-index: 1000;
 
     font-family: "Rubik Gemstones", system-ui;
 }
@@ -114,9 +115,10 @@ canvas {
 
     gap: 15px;
 
-    z-index: 10000;
+    z-index: 1500;
 
     color: rgb(230, 200, 60);
+
     font-family: "Rubik Gemstones", system-ui;
 }
 
@@ -138,20 +140,7 @@ canvas {
     justify-content: center;
     align-items: center;
 
-    z-index: 9999;
-}
-
-#howToPlayOverlay img {
-    width: 90%;
-    object-fit: contain;
-}
-
-/* =========================
-   HEADLINE
-========================= */
-h1 {
-    font-size: 60px;
-    font-family: "Rubik Gemstones", system-ui;
+    z-index: 2000;
 }
 
 /* =========================
@@ -174,14 +163,6 @@ button,
     font-weight: bold;
 
     font-family: "Rubik Gemstones", system-ui;
-
-    transition: 0.2s;
-}
-
-button:hover,
-.gameButton:hover {
-    background-color: #ffdb4d;
-    transform: scale(1.05);
 }
 
 /* =========================
@@ -189,13 +170,12 @@ button:hover,
 ========================= */
 #muteBtn {
     position: fixed;
-
     top: 20px;
     right: 20px;
 
-    padding: 10px 15px;
+    z-index: 5000;
 
-    font-size: 16px;
+    padding: 10px 15px;
 
     background-color: #ffcc00;
 
@@ -203,31 +183,6 @@ button:hover,
     border-radius: 10px;
 
     cursor: pointer;
-
-    z-index: 999999;
-
-    font-family: "Rubik Gemstones", system-ui;
-}
-
-#muteBtn:hover {
-    background-color: #ffdb4d;
-}
-
-/* =========================
-   FOOTER
-========================= */
-footer {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-
-    font-family: "Rubik Gemstones", system-ui;
-}
-
-footer a {
-    text-decoration: none;
-    color: black;
 }
 
 /* =========================
@@ -253,13 +208,11 @@ footer a {
 
     font-size: 28px;
 
-    font-family: "Rubik Gemstones", system-ui;
-
     z-index: 9999999;
 }
 
 /* =========================
-   MOBILE CONTROLS (DEFAULT = HIDDEN)
+   MOBILE CONTROLS
 ========================= */
 #mobileControls {
     display: none;
@@ -275,39 +228,42 @@ footer a {
     background: rgba(255, 204, 0, 0.8);
 
     font-size: 30px;
-    color: black;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* =========================
-   IMPRESSUM
+   IMPRESSUM (FIXED BLACK STYLE)
 ========================= */
 .imprint-wrapper {
     display: flex;
     justify-content: center;
+    align-items: center;
+
     padding: 50px 20px;
+
+    background: black; /* komplett schwarz */
 }
 
 .imprint-card {
-    background: rgb(245, 228, 184);
+    background: black; /* kein heller Kasten mehr */
+
+    color: white; /* Text sichtbar */
 
     padding: 30px;
 
     max-width: 700px;
     width: 100%;
 
-    box-shadow: 0 10px 25px rgba(0,0,0,1.0);
+    box-shadow: none; /* entfernt diesen „Streifen“-Look */
 
     font-family: "Segoe UI", sans-serif;
 
     line-height: 1.6;
+
+    border: 1px solid #333; /* optional: leichte Kontur */
 }
 
 /* =========================
-   RESPONSIVE TABLET / HANDY
+   RESPONSIVE
 ========================= */
 @media only screen and (max-width: 950px) {
 
@@ -336,13 +292,13 @@ footer a {
 
     canvas {
         object-fit: contain;
+        z-index: 1;
     }
 
     footer {
         display: none;
     }
 
-    /* MOBILE CONTROLS AN */
     #mobileControls {
         display: flex;
 
@@ -356,12 +312,40 @@ footer a {
 
         padding: 0 20px;
 
-        z-index: 999999;
+        z-index: 3000;
+    }
+    .mobileBtn {
+    width: 65px;
+    height: 65px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 204, 0, 0.8);
+
+    font-size: 30px;
+    color: black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    line-height: 1;        /* ⭐ FIX 1 */
+    padding: 0;            /* ⭐ FIX 2 */
+    text-align: center;    /* ⭐ FIX 3 */
+}
+
+    #howToPlayOverlay {
+        display: none !important;
+    }
+
+    #startScreen button:nth-of-type(2) {
+        display: none;
     }
 }
 
 /* =========================
-   PORTRAIT (ROTATE SCREEN)
+   PORTRAIT WARNING
 ========================= */
 @media only screen and (max-width: 950px) and (orientation: portrait) {
 
