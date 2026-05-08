@@ -1,111 +1,221 @@
 <!DOCTYPE html>
+<!-- Defines the document type as HTML5 -->
+
 <html lang="en">
+<!-- Root element of the website / language is English -->
 
 <head>
+    <!-- Head contains metadata, stylesheets and scripts -->
+
     <meta charset="UTF-8">
+    <!-- Enables special characters like ä ö ü -->
 
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Makes the page responsive on mobile devices -->
 
     <title>El Pollo Loco</title>
+    <!-- Browser tab title -->
 
     <link rel="icon" href="img/favicon.png">
+    <!-- Website favicon -->
 
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap"
         rel="stylesheet">
+    <!-- Imports Google Font -->
 
     <link rel="stylesheet" href="style.css">
+    <!-- Connects external CSS file -->
+
+    <!-- =========================
+         GAME SCRIPTS
+    ========================= -->
 
     <script src="models/audiohub.class.js"></script>
+    <!-- Handles all sounds and music -->
+
     <script src="models/drawable-object.class.js"></script>
+    <!-- Base drawable object class -->
+
     <script src="models/movable-object.class.js"></script>
+    <!-- Base movable object class -->
+
     <script src="models/keyboard.class.js"></script>
+    <!-- Keyboard input handling -->
+
     <script src="models/level.class.js"></script>
+    <!-- Level structure -->
 
     <script src="models/background-object.class.js"></script>
+    <!-- Background image objects -->
+
     <script src="models/cloud.class.js"></script>
+    <!-- Cloud objects -->
 
     <script src="models/chicken.class.js"></script>
+    <!-- Normal enemy class -->
+
     <script src="models/smallchicken.class.js"></script>
+    <!-- Small enemy class -->
+
     <script src="models/endboss.class.js"></script>
+    <!-- Endboss class -->
+
     <script src="models/character.class.js"></script>
+    <!-- Main player character -->
 
     <script src="models/coin.class.js"></script>
+    <!-- Coin collectible -->
+
     <script src="models/bottle.class.js"></script>
+    <!-- Bottle collectible -->
 
     <script src="models/throwable-object.class.js"></script>
+    <!-- Throwable bottle object -->
 
     <script src="models/status-bar.class.js"></script>
+    <!-- Status bar handling -->
 
     <script src="models/world.class.js"></script>
+    <!-- Main game world -->
 
     <script src="levels/level1.js"></script>
+    <!-- First level data -->
 
     <script src="js/game.js"></script>
+    <!-- Main game logic -->
+
 </head>
 
 <body onload="init()">
+<!-- Starts init() function after page load -->
 
     <div id="rotateScreen">
+        <!-- Warning shown in portrait mode -->
+
         Please turn the device around
+        <!-- Rotate device message -->
     </div>
 
-    <button id="muteBtn" onclick="toggleMute()">🔊 Sound</button>
+    <button id="muteBtn" onclick="toggleMute()">
+        <!-- Sound toggle button -->
+
+        🔊 Sound
+    </button>
 
     <div id="uiFrame">
+        <!-- Decorative game frame -->
 
         <div id="gameContainer">
+            <!-- Main game container -->
 
             <div id="startScreen">
-                <h1>El Pollo Loco</h1>
+                <!-- Start menu -->
 
-                <button onclick="startGame()">Start Game</button>
-                <button onclick="showHowToPlay()">How to Play</button>
+                <h1>El Pollo Loco</h1>
+                <!-- Game title -->
+
+                <button onclick="startGame()">
+                    <!-- Starts the game -->
+
+                    Start Game
+                </button>
+
+                <button onclick="showHowToPlay()">
+                    <!-- Opens how to play overlay -->
+
+                    How to Play
+                </button>
             </div>
 
             <div id="howToPlayOverlay" style="display:none;">
+                <!-- Tutorial overlay -->
+
                 <img src="img/howtoplay.png" alt="How to Play">
-                <button class="gameButton" onclick="closeHowToPlay()">Back</button>
+                <!-- Tutorial image -->
+
+                <button class="gameButton" onclick="closeHowToPlay()">
+                    <!-- Closes tutorial overlay -->
+
+                    Back
+                </button>
             </div>
 
             <canvas id="canvas" width="720" height="480"></canvas>
+            <!-- Main game canvas -->
 
             <div id="mobileControls">
+                <!-- Mobile touch controls -->
 
                 <button class="mobileBtn"
                     ontouchstart="keyboard.LEFT = true"
-                    ontouchend="keyboard.LEFT = false">⬅</button>
+                    ontouchend="keyboard.LEFT = false">
+                    <!-- Move left -->
+
+                    ⬅
+                </button>
 
                 <button class="mobileBtn"
                     ontouchstart="keyboard.RIGHT = true"
-                    ontouchend="keyboard.RIGHT = false">➡</button>
+                    ontouchend="keyboard.RIGHT = false">
+                    <!-- Move right -->
 
-                <!-- FIXED JUMP BUTTON -->
+                    ➡
+                </button>
+
                 <button class="mobileBtn"
                     ontouchstart="keyboard.UP = true"
-                    ontouchend="keyboard.UP = false">⬆</button>
+                    ontouchend="keyboard.UP = false">
+                    <!-- Jump button -->
+
+                    ⬆
+                </button>
 
                 <button class="mobileBtn"
                     ontouchstart="keyboard.D = true"
-                    ontouchend="keyboard.D = false">D</button>
+                    ontouchend="keyboard.D = false">
+                    <!-- Throw bottle button -->
+
+                    D
+                </button>
 
             </div>
 
             <div id="gameOverScreen" class="overlay" style="display:none;">
+                <!-- Game over screen -->
+
                 <h1>You Lost!</h1>
-                <button onclick="restartGame()">Restart</button>
+
+                <button onclick="restartGame()">
+                    <!-- Restarts the game -->
+
+                    Restart
+                </button>
             </div>
 
             <div id="winScreen" class="overlay" style="display:none;">
+                <!-- Win screen -->
+
                 <h1>You Win!</h1>
-                <button onclick="restartGame()">Play Again</button>
+
+                <button onclick="restartGame()">
+                    <!-- Restarts after winning -->
+
+                    Play Again
+                </button>
             </div>
 
         </div>
     </div>
 
     <footer>
-        <a href="impressum.html">Impressum</a>
+        <!-- Footer section -->
+
+        <a href="impressum.html">
+            <!-- Link to imprint page -->
+
+            Impressum
+        </a>
     </footer>
 
 </body>

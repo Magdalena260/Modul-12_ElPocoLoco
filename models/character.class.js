@@ -1,3 +1,8 @@
+/**
+ * Represents the main player character.
+ * Handles movement, animation, jumping, energy system and input control.
+ * Extends MovableObject.
+ */
 class Character extends MovableObject {
 
     height = 280;
@@ -28,6 +33,9 @@ class Character extends MovableObject {
         'img/2_character_pepe/1_idle/long_idle/I-11.png'
     ];
 
+    /**
+     * Creates the player character and initializes animations and gravity.
+     */
     constructor() {
         super();
         this.loadImage(this.IMAGES_WALKING[0]);
@@ -38,6 +46,9 @@ class Character extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Applies damage to the character with cooldown protection.
+     */
     hit() {
         let now = new Date().getTime();
 
@@ -49,10 +60,17 @@ class Character extends MovableObject {
         if (this.energy < 0) this.energy = 0;
     }
 
+    /**
+     * Checks if the character is dead.
+     * @returns {boolean}
+     */
     isDead() {
         return this.energy <= 0;
     }
 
+    /**
+     * Handles movement input, camera movement and jumping.
+     */
     animate() {
 
         setInterval(() => {
@@ -73,7 +91,6 @@ class Character extends MovableObject {
                 moving = true;
             }
 
-            // ✅ FIX: JUMP (DESKTOP + MOBILE)
             if (
                 (this.world.keyboard.SPACE || this.world.keyboard.UP) &&
                 !this.isAboveGround()
@@ -90,6 +107,9 @@ class Character extends MovableObject {
 
         }, 1000 / 60);
 
+        /**
+         * Handles animation state (walk, jump, idle/sleep).
+         */
         setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;

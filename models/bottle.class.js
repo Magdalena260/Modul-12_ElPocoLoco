@@ -1,5 +1,14 @@
+/**
+ * Represents a collectible bottle in the game world.
+ * The bottle can be picked up or thrown by the player.
+ */
 class Bottle extends MovableObject {
 
+    /**
+     * Creates a bottle object at a given position.
+     * @param {number} x - X position of the bottle.
+     * @param {number} y - Y position of the bottle.
+     */
     constructor(x, y) {
         super();
 

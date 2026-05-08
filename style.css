@@ -2,6 +2,9 @@
 /* =========================
    BODY
 ========================= */
+/**
+ * Main body styling
+ */
 body {
     margin: 0;
 
@@ -21,6 +24,9 @@ body {
 /* =========================
    FRAME
 ========================= */
+/**
+ * Outer game frame
+ */
 #uiFrame {
     position: relative;
 
@@ -42,6 +48,9 @@ body {
 /* =========================
    GAME CONTAINER
 ========================= */
+/**
+ * Container for canvas and overlays
+ */
 #gameContainer {
     position: relative;
 
@@ -54,6 +63,9 @@ body {
 /* =========================
    CANVAS
 ========================= */
+/**
+ * Main game canvas
+ */
 canvas {
     position: absolute;
     top: 0;
@@ -71,6 +83,9 @@ canvas {
 /* =========================
    START SCREEN
 ========================= */
+/**
+ * Start menu screen
+ */
 #startScreen {
     position: absolute;
     top: 0;
@@ -98,6 +113,9 @@ canvas {
 /* =========================
    OVERLAYS
 ========================= */
+/**
+ * Generic overlay styling
+ */
 .overlay {
     position: absolute;
     top: 0;
@@ -125,6 +143,9 @@ canvas {
 /* =========================
    HOW TO PLAY
 ========================= */
+/**
+ * How to play overlay
+ */
 #howToPlayOverlay {
     position: absolute;
     top: 0;
@@ -146,6 +167,9 @@ canvas {
 /* =========================
    BUTTONS
 ========================= */
+/**
+ * Default button styling
+ */
 button,
 .gameButton {
     padding: 12px 28px;
@@ -168,6 +192,9 @@ button,
 /* =========================
    MUTE BUTTON
 ========================= */
+/**
+ * Sound mute button
+ */
 #muteBtn {
     position: fixed;
     top: 20px;
@@ -188,6 +215,9 @@ button,
 /* =========================
    ROTATE SCREEN
 ========================= */
+/**
+ * Portrait mode warning screen
+ */
 #rotateScreen {
     display: none;
 
@@ -214,10 +244,16 @@ button,
 /* =========================
    MOBILE CONTROLS
 ========================= */
+/**
+ * Mobile touch controls
+ */
 #mobileControls {
     display: none;
 }
 
+/**
+ * Mobile button styling
+ */
 .mobileBtn {
     width: 65px;
     height: 65px;
@@ -231,8 +267,11 @@ button,
 }
 
 /* =========================
-   IMPRESSUM (FIXED BLACK STYLE)
+   IMPRESSUM
 ========================= */
+/**
+ * Impressum wrapper styling
+ */
 .imprint-wrapper {
     display: flex;
     justify-content: center;
@@ -240,31 +279,37 @@ button,
 
     padding: 50px 20px;
 
-    background: black; /* komplett schwarz */
+    background: black;
 }
 
+/**
+ * Impressum card styling
+ */
 .imprint-card {
-    background: black; /* kein heller Kasten mehr */
+    background: black;
 
-    color: white; /* Text sichtbar */
+    color: white;
 
     padding: 30px;
 
     max-width: 700px;
     width: 100%;
 
-    box-shadow: none; /* entfernt diesen „Streifen“-Look */
+    box-shadow: none;
 
     font-family: "Segoe UI", sans-serif;
 
     line-height: 1.6;
 
-    border: 1px solid #333; /* optional: leichte Kontur */
+    border: 1px solid #333;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
+/**
+ * Responsive tablet and mobile layout
+ */
 @media only screen and (max-width: 950px) {
 
     body {
@@ -274,6 +319,7 @@ button,
     #uiFrame {
         width: 100vw;
         height: 100vh;
+
         background-image: none;
     }
 
@@ -299,6 +345,9 @@ button,
         display: none;
     }
 
+    /**
+     * Mobile controls visible on smaller devices
+     */
     #mobileControls {
         display: flex;
 
@@ -314,31 +363,41 @@ button,
 
         z-index: 3000;
     }
+
+    /**
+     * Mobile button alignment
+     */
     .mobileBtn {
-    width: 65px;
-    height: 65px;
+        width: 65px;
+        height: 65px;
 
-    border: none;
-    border-radius: 50%;
+        border: none;
+        border-radius: 50%;
 
-    background: rgba(255, 204, 0, 0.8);
+        background: rgba(255, 204, 0, 0.8);
 
-    font-size: 30px;
-    color: black;
+        font-size: 30px;
+        color: black;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    line-height: 1;        /* ⭐ FIX 1 */
-    padding: 0;            /* ⭐ FIX 2 */
-    text-align: center;    /* ⭐ FIX 3 */
-}
+        line-height: 1;
+        padding: 0;
+        text-align: center;
+    }
 
+    /**
+     * Hide how to play overlay on mobile
+     */
     #howToPlayOverlay {
         display: none !important;
     }
 
+    /**
+     * Hide second button on mobile
+     */
     #startScreen button:nth-of-type(2) {
         display: none;
     }
@@ -347,6 +406,9 @@ button,
 /* =========================
    PORTRAIT WARNING
 ========================= */
+/**
+ * Show rotate warning in portrait mode
+ */
 @media only screen and (max-width: 950px) and (orientation: portrait) {
 
     #rotateScreen {

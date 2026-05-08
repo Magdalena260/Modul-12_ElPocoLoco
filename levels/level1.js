@@ -1,8 +1,13 @@
+/**
+ * Represents the first game level configuration.
+ * Contains all enemies, clouds, background layers, coins, and bottles.
+ * Defines the playable world structure.
+ * @type {Level}
+ */
 const level1 = new Level(
 
-    // ENEMIES
+    // ================= ENEMIES =================
     [
-       
         new Chicken(),
         new SmallChicken(),
         new Chicken(),
@@ -16,7 +21,7 @@ const level1 = new Level(
         new Endboss()
     ],
 
-    // CLOUDS
+    // ================= CLOUDS =================
     [
         new Cloud(),
         new Cloud(),
@@ -29,7 +34,7 @@ const level1 = new Level(
         new Cloud()
     ],
 
-    // BACKGROUND
+    // ================= BACKGROUND =================
     [
         new BackgroundObject('img/5_background/layers/air.png', -712),
         new BackgroundObject('img/5_background/layers/3_third_layer/2.png', -712),
@@ -52,7 +57,7 @@ const level1 = new Level(
         new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 712 * 2),
     ],
 
-    // COINS (NOW VISIBLE)
+    // ================= COINS =================
     [
         new Coin(300, 300),
         new Coin(200, 300),
@@ -79,7 +84,7 @@ const level1 = new Level(
         new Coin(1100, 550),
     ],
 
-    // BOTTLES
+    // ================= BOTTLES =================
     [
         new Bottle(250, 350),
         new Bottle(500, 350),
@@ -90,8 +95,8 @@ const level1 = new Level(
         new Bottle(1100, 350),
         new Bottle(1000, 350),
         new Bottle(1200, 350),
-     
     ]
 );
-// Levelende definiert!
+
+// Define level end boundary
 level1.level_end_x = 712 * 3;

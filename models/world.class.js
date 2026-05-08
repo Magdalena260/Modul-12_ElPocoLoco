@@ -1,31 +1,70 @@
+/**
+ * Represents the complete game world.
+ * Handles rendering, collisions, UI and game logic.
+ *
+ * This is the central controller of the game and connects:
+ * - Player (Character)
+ * - Enemies and Endboss
+ * - Collectibles (coins, bottles)
+ * - Projectiles (throwables)
+ * - UI (status bars)
+ * - Camera system
+ *
+ * The world runs a continuous game loop and updates all systems.
+ */
+
 class World {
 
+    /** @type {HTMLCanvasElement} */
     canvas;
+
+    /** @type {CanvasRenderingContext2D} */
     ctx;
+
+    /** Keyboard input handler */
     keyboard;
 
+    /** @type {Character} Player character */
     character;
+
+    /** @type {Level} Current level instance */
     level;
 
+    /** Camera offset for side-scrolling world movement */
     camera_x = 0;
 
+    /** UI status bars */
     statusBarHealth;
     statusBarCoins;
     statusBarBottles;
     statusBarEndboss;
 
+    /** Collected coin counter */
     coinCount = 0;
+
+    /** Collected bottle counter */
     bottleCount = 3;
 
+    /** Active throwable objects (e.g. bottles) */
     throwables = [];
+
+    /** Prevents continuous throwing (input cooldown) */
     canThrow = true;
 
+    /** Visual feedback objects (hearts on enemy kill) */
     hearts = [];
 
-    state = "running"; // FIX: zentraler Game-State
+    /** Game state: running | gameover | win */
+    state = "running";
 
+    /** Cooldown flag for step sound playback */
     stepCooldown = false;
 
+    /**
+     * Creates the game world and initializes all systems
+     * @param {HTMLCanvasElement} canvas
+     * @param {Object} keyboard - input handler object
+     */
     constructor(canvas, keyboard) {
 
         this.canvas = canvas;
@@ -36,15 +75,16 @@ class World {
         this.level = level1;
 
         this.character.world = this;
-
         this.level.enemies.forEach(e => e.world = this);
 
         this.initStatusBars();
-
         this.run();
         this.draw();
     }
 
+    /**
+     * Initializes all UI status bars (health, coins, bottles, endboss)
+     */
     initStatusBars() {
 
         this.statusBarHealth = new StatusBar([
@@ -80,15 +120,19 @@ class World {
             'img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
-            'img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue100.png'
         ], 500, 20);
     }
 
+    /**
+     * Main game loop (runs every 100ms)
+     * Handles all updates, collisions and game logic
+     */
     run() {
 
         setInterval(() => {
 
-            if (this.state !== "running") return; // ✅ FIX
+            if (this.state !== "running") return;
 
             this.checkCoins();
             this.checkBottles();
@@ -103,11 +147,14 @@ class World {
         }, 100);
     }
 
+    /** Spawns a visual heart effect at a given position */
     spawnHeart(x, y) {
         this.hearts.push({ x, y, size: 40, life: 30 });
     }
 
+    /** Checks coin collisions */
     checkCoins() {
+
         this.level.coins.forEach((c, i) => {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
@@ -117,7 +164,9 @@ class World {
         });
     }
 
+    /** Checks bottle pickup collisions */
     checkBottles() {
+
         this.level.bottles.forEach((b, i) => {
             if (this.character.isColliding(b)) {
                 this.level.bottles.splice(i, 1);
@@ -126,6 +175,7 @@ class World {
         });
     }
 
+    /** Handles chicken enemy collisions */
     checkChicken() {
 
         for (let e of this.level.enemies) {
@@ -159,6 +209,7 @@ class World {
         }
     }
 
+    /** Handles throw input and projectile creation */
     checkThrow() {
 
         if (this.keyboard.D && this.canThrow && this.bottleCount > 0) {
@@ -183,6 +234,7 @@ class World {
         }
     }
 
+    /** Checks bottle collisions with enemies */
     checkBottleHits() {
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
@@ -213,6 +265,7 @@ class World {
         }
     }
 
+    /** Handles endboss interactions and damage */
     checkEndboss() {
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
@@ -257,6 +310,7 @@ class World {
         }
     }
 
+    /** Plays step sound when moving */
     checkStepSound() {
 
         if (this.keyboard.RIGHT || this.keyboard.LEFT) {
@@ -264,14 +318,18 @@ class World {
         }
     }
 
+    /** Removes dead enemies from world */
     cleanup() {
+
         this.level.enemies = this.level.enemies.filter(e => {
             if (e instanceof Endboss) return true;
             return !e.removeFromWorld;
         });
     }
 
+    /** Updates UI status bars */
     updateUI() {
+
         this.statusBarHealth.setPercentage(this.character.energy);
         this.statusBarCoins.setPercentage(this.coinCount * 10);
         this.statusBarBottles.setPercentage(this.bottleCount * 10);
@@ -280,21 +338,27 @@ class World {
         if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
+    /** Triggers game over screen */
     triggerGameOver() {
+
         this.state = "gameover";
         AudioHub.stopMusic?.();
         document.getElementById("gameOverScreen").style.display = "flex";
         this.stopAll();
     }
 
+    /** Triggers win screen */
     triggerWin() {
+
         this.state = "win";
         AudioHub.stopMusic?.();
         document.getElementById("winScreen").style.display = "flex";
         this.stopAll();
     }
 
+    /** Stops all enemy intervals and clears objects */
     stopAll() {
+
         this.level.enemies.forEach(e => {
             if (e.movementInterval) clearInterval(e.movementInterval);
             if (e.animationInterval) clearInterval(e.animationInterval);
@@ -304,6 +368,7 @@ class World {
         this.hearts = [];
     }
 
+    /** Main render loop */
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -332,6 +397,7 @@ class World {
         requestAnimationFrame(() => this.draw());
     }
 
+    /** Draws floating heart effects */
     drawHearts() {
 
         this.hearts.forEach((h, i) => {
@@ -347,11 +413,13 @@ class World {
         });
     }
 
+    /** Adds multiple objects to canvas */
     addObjects(arr) {
         if (!arr) return;
         arr.forEach(o => this.addToMap(o));
     }
 
+    /** Draws object to canvas */
     addToMap(mo) {
 
         if (!mo || !mo.img) return;

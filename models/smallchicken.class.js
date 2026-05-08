@@ -1,26 +1,49 @@
+/**
+ * Represents a small chicken enemy in the game.
+ * Extends MovableObject and handles movement, activation range,
+ * animation states, and death behavior.
+ */
 class SmallChicken extends MovableObject {
 
+    /** @type {number} vertical position */
     y = 380;
+
+    /** @type {number} height of the chicken */
     height = 40;
+
+    /** @type {number} width of the chicken */
     width = 35;
+
+    /** @type {number} movement speed */
     speed = 1.6;
 
+    /** @type {boolean} indicates whether chicken is dead */
     dead = false;
+
+    /** @type {boolean} flag for removal from world */
     removeFromWorld = false;
 
-    activated = false;   // 
-    activationX = 800;   // 
+    /** @type {boolean} becomes true when player is close enough */
+    activated = false;
 
+    /** @type {number} activation distance for player detection */
+    activationX = 800;
+
+    /** @type {string[]} walking animation frames */
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
     ];
 
+    /** @type {string[]} death animation frames */
     IMAGES_DEAD = [
         'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
 
+    /**
+     * Creates a SmallChicken instance and initializes animations.
+     */
     constructor() {
         super();
 
@@ -33,13 +56,18 @@ class SmallChicken extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Handles movement and animation loops.
+     * - Activates when player is close enough
+     * - Moves left when activated
+     * - Switches between walking and dead animation
+     */
     animate() {
 
         setInterval(() => {
 
             if (this.dead) return;
 
-            //erst loslaufen wenn Pepe nah genug ist
             if (!this.activated && this.world?.character) {
                 let distance = Math.abs(this.world.character.x - this.x);
 
@@ -65,6 +93,9 @@ class SmallChicken extends MovableObject {
         }, 200);
     }
 
+    /**
+     * Kills the chicken and triggers removal after a delay.
+     */
     die() {
 
         if (this.dead) return;
