@@ -1,70 +1,31 @@
-/**
- * Represents the complete game world.
- * Handles rendering, collisions, UI and game logic.
- *
- * This is the central controller of the game and connects:
- * - Player (Character)
- * - Enemies and Endboss
- * - Collectibles (coins, bottles)
- * - Projectiles (throwables)
- * - UI (status bars)
- * - Camera system
- *
- * The world runs a continuous game loop and updates all systems.
- */
-
 class World {
 
-    /** @type {HTMLCanvasElement} */
     canvas;
-
-    /** @type {CanvasRenderingContext2D} */
     ctx;
-
-    /** Keyboard input handler */
     keyboard;
 
-    /** @type {Character} Player character */
     character;
-
-    /** @type {Level} Current level instance */
     level;
 
-    /** Camera offset for side-scrolling world movement */
     camera_x = 0;
 
-    /** UI status bars */
     statusBarHealth;
     statusBarCoins;
     statusBarBottles;
     statusBarEndboss;
 
-    /** Collected coin counter */
     coinCount = 0;
-
-    /** Collected bottle counter */
     bottleCount = 3;
 
-    /** Active throwable objects (e.g. bottles) */
     throwables = [];
-
-    /** Prevents continuous throwing (input cooldown) */
     canThrow = true;
 
-    /** Visual feedback objects (hearts on enemy kill) */
     hearts = [];
 
-    /** Game state: running | gameover | win */
     state = "running";
 
-    /** Cooldown flag for step sound playback */
     stepCooldown = false;
 
-    /**
-     * Creates the game world and initializes all systems
-     * @param {HTMLCanvasElement} canvas
-     * @param {Object} keyboard - input handler object
-     */
     constructor(canvas, keyboard) {
 
         this.canvas = canvas;
@@ -82,9 +43,6 @@ class World {
         this.draw();
     }
 
-    /**
-     * Initializes all UI status bars (health, coins, bottles, endboss)
-     */
     initStatusBars() {
 
         this.statusBarHealth = new StatusBar([
@@ -124,10 +82,6 @@ class World {
         ], 500, 20);
     }
 
-    /**
-     * Main game loop (runs every 100ms)
-     * Handles all updates, collisions and game logic
-     */
     run() {
 
         setInterval(() => {
@@ -147,12 +101,10 @@ class World {
         }, 100);
     }
 
-    /** Spawns a visual heart effect at a given position */
     spawnHeart(x, y) {
         this.hearts.push({ x, y, size: 40, life: 30 });
     }
 
-    /** Checks coin collisions */
     checkCoins() {
 
         this.level.coins.forEach((c, i) => {
@@ -164,7 +116,6 @@ class World {
         });
     }
 
-    /** Checks bottle pickup collisions */
     checkBottles() {
 
         this.level.bottles.forEach((b, i) => {
@@ -175,7 +126,6 @@ class World {
         });
     }
 
-    /** Handles chicken enemy collisions */
     checkChicken() {
 
         for (let e of this.level.enemies) {
@@ -188,7 +138,7 @@ class World {
             let jumpKill =
                 falling &&
                 this.character.y + this.character.height >= e.y &&
-                this.character.y + this.character.height <= e.y + 60;
+                this.character.y + this.character.height <= e.y + 50; // 🔧 tighter hitbox
 
             if (jumpKill) {
                 e.die();
@@ -209,7 +159,6 @@ class World {
         }
     }
 
-    /** Handles throw input and projectile creation */
     checkThrow() {
 
         if (this.keyboard.D && this.canThrow && this.bottleCount > 0) {
@@ -218,13 +167,18 @@ class World {
 
             let dir = this.character.otherDirection ? 'left' : 'right';
 
-            this.throwables.push(
-                new ThrowableObject(
-                    this.character.x + 50,
-                    this.character.y + 100,
-                    dir
-                )
+            let bottle = new ThrowableObject(
+                this.character.x + 50,
+                this.character.y + 100,
+                dir
             );
+
+            // 🔥 FIX: flacher Wurf statt hoher Bogen
+            bottle.speedX = dir === 'left' ? -10 : 10;
+            bottle.speedY = 8;        // runter von 12
+            bottle.gravity = 0.8;     // stärkerer Drop → weniger "hoch"
+
+            this.throwables.push(bottle);
 
             this.bottleCount--;
 
@@ -234,7 +188,6 @@ class World {
         }
     }
 
-    /** Checks bottle collisions with enemies */
     checkBottleHits() {
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
@@ -245,11 +198,14 @@ class World {
 
                 if (e instanceof Endboss || e.dead) continue;
 
+                // 🔧 HITBOX POLISH (kleiner & fairer)
+                let padding = 10;
+
                 if (
-                    bottle.x < e.x + e.width &&
-                    bottle.x + bottle.width > e.x &&
-                    bottle.y < e.y + e.height &&
-                    bottle.y + bottle.height > e.y
+                    bottle.x + padding < e.x + e.width &&
+                    bottle.x + bottle.width - padding > e.x &&
+                    bottle.y + padding < e.y + e.height &&
+                    bottle.y + bottle.height - padding > e.y
                 ) {
                     e.die();
 
@@ -265,7 +221,6 @@ class World {
         }
     }
 
-    /** Handles endboss interactions and damage */
     checkEndboss() {
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
@@ -310,15 +265,12 @@ class World {
         }
     }
 
-    /** Plays step sound when moving */
     checkStepSound() {
-
         if (this.keyboard.RIGHT || this.keyboard.LEFT) {
             AudioHub.play(AudioHub.STEP, 0.1);
         }
     }
 
-    /** Removes dead enemies from world */
     cleanup() {
 
         this.level.enemies = this.level.enemies.filter(e => {
@@ -327,7 +279,6 @@ class World {
         });
     }
 
-    /** Updates UI status bars */
     updateUI() {
 
         this.statusBarHealth.setPercentage(this.character.energy);
@@ -338,37 +289,18 @@ class World {
         if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
-    /** Triggers game over screen */
     triggerGameOver() {
-
         this.state = "gameover";
         AudioHub.stopMusic?.();
         document.getElementById("gameOverScreen").style.display = "flex";
-        this.stopAll();
     }
 
-    /** Triggers win screen */
     triggerWin() {
-
         this.state = "win";
         AudioHub.stopMusic?.();
         document.getElementById("winScreen").style.display = "flex";
-        this.stopAll();
     }
 
-    /** Stops all enemy intervals and clears objects */
-    stopAll() {
-
-        this.level.enemies.forEach(e => {
-            if (e.movementInterval) clearInterval(e.movementInterval);
-            if (e.animationInterval) clearInterval(e.animationInterval);
-        });
-
-        this.throwables = [];
-        this.hearts = [];
-    }
-
-    /** Main render loop */
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -397,7 +329,6 @@ class World {
         requestAnimationFrame(() => this.draw());
     }
 
-    /** Draws floating heart effects */
     drawHearts() {
 
         this.hearts.forEach((h, i) => {
@@ -413,13 +344,11 @@ class World {
         });
     }
 
-    /** Adds multiple objects to canvas */
     addObjects(arr) {
         if (!arr) return;
         arr.forEach(o => this.addToMap(o));
     }
 
-    /** Draws object to canvas */
     addToMap(mo) {
 
         if (!mo || !mo.img) return;

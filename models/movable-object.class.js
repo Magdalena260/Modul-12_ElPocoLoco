@@ -108,4 +108,13 @@ class MovableObject extends DrawableObject {
 
         this.currentImage++;
     }
+
+    getHitbox() {
+    return {
+        x: this.x + 10,
+        y: this.y + 10,
+        width: this.width - 20,
+        height: this.height - 20
+    };
+}
 }

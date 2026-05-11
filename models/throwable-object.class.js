@@ -29,7 +29,7 @@ class ThrowableObject extends MovableObject {
         this.speedX = direction === 'left' ? -12 : 12;
 
         /** Initial upward force */
-        this.speedY = 12;
+        this.speedY = 6;
 
         /** Gravity affecting the object */
         this.gravity = 0.5;
