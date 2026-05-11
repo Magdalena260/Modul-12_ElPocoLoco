@@ -17,11 +17,7 @@ let world;
 let keyboard;
 
 /**
- * Initialisiert das Spiel:
- * - Holt Canvas
- * - Erstellt Keyboard-Listener
- * - Aktiviert Mobile Controls
- * - Entsperrt Audio (Browser Autoplay Fix)
+ * Initialisiert das Spiel
  */
 function init() {
     canvas = document.getElementById("canvas");
@@ -33,15 +29,17 @@ function init() {
 }
 
 /**
- * Startet ein neues Spiel:
- * - Blendet Startscreen aus
- * - Erstellt neue World Instanz
- * - Startet Musik
+ * START GAME (NEU START)
  */
 function startGame() {
+
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("winScreen").style.display = "none";
+
+    if (world) {
+        world.stopAll?.();
+    }
 
     world = new World(canvas, keyboard);
 
@@ -49,26 +47,26 @@ function startGame() {
 }
 
 /**
- * Startet das Spiel neu nach Game Over / Win:
- * - Reset UI Screens
- * - Stoppt & resettet Audio
- * - Erstellt neue World
- * - Startet Musik erneut
+ * 🔁 RESTART GAME (Play Again Button)
  */
 function restartGame() {
+
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("winScreen").style.display = "none";
 
     AudioHub.resetAll();
 
-    world = new World(canvas, keyboard);
+    // Alte World stoppen
+    if (world) {
+        world.stopAll?.();
+    }
 
-    AudioHub.startMusic();
+    // 🔥 Kompletten Level neu laden
+    location.reload();
 }
 
 /**
- * Schaltet Sound global an/aus.
- * Aktualisiert zusätzlich Button-Text im UI.
+ * 🔊 MUTE TOGGLE
  */
 function toggleMute() {
     let muted = !AudioHub.MUSIC.muted;
@@ -80,11 +78,7 @@ function toggleMute() {
 }
 
 /**
- * Bindet Keyboard-Events für Desktop + Mobile Controls.
- * Steuert:
- * - Bewegung (links/rechts/hoch/runter)
- * - Aktionstaste D
- * - Sprung (Space)
+ * KEYBOARD INPUT
  */
 function bindMobileControls() {
 
@@ -108,8 +102,7 @@ function bindMobileControls() {
 }
 
 /**
- * Öffnet "How to Play" Overlay (nur Desktop).
- * Blockiert mobile Ansicht automatisch.
+ * HOW TO PLAY
  */
 function showHowToPlay() {
     if (window.innerWidth <= 950) return;
@@ -117,9 +110,6 @@ function showHowToPlay() {
     document.getElementById("howToPlayOverlay").style.display = "flex";
 }
 
-/**
- * Schließt "How to Play" Overlay.
- */
 function closeHowToPlay() {
     document.getElementById("howToPlayOverlay").style.display = "none";
 }

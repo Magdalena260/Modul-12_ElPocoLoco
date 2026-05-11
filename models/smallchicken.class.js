@@ -9,10 +9,10 @@ class SmallChicken extends MovableObject {
     y = 370;
 
     /** @type {number} height of the chicken */
-    height = 40;
+    height = 50;
 
     /** @type {number} width of the chicken */
-    width = 35;
+    width = 45;
 
     /** @type {number} movement speed */
     speed = 1.6;

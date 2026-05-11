@@ -1,9 +1,12 @@
+/**
+ * Represents the complete game world.
+ * Handles rendering, collisions, UI and game logic.
+ */
 class World {
 
     canvas;
     ctx;
     keyboard;
-
     character;
     level;
 
@@ -23,8 +26,9 @@ class World {
     hearts = [];
 
     state = "running";
-
     stepCooldown = false;
+
+    gameLoop;
 
     constructor(canvas, keyboard) {
 
@@ -36,7 +40,16 @@ class World {
         this.level = level1;
 
         this.character.world = this;
-        this.level.enemies.forEach(e => e.world = this);
+
+        this.level.enemies.forEach(e => {
+            e.world = this;
+
+            // 🔥 ENDBOSS RESET FIX
+            if (e instanceof Endboss) {
+                e.dead = false;
+                e.energy = 100;
+            }
+        });
 
         this.initStatusBars();
         this.run();
@@ -84,7 +97,7 @@ class World {
 
     run() {
 
-        setInterval(() => {
+        this.gameLoop = setInterval(() => {
 
             if (this.state !== "running") return;
 
@@ -108,9 +121,12 @@ class World {
     checkCoins() {
 
         this.level.coins.forEach((c, i) => {
+
             if (this.character.isColliding(c)) {
+
                 this.level.coins.splice(i, 1);
                 this.coinCount++;
+
                 AudioHub.play(AudioHub.COIN, 0.3);
             }
         });
@@ -119,7 +135,9 @@ class World {
     checkBottles() {
 
         this.level.bottles.forEach((b, i) => {
+
             if (this.character.isColliding(b)) {
+
                 this.level.bottles.splice(i, 1);
                 this.bottleCount++;
             }
@@ -138,18 +156,23 @@ class World {
             let jumpKill =
                 falling &&
                 this.character.y + this.character.height >= e.y &&
-                this.character.y + this.character.height <= e.y + 50; // 🔧 tighter hitbox
+                this.character.y + this.character.height <= e.y + 60;
 
             if (jumpKill) {
+
                 e.die();
+
                 this.character.speedY = 10;
 
                 AudioHub.play(AudioHub.CHICKEN, 0.3);
 
-                this.character.energy = Math.min(100, this.character.energy + 20);
+                this.character.energy =
+                    Math.min(100, this.character.energy + 20);
+
                 this.spawnHeart(e.x, e.y);
 
             } else {
+
                 this.character.hit();
 
                 if (this.character.isDead()) {
@@ -165,26 +188,25 @@ class World {
 
             this.canThrow = false;
 
-            let dir = this.character.otherDirection ? 'left' : 'right';
+            let dir = this.character.otherDirection
+                ? 'left'
+                : 'right';
 
-            let bottle = new ThrowableObject(
-                this.character.x + 50,
-                this.character.y + 100,
-                dir
+            this.throwables.push(
+                new ThrowableObject(
+                    this.character.x + 50,
+                    this.character.y + 100,
+                    dir
+                )
             );
-
-            // 🔥 FIX: flacher Wurf statt hoher Bogen
-            bottle.speedX = dir === 'left' ? -10 : 10;
-            bottle.speedY = 8;        // runter von 12
-            bottle.gravity = 0.8;     // stärkerer Drop → weniger "hoch"
-
-            this.throwables.push(bottle);
 
             this.bottleCount--;
 
             AudioHub.play(AudioHub.THROW, 0.3);
 
-            setTimeout(() => this.canThrow = true, 300);
+            setTimeout(() => {
+                this.canThrow = true;
+            }, 300);
         }
     }
 
@@ -196,25 +218,24 @@ class World {
 
             for (let e of this.level.enemies) {
 
-                if (e instanceof Endboss || e.dead) continue;
+                // 🔥 ENDBOSS NICHT HIER
+                if (e instanceof Endboss) continue;
 
-                // 🔧 HITBOX POLISH (kleiner & fairer)
-                let padding = 10;
+                if (e.dead) continue;
 
-                if (
-                    bottle.x + padding < e.x + e.width &&
-                    bottle.x + bottle.width - padding > e.x &&
-                    bottle.y + padding < e.y + e.height &&
-                    bottle.y + bottle.height - padding > e.y
-                ) {
+                if (bottle.isColliding(e)) {
+
                     e.die();
 
                     AudioHub.play(AudioHub.CHICKEN, 0.3);
 
-                    this.character.energy = Math.min(100, this.character.energy + 20);
+                    this.character.energy =
+                        Math.min(100, this.character.energy + 20);
+
                     this.spawnHeart(e.x, e.y);
 
                     this.throwables.splice(b, 1);
+
                     break;
                 }
             }
@@ -223,19 +244,23 @@ class World {
 
     checkEndboss() {
 
-        let boss = this.level.enemies.find(e => e instanceof Endboss);
+        let boss =
+            this.level.enemies.find(e => e instanceof Endboss);
+
         if (!boss) return;
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
 
             let bottle = this.throwables[b];
 
+            // 🔥 MANUELLE HITBOX = FIX
             if (
-                bottle.x < boss.x + boss.width &&
-                bottle.x + bottle.width > boss.x &&
-                bottle.y < boss.y + boss.height &&
-                bottle.y + bottle.height > boss.y
+                bottle.x + bottle.width > boss.x + 50 &&
+                bottle.x < boss.x + boss.width - 50 &&
+                bottle.y + bottle.height > boss.y + 50 &&
+                bottle.y < boss.y + boss.height - 50
             ) {
+
                 boss.hit();
 
                 AudioHub.play(AudioHub.ENDBOSS, 0.3);
@@ -243,12 +268,18 @@ class World {
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) {
-                    setTimeout(() => this.triggerWin(), 1200);
+
+                    setTimeout(() => {
+                        this.triggerWin();
+                    }, 1200);
                 }
             }
         }
 
-        if (this.character.isColliding(boss) && !boss.dead) {
+        if (
+            this.character.isColliding(boss) &&
+            !boss.dead
+        ) {
 
             let now = new Date().getTime();
 
@@ -266,6 +297,7 @@ class World {
     }
 
     checkStepSound() {
+
         if (this.keyboard.RIGHT || this.keyboard.LEFT) {
             AudioHub.play(AudioHub.STEP, 0.1);
         }
@@ -274,38 +306,75 @@ class World {
     cleanup() {
 
         this.level.enemies = this.level.enemies.filter(e => {
+
             if (e instanceof Endboss) return true;
+
             return !e.removeFromWorld;
         });
     }
 
     updateUI() {
 
-        this.statusBarHealth.setPercentage(this.character.energy);
-        this.statusBarCoins.setPercentage(this.coinCount * 10);
-        this.statusBarBottles.setPercentage(this.bottleCount * 10);
+        this.statusBarHealth.setPercentage(
+            this.character.energy
+        );
 
-        let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (boss) this.statusBarEndboss.setPercentage(boss.energy);
+        this.statusBarCoins.setPercentage(
+            this.coinCount * 10
+        );
+
+        this.statusBarBottles.setPercentage(
+            this.bottleCount * 10
+        );
+
+        let boss =
+            this.level.enemies.find(e => e instanceof Endboss);
+
+        if (boss) {
+            this.statusBarEndboss.setPercentage(
+                boss.energy
+            );
+        }
     }
 
     triggerGameOver() {
+
         this.state = "gameover";
+
         AudioHub.stopMusic?.();
-        document.getElementById("gameOverScreen").style.display = "flex";
+
+        document.getElementById(
+            "gameOverScreen"
+        ).style.display = "flex";
     }
 
     triggerWin() {
+
         this.state = "win";
+
         AudioHub.stopMusic?.();
-        document.getElementById("winScreen").style.display = "flex";
+
+        document.getElementById(
+            "winScreen"
+        ).style.display = "flex";
     }
 
     draw() {
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.state === "gameover" ||
+            this.state === "win") {
+            return;
+        }
+
+        this.ctx.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
 
         this.ctx.save();
+
         this.ctx.translate(this.camera_x, 0);
 
         this.addObjects(this.level.backgroundObjects);
@@ -332,20 +401,31 @@ class World {
     drawHearts() {
 
         this.hearts.forEach((h, i) => {
+
             let img = new Image();
             img.src = 'img/heart_red.png';
 
-            this.ctx.drawImage(img, h.x, h.y, h.size, h.size);
+            this.ctx.drawImage(
+                img,
+                h.x,
+                h.y,
+                h.size,
+                h.size
+            );
 
             h.y -= 1;
             h.life--;
 
-            if (h.life <= 0) this.hearts.splice(i, 1);
+            if (h.life <= 0) {
+                this.hearts.splice(i, 1);
+            }
         });
     }
 
     addObjects(arr) {
+
         if (!arr) return;
+
         arr.forEach(o => this.addToMap(o));
     }
 
@@ -355,16 +435,46 @@ class World {
 
         this.ctx.save();
 
-        let isCharacter = (mo instanceof Character);
+        let isCharacter =
+            (mo instanceof Character);
 
         if (isCharacter && mo.otherDirection) {
-            this.ctx.translate(mo.x + mo.width, 0);
+
+            this.ctx.translate(
+                mo.x + mo.width,
+                0
+            );
+
             this.ctx.scale(-1, 1);
-            this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+
+            this.ctx.drawImage(
+                mo.img,
+                0,
+                mo.y,
+                mo.width,
+                mo.height
+            );
+
         } else {
-            this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+
+            this.ctx.drawImage(
+                mo.img,
+                mo.x,
+                mo.y,
+                mo.width,
+                mo.height
+            );
         }
 
         this.ctx.restore();
     }
+
+    stopAll() {
+
+        clearInterval(this.gameLoop);
+
+        this.throwables = [];
+        this.hearts = [];
+    }
 }
+
