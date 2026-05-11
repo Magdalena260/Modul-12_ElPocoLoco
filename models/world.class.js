@@ -60,9 +60,6 @@ class World {
     /** Cooldown flag for step sound playback */
     stepCooldown = false;
 
-    /** 🧠 Stores all running intervals so we can stop them later */
-    intervals = [];
-
     /**
      * Creates the game world and initializes all systems
      * @param {HTMLCanvasElement} canvas
@@ -133,7 +130,7 @@ class World {
      */
     run() {
 
-        let interval = setInterval(() => {
+        setInterval(() => {
 
             if (this.state !== "running") return;
 
@@ -148,8 +145,6 @@ class World {
             this.checkStepSound();
 
         }, 100);
-
-        this.intervals.push(interval);
     }
 
     /** Spawns a visual heart effect at a given position */
@@ -157,9 +152,7 @@ class World {
         this.hearts.push({ x, y, size: 40, life: 30 });
     }
 
-    /**
-     * Checks coin collisions
-     */
+    /** Checks coin collisions */
     checkCoins() {
 
         this.level.coins.forEach((c, i) => {
@@ -171,9 +164,7 @@ class World {
         });
     }
 
-    /**
-     * Checks bottle pickup collisions
-     */
+    /** Checks bottle pickup collisions */
     checkBottles() {
 
         this.level.bottles.forEach((b, i) => {
@@ -184,9 +175,7 @@ class World {
         });
     }
 
-    /**
-     * Handles chicken enemy collisions
-     */
+    /** Handles chicken enemy collisions */
     checkChicken() {
 
         for (let e of this.level.enemies) {
@@ -220,9 +209,7 @@ class World {
         }
     }
 
-    /**
-     * Handles throw input and projectile creation
-     */
+    /** Handles throw input and projectile creation */
     checkThrow() {
 
         if (this.keyboard.D && this.canThrow && this.bottleCount > 0) {
@@ -247,9 +234,7 @@ class World {
         }
     }
 
-    /**
-     * Checks bottle collisions with enemies
-     */
+    /** Checks bottle collisions with enemies */
     checkBottleHits() {
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
@@ -280,9 +265,7 @@ class World {
         }
     }
 
-    /**
-     * Handles endboss interactions and damage
-     */
+    /** Handles endboss interactions and damage */
     checkEndboss() {
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
@@ -327,27 +310,15 @@ class World {
         }
     }
 
-    /**
-     * Step sound (FIXED: no spam anymore)
-     */
+    /** Plays step sound when moving */
     checkStepSound() {
-
-        if (this.stepCooldown) return;
 
         if (this.keyboard.RIGHT || this.keyboard.LEFT) {
             AudioHub.play(AudioHub.STEP, 0.1);
-
-            this.stepCooldown = true;
-
-            setTimeout(() => {
-                this.stepCooldown = false;
-            }, 200);
         }
     }
 
-    /**
-     * Removes dead enemies from world
-     */
+    /** Removes dead enemies from world */
     cleanup() {
 
         this.level.enemies = this.level.enemies.filter(e => {
@@ -356,9 +327,7 @@ class World {
         });
     }
 
-    /**
-     * Updates UI status bars
-     */
+    /** Updates UI status bars */
     updateUI() {
 
         this.statusBarHealth.setPercentage(this.character.energy);
@@ -369,9 +338,7 @@ class World {
         if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
-    /**
-     * Game over
-     */
+    /** Triggers game over screen */
     triggerGameOver() {
 
         this.state = "gameover";
@@ -380,9 +347,7 @@ class World {
         this.stopAll();
     }
 
-    /**
-     * Win condition
-     */
+    /** Triggers win screen */
     triggerWin() {
 
         this.state = "win";
@@ -391,26 +356,19 @@ class World {
         this.stopAll();
     }
 
-    /**
-     * Stops ALL intervals and sounds
-     */
+    /** Stops all enemy intervals and clears objects */
     stopAll() {
 
-        this.intervals.forEach(clearInterval);
-        this.intervals = [];
-
-        if (this.character?.moveInterval) clearInterval(this.character.moveInterval);
-        if (this.character?.animationInterval) clearInterval(this.character.animationInterval);
+        this.level.enemies.forEach(e => {
+            if (e.movementInterval) clearInterval(e.movementInterval);
+            if (e.animationInterval) clearInterval(e.animationInterval);
+        });
 
         this.throwables = [];
         this.hearts = [];
-
-        AudioHub.resetAll();
     }
 
-    /**
-     * Draw loop
-     */
+    /** Main render loop */
     draw() {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -439,9 +397,7 @@ class World {
         requestAnimationFrame(() => this.draw());
     }
 
-    /**
-     * Draw floating hearts
-     */
+    /** Draws floating heart effects */
     drawHearts() {
 
         this.hearts.forEach((h, i) => {
@@ -457,18 +413,22 @@ class World {
         });
     }
 
+    /** Adds multiple objects to canvas */
     addObjects(arr) {
         if (!arr) return;
         arr.forEach(o => this.addToMap(o));
     }
 
+    /** Draws object to canvas */
     addToMap(mo) {
 
         if (!mo || !mo.img) return;
 
         this.ctx.save();
 
-        if (mo instanceof Character && mo.otherDirection) {
+        let isCharacter = (mo instanceof Character);
+
+        if (isCharacter && mo.otherDirection) {
             this.ctx.translate(mo.x + mo.width, 0);
             this.ctx.scale(-1, 1);
             this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
