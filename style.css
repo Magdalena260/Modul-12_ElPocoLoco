@@ -1,10 +1,6 @@
-
 /* =========================
    BODY
 ========================= */
-/**
- * Main body styling
- */
 body {
     margin: 0;
 
@@ -24,9 +20,6 @@ body {
 /* =========================
    FRAME
 ========================= */
-/**
- * Outer game frame
- */
 #uiFrame {
     position: relative;
 
@@ -48,9 +41,6 @@ body {
 /* =========================
    GAME CONTAINER
 ========================= */
-/**
- * Container for canvas and overlays
- */
 #gameContainer {
     position: relative;
 
@@ -63,9 +53,6 @@ body {
 /* =========================
    CANVAS
 ========================= */
-/**
- * Main game canvas
- */
 canvas {
     position: absolute;
     top: 0;
@@ -83,9 +70,6 @@ canvas {
 /* =========================
    START SCREEN
 ========================= */
-/**
- * Start menu screen
- */
 #startScreen {
     position: absolute;
     top: 0;
@@ -113,9 +97,6 @@ canvas {
 /* =========================
    OVERLAYS
 ========================= */
-/**
- * Generic overlay styling
- */
 .overlay {
     position: absolute;
     top: 0;
@@ -143,9 +124,6 @@ canvas {
 /* =========================
    HOW TO PLAY
 ========================= */
-/**
- * How to play overlay
- */
 #howToPlayOverlay {
     position: absolute;
     top: 0;
@@ -164,10 +142,6 @@ canvas {
     z-index: 2000;
 }
 
-
-/**
- * How to play overlay img
- */
 #howToPlayOverlay img {
     max-width: 90%;
     max-height: 80%;
@@ -178,9 +152,6 @@ canvas {
 /* =========================
    BUTTONS
 ========================= */
-/**
- * Default button styling
- */
 button,
 .gameButton {
     padding: 12px 28px;
@@ -203,9 +174,6 @@ button,
 /* =========================
    MUTE BUTTON
 ========================= */
-/**
- * Sound mute button
- */
 #muteBtn {
     position: fixed;
     top: 20px;
@@ -226,9 +194,6 @@ button,
 /* =========================
    ROTATE SCREEN
 ========================= */
-/**
- * Portrait mode warning screen
- */
 #rotateScreen {
     display: none;
 
@@ -255,16 +220,10 @@ button,
 /* =========================
    MOBILE CONTROLS
 ========================= */
-/**
- * Mobile touch controls
- */
 #mobileControls {
     display: none;
 }
 
-/**
- * Mobile button styling
- */
 .mobileBtn {
     width: 65px;
     height: 65px;
@@ -280,9 +239,8 @@ button,
 /* =========================
    IMPRESSUM
 ========================= */
-/**
- * Impressum wrapper styling
- */
+
+/* Wrapper NICHT mehr fullscreen-look erzwingen */
 .imprint-wrapper {
     display: flex;
     justify-content: center;
@@ -290,37 +248,65 @@ button,
 
     padding: 50px 20px;
 
-    background: black;
+    background: transparent; /* kein Vollflächenblock mehr */
+
+    height: auto;
 }
 
-/**
- * Impressum card styling
- */
+/* Clean Card mit Schatten */
 .imprint-card {
-    background: black;
+    background: #f6e7b4;
 
-    color: white;
+    color: #5a3412;
 
     padding: 30px;
 
     max-width: 700px;
     width: 100%;
 
-    box-shadow: none;
+    font-family: "Rubik Gemstones", system-ui;
 
-    font-family: "Segoe UI", sans-serif;
+    line-height: 1.8;
 
-    line-height: 1.6;
+    border-radius: 12px;
 
-    border: 1px solid #333;
+    border: none;
+
+    /* ⭐ Schlagschatten für Abhebung */
+    box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.imprint-card h1,
+.imprint-card h2 {
+    color: #5a3412;
+}
+
+.imprint-card a {
+    color: #5a3412;
+    text-decoration: none;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+
+    font-family: "Rubik Gemstones", system-ui;
+}
+
+footer a {
+    color: #5a3412;
+    text-decoration: none;
+    font-size: 20px;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-/**
- * Responsive tablet and mobile layout
- */
 @media only screen and (max-width: 950px) {
 
     body {
@@ -330,7 +316,6 @@ button,
     #uiFrame {
         width: 100vw;
         height: 100vh;
-
         background-image: none;
     }
 
@@ -347,18 +332,10 @@ button,
         height: 100%;
     }
 
-    canvas {
-        object-fit: contain;
-        z-index: 1;
-    }
-
     footer {
         display: none;
     }
 
-    /**
-     * Mobile controls visible on smaller devices
-     */
     #mobileControls {
         display: flex;
 
@@ -375,51 +352,15 @@ button,
         z-index: 3000;
     }
 
-    /**
-     * Mobile button alignment
-     */
-    .mobileBtn {
-        width: 65px;
-        height: 65px;
-
-        border: none;
-        border-radius: 50%;
-
-        background: rgba(255, 204, 0, 0.8);
-
-        font-size: 30px;
-        color: black;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        line-height: 1;
-        padding: 0;
-        text-align: center;
-    }
-
-    /**
-     * Hide how to play overlay on mobile
-     */
     #howToPlayOverlay {
         display: none !important;
     }
 
-    /**
-     * Hide second button on mobile
-     */
     #startScreen button:nth-of-type(2) {
         display: none;
     }
 }
 
-/* =========================
-   PORTRAIT WARNING
-========================= */
-/**
- * Show rotate warning in portrait mode
- */
 @media only screen and (max-width: 950px) and (orientation: portrait) {
 
     #rotateScreen {
