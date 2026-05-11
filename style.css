@@ -164,6 +164,17 @@ canvas {
     z-index: 2000;
 }
 
+
+/**
+ * How to play overlay img
+ */
+#howToPlayOverlay img {
+    max-width: 90%;
+    max-height: 80%;
+
+    object-fit: contain;
+}
+
 /* =========================
    BUTTONS
 ========================= */
