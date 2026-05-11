@@ -23,7 +23,7 @@ class StatusBar extends DrawableObject {
         /** Preload all status bar images */
         this.loadImages(images);
 
-        /** Position */
+        /** Position statusbar*/
         this.x = x;
         this.y = y;
 

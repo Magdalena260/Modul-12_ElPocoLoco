@@ -2,6 +2,7 @@
  * Represents the Endboss enemy in the game.
  * Handles AI behavior, movement, animations, attacks, and death logic.
  * Extends MovableObject.
+ * change needed: stop porking after you win or you lost
  */
 class Endboss extends MovableObject {
 

@@ -2,6 +2,7 @@
  * Represents the main player character.
  * Handles movement, animation, jumping, energy system and input control.
  * Extends MovableObject.
+ * * change needed: stop snooring after you win or you lost
  */
 class Character extends MovableObject {
 
