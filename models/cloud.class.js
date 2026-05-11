@@ -14,7 +14,7 @@ class Cloud extends MovableObject {
     height = 250;
 
     /** @type {number} horizontal movement speed */
-    speed = 0.15;
+    speed = 0.12;
 
     /**
      * Creates a Cloud instance with random starting position.

@@ -15,7 +15,12 @@ const level1 = new Level(
         new SmallChicken(),
         new SmallChicken(),
         new Chicken(),
+        new SmallChicken(),
         new Chicken(),
+        new SmallChicken(),
+        new Chicken(),
+        new Chicken(),
+        new SmallChicken(),
         new SmallChicken(),
         new Chicken(),
         new Endboss()
@@ -23,6 +28,9 @@ const level1 = new Level(
 
     // ================= CLOUDS =================
     [
+        new Cloud(),
+        new Cloud(),
+        new Cloud(),
         new Cloud(),
         new Cloud(),
         new Cloud(),
@@ -55,6 +63,12 @@ const level1 = new Level(
         new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 712 * 2),
         new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 712 * 2),
         new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 712 * 2),
+
+        new BackgroundObject('img/5_background/layers/air.png', 712 * 3),
+        new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 712 * 3),
+        new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 712 * 3),
+        new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 712 * 3),
+      
     ],
 
     // ================= COINS =================
@@ -66,19 +80,24 @@ const level1 = new Level(
         new Coin(800, 600),
         new Coin(750, 300),
         new Coin(600, 100),
+        new Coin(750, 200),
+        new Coin(600, 400),
+        new Coin(350, 700),
         new Coin(150, 700),
         new Coin(300, 500),
         new Coin(350, 650),
         new Coin(250, 800),
         new Coin(600, 100),
-        new Coin(30, 800),
+        new Coin(30, 600),
         new Coin(30, 400),
         new Coin(30, 600),
         new Coin(600, 100),
         new Coin(900, 650),
-        new Coin(900, 800),
         new Coin(1000, 100),
+        new Coin(1000, 300),
         new Coin(1100, 100),
+        new Coin(1100, 300),
+
         new Coin(1100, 400),
         new Coin(1100, 450),
         new Coin(1100, 550),
@@ -86,6 +105,8 @@ const level1 = new Level(
 
     // ================= BOTTLES =================
     [
+       
+        new Bottle(150, 350),
         new Bottle(250, 350),
         new Bottle(500, 350),
         new Bottle(650, 350),

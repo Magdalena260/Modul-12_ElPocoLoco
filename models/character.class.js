@@ -19,6 +19,10 @@ class Character extends MovableObject {
 
     lastMove = new Date().getTime();
 
+    // 🧠 INTERVAL HANDLES (IMPORTANT FIX)
+    movementInterval;
+    animationInterval;
+
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -70,12 +74,27 @@ class Character extends MovableObject {
     }
 
     /**
+     * 🛑 HARD STOP FUNCTION (NEW)
+     * Stops all movement + animation loops safely
+     */
+    stopAll() {
+        if (this.movementInterval) clearInterval(this.movementInterval);
+        if (this.animationInterval) clearInterval(this.animationInterval);
+
+        // 🧠 extra safety: prevents “last JS tick movement bug”
+        this.movementInterval = null;
+        this.animationInterval = null;
+    }
+
+    /**
      * Handles movement input, camera movement and jumping.
      */
     animate() {
 
-        setInterval(() => {
+        // ================= MOVEMENT LOOP =================
+        this.movementInterval = setInterval(() => {
 
+            // 🔥 HARD STOP CONDITION
             if (!this.world || this.world.state !== "running") return;
 
             let moving = false;
@@ -108,11 +127,11 @@ class Character extends MovableObject {
 
         }, 1000 / 60);
 
-        /**
-         * Handles animation state (walk, jump, idle/sleep).
-         */
-        setInterval(() => {
 
+        // ================= ANIMATION LOOP =================
+        this.animationInterval = setInterval(() => {
+
+            // 🔥 HARD STOP CONDITION
             if (!this.world || this.world.state !== "running") return;
 
             let time = new Date().getTime() - this.lastMove;

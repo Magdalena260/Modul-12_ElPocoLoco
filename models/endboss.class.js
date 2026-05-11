@@ -7,13 +7,13 @@
 class Endboss extends MovableObject {
 
     /** @type {number} height of the boss */
-    height = 300;
+    height = 320;
 
     /** @type {number} width of the boss */
-    width = 250;
+    width = 270;
 
     /** @type {number} vertical position */
-    y = 50;
+    y = 120;
 
     /** @type {number} current energy (health) */
     energy = 100;

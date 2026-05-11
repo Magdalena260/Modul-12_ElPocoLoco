@@ -1,4 +1,14 @@
 /* =========================
+   LOCAL FONT
+========================= */
+@font-face {
+    font-family: "Rubik Gemstones";
+    src: url("fonts/Rubik_Gemstones/RubikGemstones-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* =========================
    BODY
 ========================= */
 body {
@@ -240,20 +250,20 @@ button,
    IMPRESSUM
 ========================= */
 
-/* Wrapper NICHT mehr fullscreen-look erzwingen */
+/* Wrapper overlay */
 .imprint-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    padding: 50px 20px;
+    padding: 60px 20px;
 
-    background: transparent; /* kein Vollflächenblock mehr */
+    background: transparent;
 
     height: auto;
 }
 
-/* Clean Card mit Schatten */
+/* Card */
 .imprint-card {
     background: #f6e7b4;
 
@@ -268,12 +278,11 @@ button,
 
     line-height: 1.8;
 
-    border-radius: 12px;
-
     border: none;
 
-    /* ⭐ Schlagschatten für Abhebung */
-    box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+
+    box-shadow: 0px 18px 40px rgba(0, 0, 0, 0.55);
 }
 
 .imprint-card h1,
