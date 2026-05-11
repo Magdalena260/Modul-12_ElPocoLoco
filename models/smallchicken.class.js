@@ -6,7 +6,7 @@
 class SmallChicken extends MovableObject {
 
     /** @type {number} vertical position */
-    y = 380;
+    y = 370;
 
     /** @type {number} height of the chicken */
     height = 40;

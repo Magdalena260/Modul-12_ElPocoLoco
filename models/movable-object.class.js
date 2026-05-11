@@ -41,7 +41,7 @@ class MovableObject extends DrawableObject {
      * @returns {boolean}
      */
     isAboveGround() {
-        return this.y < 180;
+        return this.y < 140;
     }
 
     /**
