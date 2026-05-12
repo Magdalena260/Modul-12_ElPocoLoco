@@ -21,7 +21,6 @@ class World {
     state = "running";
     gameLoop;
 
-    // 🔊 GLOBAL VOLUME (FIX: CHICKENS NICHT MEHR SCHREIEN 😄)
     soundVolume = 0.15;
 
     coinSound = AudioHub.COIN;
@@ -48,8 +47,9 @@ class World {
         this.draw();
     }
 
-    // 🔊 CENTRAL SOUND PLAYER
+    // 🔊 SOUND SAFE (mute kompatibel)
     playSound(sound, volume = 1) {
+        if (muted) return;
         AudioHub.play(sound, this.soundVolume * volume);
     }
 
@@ -57,19 +57,6 @@ class World {
 
         this.level.enemies.forEach(e => {
             e.world = this;
-
-            if (e instanceof Endboss) {
-                e.dead = false;
-                e.energy = 100;
-                e.activated = false;
-                e.state = "alert";
-
-                if (e.roarSound) {
-                    e.roarSound.pause();
-                    e.roarSound.currentTime = 0;
-                    e.roarSound = null;
-                }
-            }
         });
 
         this.level.coins.forEach(c => c.world = this);
@@ -105,7 +92,6 @@ class World {
             'img/7_statusbars/1_statusbar/3_statusbar_bottle/green/100.png'
         ], 20, 140);
 
-        // 📉 FIX: Endboss Statusbar weiter runter!
         this.statusBarEndboss = new StatusBar([
             'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
@@ -113,7 +99,7 @@ class World {
             'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue100.png'
-        ], 500, 60); // 👈 WAR 20, jetzt weiter runter
+        ], 500, 60);
     }
 
     run() {
@@ -121,6 +107,8 @@ class World {
         this.gameLoop = setInterval(() => {
 
             if (this.state !== "running") return;
+
+            this.cleanUpObjects();
 
             this.checkCoins();
             this.checkBottles();
@@ -133,7 +121,15 @@ class World {
         }, 100);
     }
 
+    // 🧹 FIX: tote Gegner wirklich entfernen
+    cleanUpObjects() {
+
+        this.level.enemies = this.level.enemies.filter(e => !e.remove);
+        this.throwables = this.throwables.filter(b => !b.remove);
+    }
+
     checkCoins() {
+
         this.level.coins.forEach((c, i) => {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
@@ -144,6 +140,7 @@ class World {
     }
 
     checkBottles() {
+
         this.level.bottles.forEach((b, i) => {
             if (this.character.isColliding(b)) {
                 this.level.bottles.splice(i, 1);
@@ -152,12 +149,12 @@ class World {
         });
     }
 
-    // 🔊 FIX: CHICKEN VIEL LEISER
     checkChicken() {
 
         for (let e of this.level.enemies) {
 
             if (e instanceof Endboss) continue;
+            if (e.dead || e.remove) continue;
             if (!this.character.isColliding(e)) continue;
 
             let falling = this.character.speedY > 0;
@@ -170,7 +167,7 @@ class World {
             if (jumpKill) {
 
                 e.die?.();
-                this.playSound(this.chickenSound, 0.2); //
+                this.playSound(this.chickenSound, 0.2);
                 this.character.speedY = 10;
 
             } else {
@@ -211,14 +208,14 @@ class World {
             for (let e of this.level.enemies) {
 
                 if (e instanceof Endboss) continue;
-                if (e.dead) continue;
+                if (e.dead || e.remove) continue;
 
                 if (bottle.isColliding(e)) {
 
                     e.die?.();
                     this.playSound(this.chickenSound, 0.2);
 
-                    this.throwables.splice(b, 1);
+                    bottle.remove = true;
                     break;
                 }
             }
@@ -230,16 +227,13 @@ class World {
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (!boss || boss.dead) return;
 
-        for (let b = this.throwables.length - 1; b >= 0; b--) {
+        for (let b of this.throwables) {
 
-            let bottle = this.throwables[b];
-
-            if (bottle.isColliding(boss)) {
+            if (b.isColliding(boss)) {
 
                 boss.hit();
                 this.playSound(this.bossHitSound, 0.4);
-
-                this.throwables.splice(b, 1);
+                b.remove = true;
 
                 if (boss.isDead()) {
                     this.playSound(this.bossDeathSound, 0.3);
@@ -301,7 +295,7 @@ class World {
 
     addToMap(mo) {
 
-        if (!mo || !mo.img) return;
+        if (!mo || !mo.img || mo.remove) return;
 
         this.ctx.save();
 

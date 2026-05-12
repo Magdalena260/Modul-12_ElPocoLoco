@@ -9,8 +9,15 @@ class SmallChicken extends MovableObject {
     dead = false;
     activated = false;
 
-    IMAGES_WALKING = [/* unchanged */];
-    IMAGES_DEAD = [/* unchanged */];
+    IMAGES_WALKING = [
+        'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
+        'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
+        'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
+    ];
+
+    IMAGES_DEAD = [
+        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
+    ];
 
     constructor() {
         super();
@@ -56,6 +63,12 @@ class SmallChicken extends MovableObject {
         this.dead = true;
         this.speed = 0;
 
-        AudioHub.play(AudioHub.CHICKEN_DEATH, 0.1); //
+        this.loadImage(this.IMAGES_DEAD[0]);
+
+        this.height = 20;
+
+        setTimeout(() => {
+            this.remove = true;
+        }, 800);
     }
 }
