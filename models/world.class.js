@@ -21,8 +21,7 @@ class World {
     state = "running";
     gameLoop;
 
-    // 🔊 GLOBAL VOLUME (FIX: CHICKENS NICHT MEHR SCHREIEN 😄)
-    soundVolume = 0.15;
+    soundVolume = 0.1;
 
     coinSound = AudioHub.COIN;
     throwSound = AudioHub.THROW;
@@ -111,7 +110,7 @@ class World {
             'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue100.png'
-        ], 500, 60); 
+        ], 500, 60);
     }
 
     run() {
@@ -122,7 +121,7 @@ class World {
 
             this.checkCoins();
             this.checkBottles();
-            this.checkChicken();
+            this.checkChicken();   // ✅ FIXED
             this.checkThrow();
             this.checkBottleHits();
             this.checkEndboss();
@@ -150,26 +149,42 @@ class World {
         });
     }
 
-    // 🔊 FIX: CHICKEN VIEL LEISER
+    // 🐔 FIXED: reliable stomp kill
     checkChicken() {
 
-        for (let e of this.level.enemies) {
+        for (let i = this.level.enemies.length - 1; i >= 0; i--) {
+
+            let e = this.level.enemies[i];
 
             if (e instanceof Endboss) continue;
+            if (e.dead) continue;
+
             if (!this.character.isColliding(e)) continue;
+
+            let charBottom = this.character.y + this.character.height;
+            let enemyTop = e.y + (e.offset?.top || 0);
 
             let falling = this.character.speedY > 0;
 
-            let jumpKill =
+            let stomp =
                 falling &&
-                this.character.y + this.character.height >= e.y &&
-                this.character.y + this.character.height <= e.y + 60;
+                charBottom >= enemyTop &&
+                charBottom <= enemyTop + 60;
 
-            if (jumpKill) {
+            if (stomp) {
 
+                e.dead = true;
+                e.speed = 0;
                 e.die?.();
-                this.playSound(this.chickenSound, 0.1); 
-                this.character.speedY = 10;
+
+                this.playSound(this.chickenSound, 0.15);
+
+                this.character.speedY = 12;
+
+                setTimeout(() => {
+                    let index = this.level.enemies.indexOf(e);
+                    if (index > -1) this.level.enemies.splice(index, 1);
+                }, 300);
 
             } else {
 

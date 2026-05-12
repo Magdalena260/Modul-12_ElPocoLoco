@@ -20,6 +20,10 @@ class Endboss extends MovableObject {
     movementInterval = null;
     animationInterval = null;
 
+    // 🔥 NEW: death control
+    deathAnimationDone = false;
+    deathFrameCounter = 0;
+
     offset = {
         top: 80,
         left: 50,
@@ -95,6 +99,7 @@ class Endboss extends MovableObject {
         setTimeout(() => this.stateLock = false, 500);
     }
 
+    // 💀 FIXED DEATH
     die() {
         if (this.dead) return;
 
@@ -102,10 +107,37 @@ class Endboss extends MovableObject {
         this.speed = 0;
         this.state = 'dead';
 
-        this.fullStop(); 
+        this.fullStop();
+
+        // 🔥 animation control
+        this.deathFrameCounter = 0;
+        this.playDeathAnimation();
     }
 
-    
+    playDeathAnimation() {
+
+        let interval = setInterval(() => {
+
+            this.playAnimation(this.IMAGES_DEAD);
+            this.deathFrameCounter++;
+
+            // 🔥 wait until animation is "done"
+            if (this.deathFrameCounter > 15) {
+
+                clearInterval(interval);
+                this.deathAnimationDone = true;
+
+                this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
+
+                // notify world
+                if (this.world) {
+                    this.world.onEndbossDeathFinished?.();
+                }
+            }
+
+        }, 150);
+    }
+
     fullStop() {
 
         if (this.movementInterval) clearInterval(this.movementInterval);
@@ -119,19 +151,6 @@ class Endboss extends MovableObject {
             this.roarSound.currentTime = 0;
             this.roarSound = null;
         }
-    }
-
-    reset() {
-        this.dead = false;
-        this.energy = 100;
-        this.activated = false;
-        this.state = 'alert';
-        this.stateLock = false;
-
-        this.speed = 1.5;
-
-        this.fullStop();   
-        this.animate();    
     }
 
     animate() {
@@ -153,8 +172,7 @@ class Endboss extends MovableObject {
                 this.roarSound.play().catch(() => {});
             }
 
-            if (!this.activated) return;
-            if (this.stateLock) return;
+            if (!this.activated || this.stateLock) return;
 
             this.state = (dist < 120) ? 'attack' : 'walk';
 
