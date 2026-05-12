@@ -1,8 +1,3 @@
-/**
- * Represents the main player character.
- * Handles movement, animation, jumping, energy system and input control.
- * Extends MovableObject.
- */
 class Character extends MovableObject {
 
     height = 280;
@@ -20,6 +15,13 @@ class Character extends MovableObject {
 
     movementInterval;
     animationInterval;
+
+    offset = {
+        top: 110,
+        left: 35,
+        right: 35,
+        bottom: 10
+    };
 
     IMAGES_IDLE = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -84,9 +86,6 @@ class Character extends MovableObject {
         'img/2_character_pepe/5_dead/D-57.png'
     ];
 
-    /**
-     * Creates the player character and initializes animations and gravity.
-     */
     constructor() {
         super();
 
@@ -103,9 +102,6 @@ class Character extends MovableObject {
         this.animate();
     }
 
-    /**
-     * Applies damage to the character with cooldown protection.
-     */
     hit() {
         let now = new Date().getTime();
 
@@ -114,76 +110,44 @@ class Character extends MovableObject {
         this.lastHit = now;
         this.energy -= 20;
 
-        if (this.energy < 0) {
-            this.energy = 0;
-        }
+        if (this.energy < 0) this.energy = 0;
     }
 
-    /**
-     * Checks if character is dead.
-     */
     isDead() {
         return this.energy <= 0;
     }
 
-    /**
-     * Checks if character is currently hurt.
-     */
     isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;
         return timePassed < 500;
     }
 
-    /**
-     * Stops all intervals safely.
-     */
     stopAll() {
-        if (this.movementInterval) {
-            clearInterval(this.movementInterval);
-        }
-
-        if (this.animationInterval) {
-            clearInterval(this.animationInterval);
-        }
-
-        this.movementInterval = null;
-        this.animationInterval = null;
+        clearInterval(this.movementInterval);
+        clearInterval(this.animationInterval);
     }
 
-    /**
-     * Handles movement and animations.
-     */
     animate() {
 
-        // ================= MOVEMENT LOOP =================
         this.movementInterval = setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;
 
             let moving = false;
 
-            if (
-                this.world.keyboard.RIGHT &&
-                this.x < this.world.level.level_end_x
-            ) {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.x += this.speed;
                 this.otherDirection = false;
                 moving = true;
             }
 
-            if (
-                this.world.keyboard.LEFT &&
-                this.x > 0
-            ) {
+            if (this.world.keyboard.LEFT && this.x > 0) {
                 this.x -= this.speed;
                 this.otherDirection = true;
                 moving = true;
             }
 
-            if (
-                (this.world.keyboard.SPACE || this.world.keyboard.UP) &&
-                !this.isAboveGround()
-            ) {
+            if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.isAboveGround()) {
                 this.jump();
                 AudioHub.play(AudioHub.JUMP, 0.3);
             }
@@ -196,49 +160,37 @@ class Character extends MovableObject {
 
         }, 1000 / 60);
 
-
-
-        // ================= ANIMATION LOOP =================
         this.animationInterval = setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;
 
             let time = new Date().getTime() - this.lastMove;
 
-            // DEAD
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
                 return;
             }
 
-            // HURT
             if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
                 return;
             }
 
-            // JUMP
             if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
                 return;
             }
 
-            // WALK
-            if (
-                this.world.keyboard.RIGHT ||
-                this.world.keyboard.LEFT
-            ) {
+            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.playAnimation(this.IMAGES_WALKING);
                 return;
             }
 
-            // SLEEP
             if (time > 4000) {
                 this.playAnimation(this.IMAGES_SLEEP);
                 return;
             }
 
-            // IDLE
             this.playAnimation(this.IMAGES_IDLE);
 
         }, 120);

@@ -1,8 +1,3 @@
-/**
- * Represents a normal chicken enemy in the game.
- * Moves left when activated and plays walking/death animations.
- * Can be killed by jumping on it or hitting it.
- */
 class Chicken extends MovableObject {
 
     y = 340;
@@ -10,11 +5,19 @@ class Chicken extends MovableObject {
     width = 77;
     speed = 0.8;
 
+    world = null;
+
     dead = false;
     removeFromWorld = false;
 
     activated = false;
-    activationX = 900;
+
+    offset = {
+        top: 10,
+        left: 10,
+        right: 10,
+        bottom: 10
+    };
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -38,22 +41,15 @@ class Chicken extends MovableObject {
         this.animate();
     }
 
-    /**
-     * Handles movement and animation loops.
-     */
     animate() {
 
         setInterval(() => {
 
             if (this.dead) return;
 
-            // Activate when player is near
             if (!this.activated && this.world?.character) {
                 let distance = Math.abs(this.world.character.x - this.x);
-
-                if (distance < this.activationX) {
-                    this.activated = true;
-                }
+                if (distance < 900) this.activated = true;
             }
 
             if (this.activated) {
@@ -73,17 +69,12 @@ class Chicken extends MovableObject {
         }, 200);
     }
 
-    /**
-     * Marks the chicken as dead and triggers removal.
-     */
     die() {
 
         if (this.dead) return;
 
         this.dead = true;
         this.speed = 0;
-
-        this.loadImage(this.IMAGES_DEAD[0]);
 
         setTimeout(() => {
             this.removeFromWorld = true;

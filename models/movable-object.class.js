@@ -1,28 +1,29 @@
 /**
  * Base class for all movable game objects.
  * Provides physics (gravity), movement, collision detection,
- * health system, and animation handling.
+ * health system, animation handling and HITBOX (OFFSET) system.
  */
 class MovableObject extends DrawableObject {
 
-    /** @type {number} horizontal movement speed */
     speed = 0.15;
-
-    /** @type {number} vertical speed (used for jumping/falling) */
     speedY = 0;
-
-    /** @type {number} gravity acceleration applied each frame */
     acceleration = 2.5;
 
-    /** @type {number} current energy (health) */
     energy = 100;
-
-    /** @type {number} timestamp of last hit */
     lastHit = 0;
 
     /**
-     * Applies gravity to the object.
-     * Continuously updates vertical position and speed.
+     * Default hitbox offsets (can be overwritten in child classes)
+     */
+    offset = {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+    };
+
+    /**
+     * Gravity system
      */
     applyGravity() {
 
@@ -37,30 +38,20 @@ class MovableObject extends DrawableObject {
     }
 
     /**
-     * Checks if the object is above ground level.
-     * @returns {boolean}
+     * Checks if object is above ground
      */
     isAboveGround() {
         return this.y < 140;
     }
 
-    /**
-     * Moves the object to the right.
-     */
     moveRight() {
         this.x += this.speed;
     }
 
-    /**
-     * Moves the object to the left.
-     */
     moveLeft() {
         this.x -= this.speed;
     }
 
-    /**
-     * Makes the object jump if it is on the ground.
-     */
     jump() {
         if (!this.isAboveGround()) {
             this.speedY = 32;
@@ -68,35 +59,53 @@ class MovableObject extends DrawableObject {
     }
 
     /**
-     * Checks collision with another movable object.
-     * @param {MovableObject} mo - other object
-     * @returns {boolean} true if colliding
+     * 🔥 COLLISION FIX USING HITBOXES
      */
     isColliding(mo) {
+
+        let a = this.getHitbox();
+        let b = mo.getHitbox();
+
         return (
-            this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height
+            a.x + a.width > b.x &&
+            a.y + a.height > b.y &&
+            a.x < b.x + b.width &&
+            a.y < b.y + b.height
         );
     }
 
     /**
-     * Reduces energy when hit.
-     * Sets timestamp of last hit.
+     * 🔥 HITBOX SYSTEM (OFFSET FIX)
+     * This is what fixes "collecting from far away"
+     */
+    getHitbox() {
+
+        return {
+            x: this.x + this.offset.left,
+            y: this.y + this.offset.top,
+            width: this.width - this.offset.left - this.offset.right,
+            height: this.height - this.offset.top - this.offset.bottom
+        };
+    }
+
+    /**
+     * Damage system
      */
     hit() {
         this.energy -= 5;
-        if (this.energy < 0) this.energy = 0;
+
+        if (this.energy < 0) {
+            this.energy = 0;
+        }
+
         this.lastHit = new Date().getTime();
     }
 
     /**
-     * Plays animation from an array of image paths.
-     * Ensures image is always set even if not cached yet.
-     * @param {string[]} images - animation frames
+     * Animation system
      */
     playAnimation(images) {
+
         let i = this.currentImage % images.length;
         let path = images[i];
 
@@ -108,13 +117,4 @@ class MovableObject extends DrawableObject {
 
         this.currentImage++;
     }
-
-    getHitbox() {
-    return {
-        x: this.x + 10,
-        y: this.y + 10,
-        width: this.width - 20,
-        height: this.height - 20
-    };
-}
 }
