@@ -1,6 +1,7 @@
 /**
  * Represents a collectible coin in the game.
  * Extends MovableObject and handles animation.
+ * Uses offset for precise collision detection.
  */
 class Coin extends MovableObject {
 
@@ -9,6 +10,16 @@ class Coin extends MovableObject {
         'img/8_coin/coin_1.png',
         'img/8_coin/coin_2.png',
     ];
+
+    /**
+     * Collision offset (smaller than sprite for fair pickup)
+     */
+    offset = {
+        top: 20,
+        left: 20,
+        right: 20,
+        bottom: 20
+    };
 
     /**
      * Creates a Coin at a specific position.

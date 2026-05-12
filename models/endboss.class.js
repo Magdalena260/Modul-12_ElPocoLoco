@@ -1,6 +1,3 @@
-/**
- * Endboss enemy with AI behavior
- */
 class Endboss extends MovableObject {
 
     height = 320;
@@ -11,18 +8,14 @@ class Endboss extends MovableObject {
     dead = false;
 
     speed = 1.5;
-
-    lastAttack = 0;
-    attackCooldown = 1500;
-
     activated = false;
 
     state = 'alert';
     stateLock = false;
 
-    currentImage = 0;
-
     world = null;
+
+    roarSound = null;
 
     offset = {
         top: 80,
@@ -70,9 +63,7 @@ class Endboss extends MovableObject {
 
     constructor() {
         super();
-
         this.loadImage(this.IMAGES_ALERT[0]);
-
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
@@ -80,12 +71,10 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
 
         this.x = 1600;
-
         this.animate();
     }
 
     hit() {
-
         if (this.dead) return;
 
         this.energy -= 20;
@@ -99,26 +88,20 @@ class Endboss extends MovableObject {
         this.state = 'hurt';
         this.stateLock = true;
 
-        setTimeout(() => {
-            if (!this.dead) {
-                this.stateLock = false;
-                this.state = 'walk';
-            }
-        }, 500);
+        setTimeout(() => this.stateLock = false, 500);
     }
 
     die() {
-
         if (this.dead) return;
 
         this.dead = true;
         this.speed = 0;
-        this.stateLock = true;
-        this.currentImage = 0;
-    }
+        this.state = 'dead';
 
-    isDead() {
-        return this.dead;
+        if (this.roarSound) {
+            this.roarSound.pause();
+            this.roarSound.currentTime = 0;
+        }
     }
 
     animate() {
@@ -129,24 +112,24 @@ class Endboss extends MovableObject {
             if (this.dead) return;
 
             let player = this.world.character;
-            let distance = Math.abs(player.x - this.x);
+            let dist = Math.abs(player.x - this.x);
 
-            if (distance < 500) this.activated = true;
+            if (dist < 600 && !this.activated) {
+                this.activated = true;
+
+                this.roarSound = AudioHub.BOSS_HIT.cloneNode();
+                this.roarSound.volume = 0.5;
+                this.roarSound.loop = true;
+                this.roarSound.play();
+            }
+
             if (!this.activated) return;
 
-            if (distance < 80 && !this.stateLock) {
+            if (this.stateLock) return;
 
+            if (dist < 120) {
                 this.state = 'attack';
-                this.stateLock = true;
-
-                setTimeout(() => {
-                    if (!this.dead) {
-                        this.stateLock = false;
-                        this.state = 'walk';
-                    }
-                }, 700);
-
-            } else if (!this.stateLock) {
+            } else {
                 this.state = 'walk';
             }
 
@@ -164,16 +147,12 @@ class Endboss extends MovableObject {
 
             if (!this.world || this.world.state !== "running") return;
 
-            if (this.dead) {
-                this.playAnimation(this.IMAGES_DEAD);
-                return;
-            }
-
-            if (this.state === 'hurt') this.playAnimation(this.IMAGES_HURT);
+            if (this.dead) this.playAnimation(this.IMAGES_DEAD);
+            else if (this.state === 'hurt') this.playAnimation(this.IMAGES_HURT);
             else if (this.state === 'attack') this.playAnimation(this.IMAGES_ATTACK);
             else if (this.state === 'walk') this.playAnimation(this.IMAGES_WALKING);
             else this.playAnimation(this.IMAGES_ALERT);
 
-        }, 150);
+        }, 140);
     }
 }

@@ -97,13 +97,20 @@ canvas {
     z-index: 2000;
 }
 
-/* 🔥 ONLY ADDITION (safe text styling) */
+/* ONLY ADDITION (safe text styling) */
 .howToText {
     color: rgb(230, 200, 60);
     font-family: "Rubik Gemstones", system-ui;
     text-align: center;
     max-width: 85%;
     line-height: 1.5;
+}
+
+.heart {
+    width: 28px;
+    height: 28px;
+    background-image: url("img/heart.png");
+    background-size: cover;
 }
 
 /* BUTTONS */

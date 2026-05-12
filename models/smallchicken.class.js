@@ -1,26 +1,13 @@
-/**
- * Small Chicken enemy
- */
 class SmallChicken extends MovableObject {
 
     y = 370;
     height = 50;
     width = 45;
+
     speed = 1.6;
 
-    world = null;
-
     dead = false;
-    removeFromWorld = false;
-
     activated = false;
-
-    offset = {
-        top: 8,
-        left: 8,
-        right: 8,
-        bottom: 8
-    };
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
@@ -35,7 +22,6 @@ class SmallChicken extends MovableObject {
     constructor() {
         super();
 
-        this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
 
@@ -51,13 +37,11 @@ class SmallChicken extends MovableObject {
             if (this.dead) return;
 
             if (!this.activated && this.world?.character) {
-                let distance = Math.abs(this.world.character.x - this.x);
-                if (distance < 800) this.activated = true;
+                let dist = Math.abs(this.world.character.x - this.x);
+                if (dist < 800) this.activated = true;
             }
 
-            if (this.activated) {
-                this.moveLeft();
-            }
+            if (this.activated) this.moveLeft();
 
         }, 1000 / 60);
 
@@ -79,8 +63,6 @@ class SmallChicken extends MovableObject {
         this.dead = true;
         this.speed = 0;
 
-        setTimeout(() => {
-            this.removeFromWorld = true;
-        }, 400);
+        AudioHub.play(AudioHub.CHICKEN_DEATH, 0.3);
     }
 }

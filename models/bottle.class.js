@@ -5,6 +5,16 @@
 class Bottle extends MovableObject {
 
     /**
+     * Collision offset for more precise pickup detection
+     */
+    offset = {
+        top: 15,
+        left: 15,
+        right: 15,
+        bottom: 15
+    };
+
+    /**
      * Creates a bottle object at a given position.
      * @param {number} x - X position of the bottle.
      * @param {number} y - Y position of the bottle.

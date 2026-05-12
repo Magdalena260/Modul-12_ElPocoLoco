@@ -21,6 +21,13 @@ class World {
     state = "running";
     gameLoop;
 
+    // ================= SOUNDS =================
+    coinSound = AudioHub.COIN;
+    throwSound = AudioHub.THROW;
+    chickenSound = AudioHub.CHICKEN_HIT;
+    bossHitSound = AudioHub.BOSS_HIT;
+    bossDeathSound = AudioHub.BOSS_DEATH;
+
     constructor(canvas, keyboard) {
 
         this.canvas = canvas;
@@ -39,8 +46,6 @@ class World {
         this.draw();
     }
 
-    // ================= INIT =================
-
     initLevelEntities() {
 
         this.level.enemies.forEach(e => {
@@ -50,6 +55,12 @@ class World {
                 e.dead = false;
                 e.energy = 100;
                 e.activated = false;
+
+                // 🔥 RESET ROAR
+                if (e.roarSound) {
+                    e.roarSound.pause();
+                    e.roarSound.currentTime = 0;
+                }
             }
         });
 
@@ -96,8 +107,6 @@ class World {
         ], 500, 20);
     }
 
-    // ================= LOOP =================
-
     run() {
 
         this.gameLoop = setInterval(() => {
@@ -115,19 +124,12 @@ class World {
         }, 100);
     }
 
-    // ================= FIXED CLEANUP =================
-    cleanup() {
-        this.throwables = this.throwables.filter(t => t.x < this.character.x + 1200);
-    }
-
-    // ================= LOGIC =================
-
     checkCoins() {
         this.level.coins.forEach((c, i) => {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
                 this.coinCount++;
-                AudioHub.play(AudioHub.COIN, 0.3);
+                AudioHub.play(this.coinSound, 0.4);
             }
         });
     }
@@ -156,9 +158,13 @@ class World {
                 this.character.y + this.character.height <= e.y + 60;
 
             if (jumpKill) {
-                e.die();
+
+                e.die?.();
+                AudioHub.play(this.chickenSound, 0.5);
                 this.character.speedY = 10;
+
             } else {
+
                 this.character.hit();
 
                 if (this.character.isDead()) {
@@ -181,6 +187,8 @@ class World {
             );
 
             this.bottleCount--;
+            AudioHub.play(this.throwSound, 0.5);
+            this.keyboard.D = false;
         }
     }
 
@@ -196,7 +204,10 @@ class World {
                 if (e.dead) continue;
 
                 if (bottle.isColliding(e)) {
-                    e.die();
+
+                    e.die?.();
+                    AudioHub.play(this.chickenSound, 0.5);
+
                     this.throwables.splice(b, 1);
                     break;
                 }
@@ -214,17 +225,19 @@ class World {
             let bottle = this.throwables[b];
 
             if (bottle.isColliding(boss)) {
+
                 boss.hit();
+                AudioHub.play(this.bossHitSound, 0.6);
+
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) {
+                    AudioHub.play(this.bossDeathSound, 0.8);
                     setTimeout(() => this.triggerWin(), 1200);
                 }
             }
         }
     }
-
-    // ================= UI =================
 
     updateUI() {
 
@@ -236,7 +249,15 @@ class World {
         if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
-    // ================= DRAW =================
+    triggerGameOver() {
+        this.state = "gameover";
+        document.getElementById("gameOverScreen").style.display = "flex";
+    }
+
+    triggerWin() {
+        this.state = "win";
+        document.getElementById("winScreen").style.display = "flex";
+    }
 
     draw() {
 
@@ -283,15 +304,5 @@ class World {
         }
 
         this.ctx.restore();
-    }
-
-    triggerGameOver() {
-        this.state = "gameover";
-        document.getElementById("gameOverScreen").style.display = "flex";
-    }
-
-    triggerWin() {
-        this.state = "win";
-        document.getElementById("winScreen").style.display = "flex";
     }
 }

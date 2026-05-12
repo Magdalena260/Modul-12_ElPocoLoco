@@ -16,6 +16,8 @@ class Character extends MovableObject {
     movementInterval;
     animationInterval;
 
+    deadCinematic = false;
+
     offset = {
         top: 110,
         left: 35,
@@ -90,7 +92,6 @@ class Character extends MovableObject {
         super();
 
         this.loadImage(this.IMAGES_IDLE[0]);
-
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_SLEEP);
         this.loadImages(this.IMAGES_WALKING);
@@ -103,8 +104,7 @@ class Character extends MovableObject {
     }
 
     hit() {
-        let now = new Date().getTime();
-
+        let now = Date.now();
         if (now - this.lastHit < this.hitCooldown) return;
 
         this.lastHit = now;
@@ -118,13 +118,7 @@ class Character extends MovableObject {
     }
 
     isHurt() {
-        let timePassed = new Date().getTime() - this.lastHit;
-        return timePassed < 500;
-    }
-
-    stopAll() {
-        clearInterval(this.movementInterval);
-        clearInterval(this.animationInterval);
+        return Date.now() - this.lastHit < 500;
     }
 
     animate() {
@@ -132,6 +126,7 @@ class Character extends MovableObject {
         this.movementInterval = setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;
+            if (this.isDead()) return;
 
             let moving = false;
 
@@ -149,49 +144,55 @@ class Character extends MovableObject {
 
             if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.isAboveGround()) {
                 this.jump();
-                AudioHub.play(AudioHub.JUMP, 0.3);
+                AudioHub?.play?.(AudioHub.JUMP, 0.3);
             }
 
             this.world.camera_x = -this.x + 100;
 
-            if (moving) {
-                this.lastMove = new Date().getTime();
-            }
+            if (moving) this.lastMove = Date.now();
 
         }, 1000 / 60);
 
         this.animationInterval = setInterval(() => {
 
-            if (!this.world || this.world.state !== "running") return;
+            if (!this.world) return;
 
-            let time = new Date().getTime() - this.lastMove;
-
+            // DEATH CINEMATIC
             if (this.isDead()) {
+
+                if (!this.deadCinematic) {
+                    this.deadCinematic = true;
+
+                    this.world.state = "gameover";
+
+                    // SLOWMO
+                    clearInterval(this.movementInterval);
+                    clearInterval(this.animationInterval);
+
+                    this.world.gameLoop && clearInterval(this.world.gameLoop);
+                }
+
                 this.playAnimation(this.IMAGES_DEAD);
                 return;
             }
 
+            let time = Date.now() - this.lastMove;
+
             if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
-                return;
             }
-
-            if (this.isAboveGround()) {
+            else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
-                return;
             }
-
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.playAnimation(this.IMAGES_WALKING);
-                return;
             }
-
-            if (time > 4000) {
+            else if (time > 4000) {
                 this.playAnimation(this.IMAGES_SLEEP);
-                return;
             }
-
-            this.playAnimation(this.IMAGES_IDLE);
+            else {
+                this.playAnimation(this.IMAGES_IDLE);
+            }
 
         }, 120);
     }

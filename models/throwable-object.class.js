@@ -1,62 +1,69 @@
 /**
- * ThrowableObject
- * Represents a thrown object (e.g. bottle) with physics-like movement.
- * Moves in a parabolic trajectory using speed and gravity.
+ * Throwable object with real arc physics + rotation
  */
 class ThrowableObject extends MovableObject {
 
-    /**
-     * Creates a throwable object
-     * @param {number} x - Initial x position
-     * @param {number} y - Initial y position
-     * @param {string} direction - Direction of throw ("left" or "right")
-     */
+    speedX;
+    speedY = 18;
+    gravity = 1.2;
+
+    rotation = 0;
+    rotationSpeed = 10;
+
+    direction;
+
     constructor(x, y, direction) {
         super();
 
-        /** Position */
         this.x = x;
         this.y = y;
 
-        /** Size */
         this.width = 50;
         this.height = 50;
 
-        /** Throw direction */
         this.direction = direction;
 
-        /** Horizontal speed based on direction */
-        this.speedX = direction === 'left' ? -12 : 12;
+        this.speedX = direction === "left" ? -12 : 12;
 
-        /** Initial upward force */
-        this.speedY = 6;
-
-        /** Gravity affecting the object */
-        this.gravity = 0.5;
-
-        /** Image of the throwable object */
         this.loadImage('img/6_salsa_bottle/salsa_bottle.png');
 
-        this.throw();
+        this.start();
     }
 
     /**
-     * Starts movement simulation (throw trajectory)
-     * Updates position ~60 times per second
+     * Physics loop
      */
-    throw() {
+    start() {
 
-        setInterval(() => {
+        this.interval = setInterval(() => {
 
-            // horizontal movement
+            // movement
             this.x += this.speedX;
 
-            // vertical movement (parabolic arc)
             this.y -= this.speedY;
-
-            // gravity effect
             this.speedY -= this.gravity;
 
+            // rotation
+            this.rotation += this.rotationSpeed;
+
+            // cleanup (out of screen)
+            if (this.y > 500 || this.x < -2000 || this.x > 4000) {
+                clearInterval(this.interval);
+                this.remove = true;
+            }
+
         }, 1000 / 60);
+    }
+
+    /**
+     * draw override (if your engine supports rotation rendering)
+     */
+    draw(ctx) {
+
+        ctx.save();
+        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+        ctx.rotate(this.rotation * Math.PI / 180);
+        ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
+        ctx.restore();
     }
 }

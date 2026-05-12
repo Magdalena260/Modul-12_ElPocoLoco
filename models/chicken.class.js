@@ -1,28 +1,13 @@
 class Chicken extends MovableObject {
 
-    y = 340;
-    height = 80;
-    width = 77;
-    speed = 0.8;
-
-    world = null;
-
-    dead = false;
-    removeFromWorld = false;
-
-    activated = false;
-
-    offset = {
-        top: 10,
-        left: 10,
-        right: 10,
-        bottom: 10
-    };
+    height = 60;
+    width = 60;
+    y = 360;
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png',
+        'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
     ];
 
     IMAGES_DEAD = [
@@ -32,11 +17,11 @@ class Chicken extends MovableObject {
     constructor() {
         super();
 
-        this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
 
-        this.x = 400 + Math.random() * 800;
+        this.x = 300 + Math.random() * 1200;
+        this.speed = 0.5 + Math.random() * 0.5;
 
         this.animate();
     }
@@ -44,40 +29,16 @@ class Chicken extends MovableObject {
     animate() {
 
         setInterval(() => {
-
-            if (this.dead) return;
-
-            if (!this.activated && this.world?.character) {
-                let distance = Math.abs(this.world.character.x - this.x);
-                if (distance < 900) this.activated = true;
-            }
-
-            if (this.activated) {
-                this.moveLeft();
-            }
-
+            this.moveLeft();
         }, 1000 / 60);
 
         setInterval(() => {
-
-            if (this.dead) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-
+            this.playAnimation(this.IMAGES_WALKING);
         }, 200);
     }
 
     die() {
-
-        if (this.dead) return;
-
-        this.dead = true;
+        this.loadImage(this.IMAGES_DEAD[0]);
         this.speed = 0;
-
-        setTimeout(() => {
-            this.removeFromWorld = true;
-        }, 400);
     }
 }
