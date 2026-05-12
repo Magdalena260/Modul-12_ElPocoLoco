@@ -2,146 +2,78 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>El Pollo Loco</title>
+<title>El Pollo Loco</title>
 
-    <link rel="icon" href="img/favicon.png">
-    <link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Gemstones&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 
-    <!-- ===================== CORE ENGINE ===================== -->
-    <script src="models/audiohub.class.js"></script>
+<!-- =========================
+     🧱 BASE CLASSES
+========================= -->
+<script src="models/drawable-object.class.js"></script>
+<script src="models/movable-object.class.js"></script>
+<script src="models/keyboard.class.js"></script>
+<script src="models/level.class.js"></script>
 
-    <script src="models/drawable-object.class.js"></script>
-    <script src="models/movable-object.class.js"></script>
+<!-- =========================
+     🎮 GAME OBJECTS
+========================= -->
+<script src="models/background-object.class.js"></script>
+<script src="models/cloud.class.js"></script>
 
-    <script src="models/keyboard.class.js"></script>
-    <script src="models/level.class.js"></script>
+<script src="models/chicken.class.js"></script>
+<script src="models/endboss.class.js"></script>
 
-    <!-- ===================== ENVIRONMENT ===================== -->
-    <script src="models/background-object.class.js"></script>
-    <script src="models/cloud.class.js"></script>
+<script src="models/character.class.js"></script>
 
-    <!-- ===================== ITEMS ===================== -->
-    <script src="models/coin.class.js"></script>
-    <script src="models/bottle.class.js"></script>
+<!-- 🪙🍾 COLLECTIBLES -->
+<script src="models/coin.class.js"></script>
+<script src="models/bottle.class.js"></script>
 
-    <!-- ===================== ENEMIES ===================== -->
-    <script src="models/chicken.class.js"></script>
-    <script src="models/smallchicken.class.js"></script>
-    <script src="models/endboss.class.js"></script>
+<!-- 💣 THROWABLE -->
+<script src="models/throwable-object.class.js"></script>
 
-    <!-- ===================== PLAYER ===================== -->
-    <script src="models/character.class.js"></script>
+<!-- 📊 UI -->
+<script src="models/status-bar.class.js"></script>
 
-    <!-- ===================== GAME OBJECTS ===================== -->
-    <script src="models/throwable-object.class.js"></script>
-    <script src="models/status-bar.class.js"></script>
+<!-- 🌍 WORLD -->
+<script src="models/world.class.js"></script>
 
-    <!-- ===================== WORLD ===================== -->
-    <script src="models/world.class.js"></script>
+<!-- 📦 LEVEL -->
+<script src="levels/level1.js"></script>
 
-    <!-- ===================== LEVELS ===================== -->
-    <script src="levels/level1.js"></script>
+<!-- 🎮 GAME START -->
+<script src="js/game.js"></script>
 
-    <!-- ===================== START SCRIPT ===================== -->
-    <script src="js/game.js"></script>
 </head>
 
 <body onload="init()">
 
-    <div id="rotateScreen">
-        Please turn the device around
-    </div>
+<div id="uiFrame">
 
-    <div id="uiFrame">
+    <div id="gameContainer">
 
-        <button id="muteBtn" onclick="toggleMute()">🔊 Sound</button>
+        <!-- START SCREEN -->
+        <div id="startScreen">
 
-      
-        <div id="gameContainer">
+            <h1>El Pollo Loco</h1>
 
-            <!-- ================= START SCREEN ================= -->
-            <div id="startScreen">
-                <h1>El Pollo Loco</h1>
-
-                <button onclick="startGame()">Start Game</button>
-                <button onclick="showHowToPlay()">How to Play</button>
-            </div>
-
-            <!-- ================= HOW TO PLAY ================= -->
-            <div id="howToPlayOverlay" style="display:none;">
-                <div class="howToText">
-
-                    Bienvenido zu El Pollo Loco<br><br>
-
-                    Du spielst Pepe in der Wüste.<br>
-                    Springe auf Hühner oder wirf Flaschen.<br><br>
-
-                    Ziele:<br>
-                    - Coins sammeln<br>
-                    - Flaschen sammeln<br>
-                    - Gegner besiegen<br><br>
-
-                    Endboss: Madame Chickoloco<br><br>
-
-                    Steuerung:<br>
-                    ← → bewegen<br>
-                    Space = springen<br>
-                    D = werfen<br><br>
-
-                    Viel Spaß!
-
-                </div>
-
-                <button class="gameButton" onclick="closeHowToPlay()">
-                    Back
-                </button>
-            </div>
-
-            <!-- ================= CANVAS ================= -->
-            <canvas id="canvas" width="720" height="480"></canvas>
-
-            <!-- ================= MOBILE CONTROLS ================= -->
-            <div id="mobileControls">
-
-                <button class="mobileBtn"
-                    ontouchstart="keyboard.LEFT = true"
-                    ontouchend="keyboard.LEFT = false">⬅</button>
-
-                <button class="mobileBtn"
-                    ontouchstart="keyboard.RIGHT = true"
-                    ontouchend="keyboard.RIGHT = false">➡</button>
-
-                <button class="mobileBtn"
-                    ontouchstart="keyboard.UP = true"
-                    ontouchend="keyboard.UP = false">⬆</button>
-
-                <button class="mobileBtn"
-                    ontouchstart="keyboard.D = true"
-                    ontouchend="keyboard.D = false">D</button>
-
-            </div>
-
-            <!-- ================= GAME OVER ================= -->
-            <div id="gameOverScreen" class="overlay" style="display:none;">
-                <h1>You Lost!</h1>
-                <button onclick="restartGame()">Restart</button>
-            </div>
-
-            <!-- ================= WIN SCREEN ================= -->
-            <div id="winScreen" class="overlay" style="display:none;">
-                <h1>You Win!</h1>
-                <button onclick="restartGame()">Play Again</button>
-            </div>
+            <button id="startBtn" onclick="startGame()">
+                Start Game
+            </button>
 
         </div>
+
+        <!-- CANVAS -->
+        <canvas id="canvas" width="720" height="480"></canvas>
+
     </div>
 
-    <footer>
-        <a href="impressum.html">Impressum</a>
-    </footer>
+</div>
 
 </body>
 </html>

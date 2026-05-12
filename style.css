@@ -1,39 +1,41 @@
-@font-face {
-    font-family: "Rubik Gemstones";
-    src: url("fonts/Rubik_Gemstones/RubikGemstones-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* BODY */
 body {
     margin: 0;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     height: 100vh;
+
     background-image: url('img/desert.png');
     background-size: cover;
     background-position: center;
-    overflow: hidden;
 }
 
-/* FRAME */
+/* =========================
+   UI FRAME
+========================= */
 #uiFrame {
     position: relative;
+
     width: 820px;
     height: 620px;
+
     background-image: url('frame1.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
 }
 
-/* GAME */
+/* =========================
+   GAME CONTAINER
+========================= */
 #gameContainer {
     position: relative;
     width: 720px;
@@ -41,212 +43,105 @@ body {
     overflow: hidden;
 }
 
-/* CANVAS */
+/* =========================
+   CANVAS (WICHTIG: LAYER 1)
+========================= */
 canvas {
     position: absolute;
     top: 0;
     left: 0;
+
     width: 720px;
     height: 480px;
+
     background-color: black;
+
     display: block;
+
     z-index: 1;
 }
 
-/* START */
+/* =========================
+   STARTSCREEN (LAYER 9999)
+========================= */
 #startScreen {
     position: absolute;
+    top: 0;
+    left: 0;
+
     width: 720px;
     height: 480px;
+
     background-color: rgba(0, 0, 0, 0.95);
+
     color: rgb(230, 200, 60);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    z-index: 1000;
-    font-family: "Rubik Gemstones", system-ui;
+
+    z-index: 9999;
+
+    font-family: Arial;
+
+    border-radius: 12px;
 }
 
-/* OVERLAYS */
-.overlay {
-    position: absolute;
-    width: 720px;
-    height: 480px;
-    background: black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    z-index: 1500;
-    color: rgb(230, 200, 60);
-    font-family: "Rubik Gemstones", system-ui;
-}
-
-/* HOW TO PLAY */
-#howToPlayOverlay {
-    position: absolute;
-    width: 720px;
-    height: 480px;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-/* ONLY ADDITION (safe text styling) */
-.howToText {
-    color: rgb(230, 200, 60);
-    font-family: "Rubik Gemstones", system-ui;
-    text-align: center;
-    max-width: 85%;
-    line-height: 1.5;
-}
-
-
-
-/* BUTTONS */
-button,
-.gameButton {
+/* =========================
+   BUTTON
+========================= */
+#startScreen button {
     padding: 12px 28px;
     font-size: 20px;
+
     cursor: pointer;
+
     border: none;
     border-radius: 8px;
+
     background-color: #e6c200;
     color: black;
+
     font-weight: bold;
     font-family: "Rubik Gemstones", system-ui;
+
+    transition: 0.2s;
 }
 
-/* SOUND BUTTON */
-#muteBtn {
-    position: absolute;
-    top: 90px;
-    right: 70px;
-    z-index: 5000;
-    padding: 10px 15px;
-    background-color: #ffcc00;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-/* ROTATE */
-#rotateScreen {
-    display: none;
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    color: white;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-size: 28px;
-    z-index: 9999999;
-}
-
-/* MOBILE */
-#mobileControls {
-    display: none;
-}
-
-.mobileBtn {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    background: rgba(255, 204, 0, 0.8);
-    font-size: 30px;
-}
-
-/* IMPRESSUM */
-.imprint-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
-}
-
-.imprint-card {
-    background: #f6e7b4;
-    color: #5a3412;
-    padding: 30px;
-    max-width: 700px;
-    width: 100%;
-    font-family: "Rubik Gemstones", system-ui;
-    line-height: 1.8;
-    border-radius: 12px;
-    box-shadow: 0px 18px 40px rgba(0, 0, 0, 0.55);
-}
-
-/* FOOTER */
-footer {
-    position: fixed;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-    font-family: "Rubik Gemstones", system-ui;
-}
-
-footer a {
-    color: #5a3412;
-    text-decoration: none;
-    font-size: 20px;
-}
-/* HOVER FIX */
-button:hover,
-.gameButton:hover {
-    background-color: #fff08a;
+#startScreen button:hover {
+    background-color: #ffdb4d;
     transform: scale(1.05);
-    transition: all 0.15s ease-in-out;
 }
 
-/* RESPONSIVE */
-@media only screen and (max-width: 950px) {
+#startScreen {
+    pointer-events: auto;
+    z-index: 9999;
+}
 
-    body { overflow: hidden; }
+canvas {
+    pointer-events: auto;
+}
 
-    #uiFrame {
-        width: 100vw;
-        height: 100vh;
-        background-image: none;
-    }
+/* =========================
+   TITLE
+========================= */
+h1 {
+    font-family: "Rubik Gemstones", system-ui;
+    font-size: 60px;
+}
 
-    #gameContainer {
-        width: 100vw;
-        height: 100vh;
-    }
-
-    canvas,
-    #startScreen,
-    #howToPlayOverlay,
-    .overlay {
+/* =========================
+   RESPONSIVE
+========================= */
+@media only screen and (max-width: 760px){
+    canvas {
         width: 100%;
-        height: 100%;
     }
+}
 
-    footer { display: none; }
-
-    #mobileControls {
-        display: flex;
-        position: fixed;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        justify-content: space-between;
-        padding: 0 20px;
-        z-index: 3000;
-    }
-
-    #howToPlayOverlay {
-        display: none !important;
-    }
-
-    #startScreen button:nth-of-type(2) {
-        display: none;
+@media only screen and (max-width: 480px){
+    canvas {
+        height: 100vh;
     }
 }

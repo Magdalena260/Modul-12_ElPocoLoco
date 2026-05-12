@@ -1,7 +1,3 @@
-/**
- * StatusBar
- * Displays a visual status indicator (health, coins, bottles, boss health).
- */
 class StatusBar extends DrawableObject {
 
     percentage = 100;
@@ -25,10 +21,7 @@ class StatusBar extends DrawableObject {
         this.percentage = p;
 
         let path = this.images[this.resolve()];
-
-        if (this.imageCache && this.imageCache[path]) {
-            this.img = this.imageCache[path];
-        }
+        this.img = this.imageCache[path];
     }
 
     resolve() {

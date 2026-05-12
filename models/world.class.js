@@ -1,3 +1,7 @@
+/**
+ * Represents the complete game world.
+ * Handles rendering, collisions, UI and game logic.
+ */
 class World {
 
     canvas;
@@ -17,17 +21,14 @@ class World {
     bottleCount = 3;
 
     throwables = [];
+    canThrow = true;
+
+    hearts = [];
 
     state = "running";
+    stepCooldown = false;
+
     gameLoop;
-
-    soundVolume = 0.1;
-
-    coinSound = AudioHub.COIN;
-    throwSound = AudioHub.THROW;
-    chickenSound = AudioHub.CHICKEN_HIT;
-    bossHitSound = AudioHub.BOSS_HIT;
-    bossDeathSound = AudioHub.BOSS_DEATH;
 
     constructor(canvas, keyboard) {
 
@@ -36,42 +37,24 @@ class World {
         this.keyboard = keyboard;
 
         this.character = new Character();
-        this.character.world = this;
-
         this.level = level1;
 
-        this.initLevelEntities();
-        this.initStatusBars();
-
-        this.run();
-        this.draw();
-    }
-
-    playSound(sound, volume = 1) {
-        AudioHub.play(sound, this.soundVolume * volume);
-    }
-
-    initLevelEntities() {
+        this.character.world = this;
 
         this.level.enemies.forEach(e => {
             e.world = this;
 
+            // ENDBOSS RESET FIX
             if (e instanceof Endboss) {
                 e.dead = false;
                 e.energy = 100;
-                e.activated = false;
-                e.state = "alert";
-
-                if (e.roarSound) {
-                    e.roarSound.pause();
-                    e.roarSound.currentTime = 0;
-                    e.roarSound = null;
-                }
+                e.y = 200;
             }
         });
 
-        this.level.coins.forEach(c => c.world = this);
-        this.level.bottles.forEach(b => b.world = this);
+        this.initStatusBars();
+        this.run();
+        this.draw();
     }
 
     initStatusBars() {
@@ -121,70 +104,73 @@ class World {
 
             this.checkCoins();
             this.checkBottles();
-            this.checkChicken();   // ✅ FIXED
+            this.checkChicken();
             this.checkThrow();
             this.checkBottleHits();
             this.checkEndboss();
+            this.cleanup();
             this.updateUI();
+            this.checkStepSound();
 
         }, 100);
     }
 
+    spawnHeart(x, y) {
+        this.hearts.push({ x, y, size: 40, life: 30 });
+    }
+
     checkCoins() {
+
         this.level.coins.forEach((c, i) => {
+
             if (this.character.isColliding(c)) {
+
                 this.level.coins.splice(i, 1);
                 this.coinCount++;
-                this.playSound(this.coinSound, 0.2);
+
+                AudioHub.play(AudioHub.COIN, 0.3);
             }
         });
     }
 
     checkBottles() {
+
         this.level.bottles.forEach((b, i) => {
+
             if (this.character.isColliding(b)) {
+
                 this.level.bottles.splice(i, 1);
                 this.bottleCount++;
             }
         });
     }
 
-    // 🐔 FIXED: reliable stomp kill
     checkChicken() {
 
-        for (let i = this.level.enemies.length - 1; i >= 0; i--) {
-
-            let e = this.level.enemies[i];
+        for (let e of this.level.enemies) {
 
             if (e instanceof Endboss) continue;
-            if (e.dead) continue;
-
             if (!this.character.isColliding(e)) continue;
-
-            let charBottom = this.character.y + this.character.height;
-            let enemyTop = e.y + (e.offset?.top || 0);
 
             let falling = this.character.speedY > 0;
 
-            let stomp =
+            let jumpKill =
                 falling &&
-                charBottom >= enemyTop &&
-                charBottom <= enemyTop + 60;
+                this.character.y + this.character.height >= e.y &&
+                this.character.y + this.character.height <= e.y + 60;
 
-            if (stomp) {
+            if (jumpKill) {
 
-                e.dead = true;
-                e.speed = 0;
-                e.die?.();
+                e.die();
 
-                this.playSound(this.chickenSound, 0.15);
+                this.character.speedY = 10;
 
-                this.character.speedY = 12;
+                AudioHub.play(AudioHub.CHICKEN, 0.3);
 
-                setTimeout(() => {
-                    let index = this.level.enemies.indexOf(e);
-                    if (index > -1) this.level.enemies.splice(index, 1);
-                }, 300);
+                this.character.energy =
+                    Math.min(100, this.character.energy + 20);
+
+                this.spawnHeart(e.x, e.y);
 
             } else {
 
@@ -199,19 +185,27 @@ class World {
 
     checkThrow() {
 
-        if (this.keyboard.D && this.bottleCount > 0) {
+        if (this.keyboard.D && this.canThrow && this.bottleCount > 0) {
+
+            this.canThrow = false;
+
+            let dir = this.character.otherDirection ? 'left' : 'right';
 
             this.throwables.push(
                 new ThrowableObject(
                     this.character.x + 50,
                     this.character.y + 100,
-                    this.character.otherDirection ? 'left' : 'right'
+                    dir
                 )
             );
 
             this.bottleCount--;
-            this.playSound(this.throwSound, 0.3);
-            this.keyboard.D = false;
+
+            AudioHub.play(AudioHub.THROW, 0.3);
+
+            setTimeout(() => {
+                this.canThrow = true;
+            }, 300);
         }
     }
 
@@ -224,14 +218,22 @@ class World {
             for (let e of this.level.enemies) {
 
                 if (e instanceof Endboss) continue;
+
                 if (e.dead) continue;
 
                 if (bottle.isColliding(e)) {
 
-                    e.die?.();
-                    this.playSound(this.chickenSound, 0.2);
+                    e.die();
+
+                    AudioHub.play(AudioHub.CHICKEN, 0.3);
+
+                    this.character.energy =
+                        Math.min(100, this.character.energy + 20);
+
+                    this.spawnHeart(e.x, e.y);
 
                     this.throwables.splice(b, 1);
+
                     break;
                 }
             }
@@ -241,48 +243,99 @@ class World {
     checkEndboss() {
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (!boss || boss.dead) return;
+        if (!boss) return;
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
 
             let bottle = this.throwables[b];
 
-            if (bottle.isColliding(boss)) {
+            if (
+                bottle.x + bottle.width > boss.x + 50 &&
+                bottle.x < boss.x + boss.width - 50 &&
+                bottle.y + bottle.height > boss.y + 50 &&
+                bottle.y < boss.y + boss.height - 50
+            ) {
 
                 boss.hit();
-                this.playSound(this.bossHitSound, 0.4);
+
+                AudioHub.play(AudioHub.ENDBOSS, 0.3);
 
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) {
-                    this.playSound(this.bossDeathSound, 0.3);
                     setTimeout(() => this.triggerWin(), 1200);
+                }
+            }
+        }
+
+        if (this.character.isColliding(boss) && !boss.dead) {
+
+            let now = new Date().getTime();
+
+            if (now - boss.lastAttack > boss.attackCooldown) {
+
+                boss.lastAttack = now;
+
+                this.character.hit();
+
+                if (this.character.isDead()) {
+                    this.triggerGameOver();
                 }
             }
         }
     }
 
+    checkStepSound() {
+
+        if (this.keyboard.RIGHT || this.keyboard.LEFT) {
+            AudioHub.play(AudioHub.STEP, 0.1);
+        }
+    }
+
+    cleanup() {
+
+        this.level.enemies = this.level.enemies.filter(e => {
+            if (e instanceof Endboss) return true;
+            return !e.removeFromWorld;
+        });
+    }
+
     updateUI() {
 
         this.statusBarHealth.setPercentage(this.character.energy);
-        this.statusBarCoins.setPercentage(this.coinCount * 10);
-        this.statusBarBottles.setPercentage(this.bottleCount * 10);
+
+        this.statusBarCoins.setPercentage(this.coinCount * 20);
+
+        this.statusBarBottles.setPercentage(this.bottleCount * 20);
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (boss) this.statusBarEndboss.setPercentage(boss.energy);
+
+        if (boss) {
+            this.statusBarEndboss.setPercentage(boss.energy);
+        }
     }
 
     triggerGameOver() {
+
         this.state = "gameover";
+
+        AudioHub.stopMusic?.();
+
         document.getElementById("gameOverScreen").style.display = "flex";
     }
 
     triggerWin() {
+
         this.state = "win";
+
+        AudioHub.stopMusic?.();
+
         document.getElementById("winScreen").style.display = "flex";
     }
 
     draw() {
+
+        if (this.state === "gameover" || this.state === "win") return;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -305,10 +358,29 @@ class World {
         this.addToMap(this.statusBarBottles);
         this.addToMap(this.statusBarEndboss);
 
+        this.drawHearts();
+
         requestAnimationFrame(() => this.draw());
     }
 
+    drawHearts() {
+
+        this.hearts.forEach((h, i) => {
+
+            let img = new Image();
+            img.src = 'img/heart_red.png';
+
+            this.ctx.drawImage(img, h.x, h.y, h.size, h.size);
+
+            h.y -= 1;
+            h.life--;
+
+            if (h.life <= 0) this.hearts.splice(i, 1);
+        });
+    }
+
     addObjects(arr) {
+        if (!arr) return;
         arr.forEach(o => this.addToMap(o));
     }
 
@@ -318,7 +390,7 @@ class World {
 
         this.ctx.save();
 
-        if (mo instanceof Character && mo.otherDirection) {
+        if (mo.otherDirection) {
             this.ctx.translate(mo.x + mo.width, 0);
             this.ctx.scale(-1, 1);
             this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
@@ -327,5 +399,11 @@ class World {
         }
 
         this.ctx.restore();
+    }
+
+    stopAll() {
+        clearInterval(this.gameLoop);
+        this.throwables = [];
+        this.hearts = [];
     }
 }

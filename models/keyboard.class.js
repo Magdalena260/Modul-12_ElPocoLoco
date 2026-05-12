@@ -1,31 +1,14 @@
-/**
- * Handles keyboard input for the game.
- * Tracks key states for movement and actions.
- */
 class Keyboard {
 
-    /** @type {boolean} move left key state */
     LEFT = false;
-
-    /** @type {boolean} move right key state */
     RIGHT = false;
-
-    /** @type {boolean} jump key state (spacebar) */
     SPACE = false;
-
-    /** @type {boolean} action key state (D key) */
     D = false;
 
-    /**
-     * Creates a Keyboard instance and binds event listeners.
-     */
     constructor() {
         this.bindEvents();
     }
 
-    /**
-     * Binds keydown and keyup events to update key states.
-     */
     bindEvents() {
 
         window.addEventListener('keydown', (e) => {

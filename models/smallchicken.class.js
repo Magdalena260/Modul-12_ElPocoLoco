@@ -16,6 +16,18 @@ class SmallChicken extends MovableObject {
         right: 8
     };
 
+<<<<<<< HEAD
+        offset = {
+        top: 10,
+        bottom: 5,
+        left: 8,
+        right: 8
+    };
+
+
+    /** @type {string[]} walking animation frames */
+=======
+>>>>>>> a27fffe5520d1e3eed5eb2ac0b812048325cdce3
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
