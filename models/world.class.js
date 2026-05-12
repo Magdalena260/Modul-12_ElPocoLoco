@@ -1,7 +1,3 @@
-/**
- * Represents the complete game world.
- * Handles rendering, collisions, UI and game logic.
- */
 class World {
 
     canvas;
@@ -21,7 +17,6 @@ class World {
     bottleCount = 3;
 
     throwables = [];
-    hearts = [];
 
     state = "running";
     gameLoop;
@@ -44,7 +39,7 @@ class World {
         this.draw();
     }
 
-    // ================= LEVEL INIT / RESET =================
+    // ================= INIT =================
 
     initLevelEntities() {
 
@@ -61,8 +56,6 @@ class World {
         this.level.coins.forEach(c => c.world = this);
         this.level.bottles.forEach(b => b.world = this);
     }
-
-    // ================= STATUS BARS =================
 
     initStatusBars() {
 
@@ -103,7 +96,7 @@ class World {
         ], 500, 20);
     }
 
-    // ================= GAME LOOP =================
+    // ================= LOOP =================
 
     run() {
 
@@ -117,13 +110,17 @@ class World {
             this.checkThrow();
             this.checkBottleHits();
             this.checkEndboss();
-            this.cleanup();
             this.updateUI();
 
         }, 100);
     }
 
-    // ================= GAME LOGIC =================
+    // ================= FIXED CLEANUP =================
+    cleanup() {
+        this.throwables = this.throwables.filter(t => t.x < this.character.x + 1200);
+    }
+
+    // ================= LOGIC =================
 
     checkCoins() {
         this.level.coins.forEach((c, i) => {
@@ -145,6 +142,7 @@ class World {
     }
 
     checkChicken() {
+
         for (let e of this.level.enemies) {
 
             if (e instanceof Endboss) continue;
@@ -158,12 +156,8 @@ class World {
                 this.character.y + this.character.height <= e.y + 60;
 
             if (jumpKill) {
-
                 e.die();
                 this.character.speedY = 10;
-
-                this.character.energy = Math.min(100, this.character.energy + 20);
-
             } else {
                 this.character.hit();
 
@@ -219,9 +213,7 @@ class World {
 
             let bottle = this.throwables[b];
 
-            if (
-                bottle.isColliding(boss)
-            ) {
+            if (bottle.isColliding(boss)) {
                 boss.hit();
                 this.throwables.splice(b, 1);
 
@@ -230,33 +222,6 @@ class World {
                 }
             }
         }
-    }
-
-    // ================= RESET =================
-
-    restartGame() {
-
-        clearInterval(this.gameLoop);
-
-        this.state = "running";
-
-        this.coinCount = 0;
-        this.bottleCount = 3;
-        this.throwables = [];
-        this.hearts = [];
-
-        this.character = new Character();
-        this.character.world = this;
-
-        this.level = level1;   // 🔥 HIER werden ALLE neuen Hühner geladen
-
-        this.initLevelEntities();
-        this.initStatusBars();
-
-        document.getElementById("gameOverScreen").style.display = "none";
-        document.getElementById("winScreen").style.display = "none";
-
-        this.run();
     }
 
     // ================= UI =================
@@ -299,10 +264,7 @@ class World {
         requestAnimationFrame(() => this.draw());
     }
 
-    // ================= HELPERS =================
-
     addObjects(arr) {
-        if (!arr) return;
         arr.forEach(o => this.addToMap(o));
     }
 
@@ -313,11 +275,9 @@ class World {
         this.ctx.save();
 
         if (mo instanceof Character && mo.otherDirection) {
-
             this.ctx.translate(mo.x + mo.width, 0);
             this.ctx.scale(-1, 1);
             this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
-
         } else {
             this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
         }

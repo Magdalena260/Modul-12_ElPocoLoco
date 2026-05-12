@@ -1,8 +1,6 @@
 /**
- * Represents the first game level configuration.
- * Contains all enemies, clouds, background layers, coins, and bottles.
- * Defines the playable world structure.
- * @type {Level}
+ * Level 1
+ * (Background original behalten – nur Rest bereinigt)
  */
 const level1 = new Level(
 
@@ -42,7 +40,7 @@ const level1 = new Level(
         new Cloud()
     ],
 
-    // ================= BACKGROUND =================
+    // ================= BACKGROUND (UNCHANGED) =================
     [
         new BackgroundObject('img/5_background/layers/air.png', -712),
         new BackgroundObject('img/5_background/layers/3_third_layer/2.png', -712),
@@ -68,10 +66,9 @@ const level1 = new Level(
         new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 712 * 3),
         new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 712 * 3),
         new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 712 * 3),
-      
     ],
 
-    // ================= COINS =================
+    // ================= COINS (cleaned duplicates slightly) =================
     [
         new Coin(300, 300),
         new Coin(200, 300),
@@ -87,25 +84,20 @@ const level1 = new Level(
         new Coin(300, 500),
         new Coin(350, 650),
         new Coin(250, 800),
-        new Coin(600, 100),
         new Coin(30, 600),
         new Coin(30, 400),
-        new Coin(30, 600),
-        new Coin(600, 100),
         new Coin(900, 650),
         new Coin(1000, 100),
         new Coin(1000, 300),
         new Coin(1100, 100),
         new Coin(1100, 300),
-
         new Coin(1100, 400),
         new Coin(1100, 450),
         new Coin(1100, 550),
     ],
 
-    // ================= BOTTLES =================
+    // ================= BOTTLES (unchanged) =================
     [
-       
         new Bottle(150, 350),
         new Bottle(250, 350),
         new Bottle(500, 350),
@@ -119,5 +111,5 @@ const level1 = new Level(
     ]
 );
 
-// Define level end boundary
+// Level boundary
 level1.level_end_x = 712 * 3;
