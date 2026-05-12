@@ -9,6 +9,13 @@ class SmallChicken extends MovableObject {
     dead = false;
     activated = false;
 
+    offset = {
+        top: 10,
+        bottom: 5,
+        left: 8,
+        right: 8
+    };
+
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
@@ -62,13 +69,8 @@ class SmallChicken extends MovableObject {
 
         this.dead = true;
         this.speed = 0;
+        this.remove = true;
 
-        this.loadImage(this.IMAGES_DEAD[0]);
-
-        this.height = 20;
-
-        setTimeout(() => {
-            this.remove = true;
-        }, 800);
+        AudioHub.play(AudioHub.CHICKEN_DEATH, 0.1);
     }
 }
