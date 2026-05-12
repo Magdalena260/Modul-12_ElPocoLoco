@@ -21,8 +21,6 @@ class World {
     bottleCount = 3;
 
     throwables = [];
-    canThrow = true;
-
     hearts = [];
 
     state = "running";
@@ -40,13 +38,13 @@ class World {
         this.level = level1;
 
         this.initLevelEntities();
-
         this.initStatusBars();
+
         this.run();
         this.draw();
     }
 
-    // ================= LEVEL RESET HELP =================
+    // ================= LEVEL INIT / RESET =================
 
     initLevelEntities() {
 
@@ -56,8 +54,12 @@ class World {
             if (e instanceof Endboss) {
                 e.dead = false;
                 e.energy = 100;
+                e.activated = false;
             }
         });
+
+        this.level.coins.forEach(c => c.world = this);
+        this.level.bottles.forEach(b => b.world = this);
     }
 
     // ================= STATUS BARS =================
@@ -117,49 +119,143 @@ class World {
             this.checkEndboss();
             this.cleanup();
             this.updateUI();
-            this.checkStepSound();
 
         }, 100);
     }
 
-    // ================= RESET (MENTOR SAFE VERSION) =================
+    // ================= GAME LOGIC =================
+
+    checkCoins() {
+        this.level.coins.forEach((c, i) => {
+            if (this.character.isColliding(c)) {
+                this.level.coins.splice(i, 1);
+                this.coinCount++;
+                AudioHub.play(AudioHub.COIN, 0.3);
+            }
+        });
+    }
+
+    checkBottles() {
+        this.level.bottles.forEach((b, i) => {
+            if (this.character.isColliding(b)) {
+                this.level.bottles.splice(i, 1);
+                this.bottleCount++;
+            }
+        });
+    }
+
+    checkChicken() {
+        for (let e of this.level.enemies) {
+
+            if (e instanceof Endboss) continue;
+            if (!this.character.isColliding(e)) continue;
+
+            let falling = this.character.speedY > 0;
+
+            let jumpKill =
+                falling &&
+                this.character.y + this.character.height >= e.y &&
+                this.character.y + this.character.height <= e.y + 60;
+
+            if (jumpKill) {
+
+                e.die();
+                this.character.speedY = 10;
+
+                this.character.energy = Math.min(100, this.character.energy + 20);
+
+            } else {
+                this.character.hit();
+
+                if (this.character.isDead()) {
+                    this.triggerGameOver();
+                }
+            }
+        }
+    }
+
+    checkThrow() {
+
+        if (this.keyboard.D && this.bottleCount > 0) {
+
+            this.throwables.push(
+                new ThrowableObject(
+                    this.character.x + 50,
+                    this.character.y + 100,
+                    this.character.otherDirection ? 'left' : 'right'
+                )
+            );
+
+            this.bottleCount--;
+        }
+    }
+
+    checkBottleHits() {
+
+        for (let b = this.throwables.length - 1; b >= 0; b--) {
+
+            let bottle = this.throwables[b];
+
+            for (let e of this.level.enemies) {
+
+                if (e instanceof Endboss) continue;
+                if (e.dead) continue;
+
+                if (bottle.isColliding(e)) {
+                    e.die();
+                    this.throwables.splice(b, 1);
+                    break;
+                }
+            }
+        }
+    }
+
+    checkEndboss() {
+
+        let boss = this.level.enemies.find(e => e instanceof Endboss);
+        if (!boss) return;
+
+        for (let b = this.throwables.length - 1; b >= 0; b--) {
+
+            let bottle = this.throwables[b];
+
+            if (
+                bottle.isColliding(boss)
+            ) {
+                boss.hit();
+                this.throwables.splice(b, 1);
+
+                if (boss.isDead()) {
+                    setTimeout(() => this.triggerWin(), 1200);
+                }
+            }
+        }
+    }
+
+    // ================= RESET =================
 
     restartGame() {
 
-        // STOP EVERYTHING
         clearInterval(this.gameLoop);
 
-        // RESET STATE
         this.state = "running";
 
-        // RESET VALUES
         this.coinCount = 0;
         this.bottleCount = 3;
         this.throwables = [];
         this.hearts = [];
 
-        // RESET WORLD CONTENT
         this.character = new Character();
         this.character.world = this;
 
-        this.level = level1; // 👈 HIER entstehen deine neuen Hühner!
+        this.level = level1;   // 🔥 HIER werden ALLE neuen Hühner geladen
 
-        this.level.enemies.forEach(e => {
-            e.world = this;
-
-            if (e instanceof Endboss) {
-                e.dead = false;
-                e.energy = 100;
-            }
-        });
-
+        this.initLevelEntities();
         this.initStatusBars();
 
-        // HIDE SCREENS
         document.getElementById("gameOverScreen").style.display = "none";
         document.getElementById("winScreen").style.display = "none";
 
-        // RESTART LOOP
         this.run();
     }
 
@@ -172,26 +268,7 @@ class World {
         this.statusBarBottles.setPercentage(this.bottleCount * 10);
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-
-        if (boss) {
-            this.statusBarEndboss.setPercentage(boss.energy);
-        }
-    }
-
-    // ================= STATE =================
-
-    triggerGameOver() {
-
-        this.state = "gameover";
-
-        document.getElementById("gameOverScreen").style.display = "flex";
-    }
-
-    triggerWin() {
-
-        this.state = "win";
-
-        document.getElementById("winScreen").style.display = "flex";
+        if (boss) this.statusBarEndboss.setPercentage(boss.energy);
     }
 
     // ================= DRAW =================
@@ -219,10 +296,42 @@ class World {
         this.addToMap(this.statusBarBottles);
         this.addToMap(this.statusBarEndboss);
 
-        this.drawHearts();
-
         requestAnimationFrame(() => this.draw());
     }
 
-    // (Rest bleibt wie bei dir – unverändert)
+    // ================= HELPERS =================
+
+    addObjects(arr) {
+        if (!arr) return;
+        arr.forEach(o => this.addToMap(o));
+    }
+
+    addToMap(mo) {
+
+        if (!mo || !mo.img) return;
+
+        this.ctx.save();
+
+        if (mo instanceof Character && mo.otherDirection) {
+
+            this.ctx.translate(mo.x + mo.width, 0);
+            this.ctx.scale(-1, 1);
+            this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+
+        } else {
+            this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+        }
+
+        this.ctx.restore();
+    }
+
+    triggerGameOver() {
+        this.state = "gameover";
+        document.getElementById("gameOverScreen").style.display = "flex";
+    }
+
+    triggerWin() {
+        this.state = "win";
+        document.getElementById("winScreen").style.display = "flex";
+    }
 }
