@@ -144,7 +144,7 @@ class Character extends MovableObject {
 
             if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.isAboveGround()) {
                 this.jump();
-                AudioHub?.play?.(AudioHub.JUMP, 0.3);
+                AudioHub?.play?.(AudioHub.JUMP, 0.15);
             }
 
             this.world.camera_x = -this.x + 100;
@@ -157,19 +157,18 @@ class Character extends MovableObject {
 
             if (!this.world) return;
 
-            // DEATH CINEMATIC
+            // =========================
+            // DEATH FIX (WICHTIG)
+            // =========================
             if (this.isDead()) {
 
                 if (!this.deadCinematic) {
                     this.deadCinematic = true;
 
-                    this.world.state = "gameover";
-
-                    // SLOWMO
-                    clearInterval(this.movementInterval);
-                    clearInterval(this.animationInterval);
-
-                    this.world.gameLoop && clearInterval(this.world.gameLoop);
+                    // 
+                    setTimeout(() => {
+                        this.world.state = "gameover";
+                    }, 1200);
                 }
 
                 this.playAnimation(this.IMAGES_DEAD);

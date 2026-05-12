@@ -106,12 +106,7 @@ canvas {
     line-height: 1.5;
 }
 
-.heart {
-    width: 28px;
-    height: 28px;
-    background-image: url("img/heart.png");
-    background-size: cover;
-}
+
 
 /* BUTTONS */
 button,

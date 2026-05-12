@@ -21,7 +21,9 @@ class World {
     state = "running";
     gameLoop;
 
-    // ================= SOUNDS =================
+    // 🔊 GLOBAL VOLUME (FIX: CHICKENS NICHT MEHR SCHREIEN 😄)
+    soundVolume = 0.15;
+
     coinSound = AudioHub.COIN;
     throwSound = AudioHub.THROW;
     chickenSound = AudioHub.CHICKEN_HIT;
@@ -46,6 +48,11 @@ class World {
         this.draw();
     }
 
+    // 🔊 CENTRAL SOUND PLAYER
+    playSound(sound, volume = 1) {
+        AudioHub.play(sound, this.soundVolume * volume);
+    }
+
     initLevelEntities() {
 
         this.level.enemies.forEach(e => {
@@ -55,11 +62,12 @@ class World {
                 e.dead = false;
                 e.energy = 100;
                 e.activated = false;
+                e.state = "alert";
 
-                // 🔥 RESET ROAR
                 if (e.roarSound) {
                     e.roarSound.pause();
                     e.roarSound.currentTime = 0;
+                    e.roarSound = null;
                 }
             }
         });
@@ -97,6 +105,7 @@ class World {
             'img/7_statusbars/1_statusbar/3_statusbar_bottle/green/100.png'
         ], 20, 140);
 
+        // 📉 FIX: Endboss Statusbar weiter runter!
         this.statusBarEndboss = new StatusBar([
             'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
@@ -104,7 +113,7 @@ class World {
             'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
             'img/7_statusbars/2_statusbar_endboss/blue/blue100.png'
-        ], 500, 20);
+        ], 500, 60); // 👈 WAR 20, jetzt weiter runter
     }
 
     run() {
@@ -129,7 +138,7 @@ class World {
             if (this.character.isColliding(c)) {
                 this.level.coins.splice(i, 1);
                 this.coinCount++;
-                AudioHub.play(this.coinSound, 0.4);
+                this.playSound(this.coinSound, 0.4);
             }
         });
     }
@@ -143,6 +152,7 @@ class World {
         });
     }
 
+    // 🔊 FIX: CHICKEN VIEL LEISER
     checkChicken() {
 
         for (let e of this.level.enemies) {
@@ -160,7 +170,7 @@ class World {
             if (jumpKill) {
 
                 e.die?.();
-                AudioHub.play(this.chickenSound, 0.5);
+                this.playSound(this.chickenSound, 0.2); //
                 this.character.speedY = 10;
 
             } else {
@@ -187,7 +197,7 @@ class World {
             );
 
             this.bottleCount--;
-            AudioHub.play(this.throwSound, 0.5);
+            this.playSound(this.throwSound, 0.3);
             this.keyboard.D = false;
         }
     }
@@ -206,7 +216,7 @@ class World {
                 if (bottle.isColliding(e)) {
 
                     e.die?.();
-                    AudioHub.play(this.chickenSound, 0.5);
+                    this.playSound(this.chickenSound, 0.2);
 
                     this.throwables.splice(b, 1);
                     break;
@@ -218,7 +228,7 @@ class World {
     checkEndboss() {
 
         let boss = this.level.enemies.find(e => e instanceof Endboss);
-        if (!boss) return;
+        if (!boss || boss.dead) return;
 
         for (let b = this.throwables.length - 1; b >= 0; b--) {
 
@@ -227,12 +237,12 @@ class World {
             if (bottle.isColliding(boss)) {
 
                 boss.hit();
-                AudioHub.play(this.bossHitSound, 0.6);
+                this.playSound(this.bossHitSound, 0.4);
 
                 this.throwables.splice(b, 1);
 
                 if (boss.isDead()) {
-                    AudioHub.play(this.bossDeathSound, 0.8);
+                    this.playSound(this.bossDeathSound, 0.3);
                     setTimeout(() => this.triggerWin(), 1200);
                 }
             }

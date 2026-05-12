@@ -17,6 +17,9 @@ class Endboss extends MovableObject {
 
     roarSound = null;
 
+    movementInterval = null;
+    animationInterval = null;
+
     offset = {
         top: 80,
         left: 50,
@@ -63,6 +66,7 @@ class Endboss extends MovableObject {
 
     constructor() {
         super();
+
         this.loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
@@ -98,15 +102,41 @@ class Endboss extends MovableObject {
         this.speed = 0;
         this.state = 'dead';
 
+        this.fullStop(); 
+    }
+
+    
+    fullStop() {
+
+        if (this.movementInterval) clearInterval(this.movementInterval);
+        if (this.animationInterval) clearInterval(this.animationInterval);
+
+        this.movementInterval = null;
+        this.animationInterval = null;
+
         if (this.roarSound) {
             this.roarSound.pause();
             this.roarSound.currentTime = 0;
+            this.roarSound = null;
         }
+    }
+
+    reset() {
+        this.dead = false;
+        this.energy = 100;
+        this.activated = false;
+        this.state = 'alert';
+        this.stateLock = false;
+
+        this.speed = 1.5;
+
+        this.fullStop();   
+        this.animate();    
     }
 
     animate() {
 
-        setInterval(() => {
+        this.movementInterval = setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;
             if (this.dead) return;
@@ -118,20 +148,15 @@ class Endboss extends MovableObject {
                 this.activated = true;
 
                 this.roarSound = AudioHub.BOSS_HIT.cloneNode();
-                this.roarSound.volume = 0.5;
+                this.roarSound.volume = 0.3;
                 this.roarSound.loop = true;
-                this.roarSound.play();
+                this.roarSound.play().catch(() => {});
             }
 
             if (!this.activated) return;
-
             if (this.stateLock) return;
 
-            if (dist < 120) {
-                this.state = 'attack';
-            } else {
-                this.state = 'walk';
-            }
+            this.state = (dist < 120) ? 'attack' : 'walk';
 
             if (player.x < this.x) {
                 this.x -= this.speed;
@@ -143,12 +168,16 @@ class Endboss extends MovableObject {
 
         }, 1000 / 60);
 
-        setInterval(() => {
+        this.animationInterval = setInterval(() => {
 
             if (!this.world || this.world.state !== "running") return;
 
-            if (this.dead) this.playAnimation(this.IMAGES_DEAD);
-            else if (this.state === 'hurt') this.playAnimation(this.IMAGES_HURT);
+            if (this.dead) {
+                this.playAnimation(this.IMAGES_DEAD);
+                return;
+            }
+
+            if (this.state === 'hurt') this.playAnimation(this.IMAGES_HURT);
             else if (this.state === 'attack') this.playAnimation(this.IMAGES_ATTACK);
             else if (this.state === 'walk') this.playAnimation(this.IMAGES_WALKING);
             else this.playAnimation(this.IMAGES_ALERT);
