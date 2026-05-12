@@ -123,8 +123,8 @@ button,
 /* SOUND BUTTON */
 #muteBtn {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 90px;
+    right: 70px;
     z-index: 5000;
     padding: 10px 15px;
     background-color: #ffcc00;

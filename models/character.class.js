@@ -2,7 +2,6 @@
  * Represents the main player character.
  * Handles movement, animation, jumping, energy system and input control.
  * Extends MovableObject.
- * * change needed: stop snooring after you win or you lost
  */
 class Character extends MovableObject {
 
@@ -19,23 +18,70 @@ class Character extends MovableObject {
 
     lastMove = new Date().getTime();
 
-    // 🧠 INTERVAL HANDLES (IMPORTANT FIX)
     movementInterval;
     animationInterval;
+
+    IMAGES_IDLE = [
+        'img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
+
+    IMAGES_SLEEP = [
+        'img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/2_character_pepe/1_idle/long_idle/I-20.png'
+    ];
 
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
         'img/2_character_pepe/2_walk/W-23.png',
-        'img/2_character_pepe/2_walk/W-24.png'
+        'img/2_character_pepe/2_walk/W-24.png',
+        'img/2_character_pepe/2_walk/W-25.png',
+        'img/2_character_pepe/2_walk/W-26.png'
     ];
 
     IMAGES_JUMPING = [
-        'img/2_character_pepe/3_jump/J-31.png'
+        'img/2_character_pepe/3_jump/J-31.png',
+        'img/2_character_pepe/3_jump/J-32.png',
+        'img/2_character_pepe/3_jump/J-33.png',
+        'img/2_character_pepe/3_jump/J-34.png',
+        'img/2_character_pepe/3_jump/J-35.png',
+        'img/2_character_pepe/3_jump/J-36.png',
+        'img/2_character_pepe/3_jump/J-37.png',
+        'img/2_character_pepe/3_jump/J-38.png',
+        'img/2_character_pepe/3_jump/J-39.png'
     ];
 
-    IMAGES_SLEEP = [
-        'img/2_character_pepe/1_idle/long_idle/I-11.png'
+    IMAGES_HURT = [
+        'img/2_character_pepe/4_hurt/H-41.png',
+        'img/2_character_pepe/4_hurt/H-42.png',
+        'img/2_character_pepe/4_hurt/H-43.png'
+    ];
+
+    IMAGES_DEAD = [
+        'img/2_character_pepe/5_dead/D-51.png',
+        'img/2_character_pepe/5_dead/D-52.png',
+        'img/2_character_pepe/5_dead/D-53.png',
+        'img/2_character_pepe/5_dead/D-54.png',
+        'img/2_character_pepe/5_dead/D-55.png',
+        'img/2_character_pepe/5_dead/D-56.png',
+        'img/2_character_pepe/5_dead/D-57.png'
     ];
 
     /**
@@ -43,10 +89,16 @@ class Character extends MovableObject {
      */
     constructor() {
         super();
-        this.loadImage(this.IMAGES_WALKING[0]);
+
+        this.loadImage(this.IMAGES_IDLE[0]);
+
+        this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_SLEEP);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
-        this.loadImages(this.IMAGES_SLEEP);
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_DEAD);
+
         this.applyGravity();
         this.animate();
     }
@@ -62,50 +114,67 @@ class Character extends MovableObject {
         this.lastHit = now;
         this.energy -= 20;
 
-        if (this.energy < 0) this.energy = 0;
+        if (this.energy < 0) {
+            this.energy = 0;
+        }
     }
 
     /**
-     * Checks if the character is dead.
-     * @returns {boolean}
+     * Checks if character is dead.
      */
     isDead() {
         return this.energy <= 0;
     }
 
     /**
-     * 🛑 HARD STOP FUNCTION (NEW)
-     * Stops all movement + animation loops safely
+     * Checks if character is currently hurt.
+     */
+    isHurt() {
+        let timePassed = new Date().getTime() - this.lastHit;
+        return timePassed < 500;
+    }
+
+    /**
+     * Stops all intervals safely.
      */
     stopAll() {
-        if (this.movementInterval) clearInterval(this.movementInterval);
-        if (this.animationInterval) clearInterval(this.animationInterval);
+        if (this.movementInterval) {
+            clearInterval(this.movementInterval);
+        }
 
-        // 🧠 extra safety: prevents “last JS tick movement bug”
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+        }
+
         this.movementInterval = null;
         this.animationInterval = null;
     }
 
     /**
-     * Handles movement input, camera movement and jumping.
+     * Handles movement and animations.
      */
     animate() {
 
         // ================= MOVEMENT LOOP =================
         this.movementInterval = setInterval(() => {
 
-            // 🔥 HARD STOP CONDITION
             if (!this.world || this.world.state !== "running") return;
 
             let moving = false;
 
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            if (
+                this.world.keyboard.RIGHT &&
+                this.x < this.world.level.level_end_x
+            ) {
                 this.x += this.speed;
                 this.otherDirection = false;
                 moving = true;
             }
 
-            if (this.world.keyboard.LEFT && this.x > 0) {
+            if (
+                this.world.keyboard.LEFT &&
+                this.x > 0
+            ) {
                 this.x -= this.speed;
                 this.otherDirection = true;
                 moving = true;
@@ -128,30 +197,49 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
 
+
         // ================= ANIMATION LOOP =================
         this.animationInterval = setInterval(() => {
 
-            // 🔥 HARD STOP CONDITION
             if (!this.world || this.world.state !== "running") return;
 
             let time = new Date().getTime() - this.lastMove;
 
+            // DEAD
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+                return;
+            }
+
+            // HURT
+            if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+                return;
+            }
+
+            // JUMP
             if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
                 return;
             }
 
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            // WALK
+            if (
+                this.world.keyboard.RIGHT ||
+                this.world.keyboard.LEFT
+            ) {
                 this.playAnimation(this.IMAGES_WALKING);
                 return;
             }
 
+            // SLEEP
             if (time > 4000) {
                 this.playAnimation(this.IMAGES_SLEEP);
                 return;
             }
 
-            this.loadImage(this.IMAGES_WALKING[0]);
+            // IDLE
+            this.playAnimation(this.IMAGES_IDLE);
 
         }, 120);
     }
