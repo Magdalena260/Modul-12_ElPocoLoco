@@ -1,7 +1,19 @@
+<<<<<<< HEAD
+=======
+/**
+ * Handles keyboard input for the game.
+ * Tracks pressed movement and action keys.
+ */
+>>>>>>> aa281ad (Update)
 class Keyboard {
 
     LEFT = false;
     RIGHT = false;
+<<<<<<< HEAD
+=======
+    UP = false;
+    DOWN = false;
+>>>>>>> aa281ad (Update)
     SPACE = false;
     D = false;
 
@@ -12,19 +24,41 @@ class Keyboard {
     bindEvents() {
 
         window.addEventListener('keydown', (e) => {
-
-            if (e.keyCode == 39) this.RIGHT = true;
-            if (e.keyCode == 37) this.LEFT = true;
-            if (e.keyCode == 32) this.SPACE = true;
-            if (e.keyCode == 68) this.D = true;
+            this.setKeyState(e.code, true);
         });
 
         window.addEventListener('keyup', (e) => {
-
-            if (e.keyCode == 39) this.RIGHT = false;
-            if (e.keyCode == 37) this.LEFT = false;
-            if (e.keyCode == 32) this.SPACE = false;
-            if (e.keyCode == 68) this.D = false;
+            this.setKeyState(e.code, false);
         });
+    }
+
+    setKeyState(code, state) {
+
+        switch (code) {
+
+            case 'ArrowRight':
+                this.RIGHT = state;
+                break;
+
+            case 'ArrowLeft':
+                this.LEFT = state;
+                break;
+
+            case 'ArrowUp':
+                this.UP = state;
+                break;
+
+            case 'ArrowDown':
+                this.DOWN = state;
+                break;
+
+            case 'Space':
+                this.SPACE = state;
+                break;
+
+            case 'KeyD':
+                this.D = state;
+                break;
+        }
     }
 }

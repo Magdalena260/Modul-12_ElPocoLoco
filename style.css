@@ -1,3 +1,24 @@
+<<<<<<< HEAD
+=======
+/**
+ * =========================
+ * FONT
+ * =========================
+ */
+@font-face {
+    font-family: "Rubik Gemstones";
+    src: url("fonts/Rubik_Gemstones/RubikGemstones-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/**
+ * =========================
+ * GLOBAL LAYOUT
+ * =========================
+ */
+
+>>>>>>> aa281ad (Update)
 body {
     margin: 0;
 
@@ -12,9 +33,15 @@ body {
     background-position: center;
 }
 
+<<<<<<< HEAD
 /* =========================
    UI FRAME
 ========================= */
+=======
+/**
+ * MAIN FRAME
+ */
+>>>>>>> aa281ad (Update)
 #uiFrame {
     position: relative;
 
@@ -33,19 +60,30 @@ body {
     filter: drop-shadow(0px 15px 20px rgba(31, 30, 28, 0.8));
 }
 
+<<<<<<< HEAD
 /* =========================
    GAME CONTAINER
 ========================= */
+=======
+/**
+ * GAME CONTAINER
+ */
+>>>>>>> aa281ad (Update)
 #gameContainer {
     position: relative;
     width: 720px;
     height: 480px;
-    overflow: hidden;
 }
 
+<<<<<<< HEAD
 /* =========================
    CANVAS (WICHTIG: LAYER 1)
 ========================= */
+=======
+/**
+ * CANVAS
+ */
+>>>>>>> aa281ad (Update)
 canvas {
     position: absolute;
     top: 0;
@@ -61,25 +99,42 @@ canvas {
     z-index: 1;
 }
 
+<<<<<<< HEAD
 /* =========================
    STARTSCREEN (LAYER 9999)
 ========================= */
 #startScreen {
+=======
+/**
+ * =========================
+ * SCREENS
+ * =========================
+ */
+
+#startScreen,
+.overlay,
+#howToPlayOverlay {
+>>>>>>> aa281ad (Update)
     position: absolute;
     top: 0;
     left: 0;
 
     width: 720px;
     height: 480px;
+<<<<<<< HEAD
 
     background-color: rgba(0, 0, 0, 0.95);
 
     color: rgb(230, 200, 60);
 
+=======
+    background: rgba(0,0,0,0.95);
+>>>>>>> aa281ad (Update)
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+<<<<<<< HEAD
 
     z-index: 9999;
 
@@ -92,6 +147,40 @@ canvas {
    BUTTON
 ========================= */
 #startScreen button {
+=======
+    gap: 15px;
+    z-index: 1000;
+    color: rgb(230, 200, 60);
+    font-family: "Rubik Gemstones", system-ui;
+}
+
+/**
+ * TEXT
+ */
+.howToText {
+    text-align: center;
+    max-width: 85%;
+    line-height: 1.5;
+}
+
+/**
+ * Scrollable content area for help text.
+ */
+.howToContent {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/**
+ * =========================
+ * BUTTONS
+ * =========================
+ */
+
+button,
+.gameButton {
+>>>>>>> aa281ad (Update)
     padding: 12px 28px;
     font-size: 20px;
 
@@ -109,6 +198,7 @@ canvas {
     transition: 0.2s;
 }
 
+<<<<<<< HEAD
 #startScreen button:hover {
     background-color: #ffdb4d;
     transform: scale(1.05);
@@ -130,6 +220,184 @@ h1 {
     font-family: "Rubik Gemstones", system-ui;
     font-size: 60px;
 }
+=======
+button:hover,
+.gameButton:hover {
+    background-color: #fff08a;
+    transform: scale(1.05);
+}
+
+/**
+ * MUTE BUTTON
+ */
+#muteBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5000;
+    padding: 10px 15px;
+    background-color: #ffcc00;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/**
+ * =========================
+ * MOBILE CONTROLS
+ * =========================
+ */
+
+#mobileControls {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 9999;
+}
+
+/**
+ * Left mobile controls.
+ */
+.mobileControlsLeft {
+    display: flex;
+    gap: 12px;
+}
+
+/**
+ * Right mobile controls.
+ */
+.mobileControlsRight {
+    display: flex;
+    gap: 12px;
+}
+
+.mobileBtn {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: rgba(255, 204, 0, 0.8);
+    font-size: 30px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/**
+ * Mobile menu links.
+ */
+.mobileMenuLinks {
+    display: none;
+}
+
+/**
+ * ROTATE SCREEN
+ */
+#rotateScreen {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    z-index: 9999999;
+    font-family: "Rubik Gemstones", system-ui;
+    padding: 30px;
+}
+
+/**
+ * =========================
+ * FOOTER
+ * =========================
+ */
+
+footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-family: "Rubik Gemstones", system-ui;
+}
+
+footer a {
+    color: #5a3412;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/**
+ * =========================
+ * GLOBAL FIXES
+ * =========================
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+/**
+ * Smooth button animation
+ */
+button {
+    transition: all 125ms ease-in-out;
+}
+
+/**
+ * Overlay title styling
+ */
+.overlay h1 {
+    font-size: 52px;
+    text-align: center;
+}
+
+/**
+ * =========================
+ * IMPRESSUM
+ * =========================
+ */
+
+.imprint-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.imprint-card {
+    background: #f6e7b4;
+    color: #5a3412;
+    padding: 30px;
+    max-width: 700px;
+    width: 100%;
+    font-family: "Rubik Gemstones", system-ui;
+    line-height: 1.8;
+    border-radius: 12px;
+    box-shadow: 0px 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+/**
+ * =========================
+ * RESPONSIVE FIX (CLEAN)
+ * =========================
+ */
+
+@media only screen and (max-width: 950px) {
+
+    #uiFrame {
+        width: 100vw;
+        height: 100vh;
+        background-image: none;
+    }
+>>>>>>> aa281ad (Update)
 
 /* =========================
    RESPONSIVE
@@ -140,8 +408,38 @@ h1 {
     }
 }
 
+<<<<<<< HEAD
 @media only screen and (max-width: 480px){
     canvas {
         height: 100vh;
+=======
+    .howToText {
+        font-size: 11px;
+    }
+
+    #mobileControls {
+        display: flex;
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 3000;
+    }
+
+    footer {
+        display: none;
+>>>>>>> aa281ad (Update)
+    }
+
+    .mobileMenuLinks {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .howToText {
+        font-size: 14px;
     }
 }

@@ -30,9 +30,16 @@
 
 <script src="models/character.class.js"></script>
 
+<<<<<<< HEAD
 <!-- 🪙🍾 COLLECTIBLES -->
 <script src="models/coin.class.js"></script>
 <script src="models/bottle.class.js"></script>
+=======
+    <!-- ===================== ITEMS ===================== -->
+    <script src="models/coin.class.js"></script>
+
+    <script src="models/bottle.class.js"></script>
+>>>>>>> aa281ad (Update)
 
 <!-- 💣 THROWABLE -->
 <script src="models/throwable-object.class.js"></script>
@@ -53,7 +60,13 @@
 
 <body onload="init()">
 
+<<<<<<< HEAD
 <div id="uiFrame">
+=======
+    <div id="rotateScreen">
+        Please rotate your device
+    </div>
+>>>>>>> aa281ad (Update)
 
     <div id="gameContainer">
 
@@ -62,9 +75,118 @@
 
             <h1>El Pollo Loco</h1>
 
+<<<<<<< HEAD
             <button id="startBtn" onclick="startGame()">
                 Start Game
             </button>
+=======
+            <!-- ================= START SCREEN ================= -->
+            <div id="startScreen">
+                <h1>El Pollo Loco</h1>
+
+                <button onclick="startGame()">Start Game</button>
+                <button onclick="showHowToPlay()">How to Play</button>
+
+                <!-- FIX: Mobile Menü Links -->
+                <div class="mobileMenuLinks">
+                    
+                    <button onclick="window.location.href='impressum.html'">
+                        Impressum
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- ================= HOW TO PLAY ================= -->
+            <div id="howToPlayOverlay" style="display:none;">
+
+                <div class="howToText howToContent">
+
+                    Welcome to El Pollo Loco<br><br>
+
+                    You play Pepe in the desert.<br>
+                    Jump on chickens or throw bottles.<br><br>
+
+                    Goals:<br>
+                    - Collect coins<br>
+                    - Collect bottles<br>
+                    - Defeat enemies<br><br>
+
+                    Final Boss: Madame Chickoloco<br><br>
+
+                    Controls:<br>
+                    ← → move<br>
+                    Space = jump<br>
+                    D = throw<br><br>
+
+                    Have fun!
+
+                </div>
+
+                <button class="gameButton" onclick="closeHowToPlay()">
+                    Back
+                </button>
+
+            </div>
+
+            <!-- ================= CANVAS ================= -->
+            <canvas id="canvas" width="720" height="480"></canvas>
+
+            <!-- ================= MOBILE CONTROLS (FIXED SPLIT) ================= -->
+            <div id="mobileControls">
+
+                <div class="mobileControlsLeft">
+
+                    <button class="mobileBtn"
+                        ontouchstart="keyboard.LEFT = true"
+                        ontouchend="keyboard.LEFT = false">⬅</button>
+
+                    <button class="mobileBtn"
+                        ontouchstart="keyboard.RIGHT = true"
+                        ontouchend="keyboard.RIGHT = false">➡</button>
+
+                </div>
+
+                <div class="mobileControlsRight">
+
+                    <button class="mobileBtn"
+                        ontouchstart="keyboard.UP = true"
+                        ontouchend="keyboard.UP = false">⬆</button>
+
+                    <button class="mobileBtn"
+                        ontouchstart="keyboard.D = true"
+                        ontouchend="keyboard.D = false">D</button>
+
+                </div>
+
+            </div>
+
+            <!-- ================= GAME OVER ================= -->
+            <div id="gameOverScreen" class="overlay" style="display:none;">
+                <h1>You Lost!</h1>
+
+                <button onclick="restartGame()">
+                    Restart
+                </button>
+
+                <button onclick="goToMenu()">
+                    Main Menu
+                </button>
+            </div>
+
+            <!-- ================= WIN SCREEN ================= -->
+            <div id="winScreen" class="overlay" style="display:none;">
+                <h1>You Win!</h1>
+
+                <button onclick="restartGame()">
+                    Play Again
+                </button>
+
+                <button onclick="goToMenu()">
+                    Back to Menu
+                </button>
+            </div>
+>>>>>>> aa281ad (Update)
 
         </div>
 
@@ -76,4 +198,5 @@
 </div>
 
 </body>
+
 </html>
