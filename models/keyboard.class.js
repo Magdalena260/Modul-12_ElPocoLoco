@@ -1,47 +1,58 @@
 /**
  * Handles keyboard input for the game.
- * Tracks key states for movement and actions.
+ * Tracks pressed movement and action keys.
  */
 class Keyboard {
 
-    /** @type {boolean} move left key state */
     LEFT = false;
-
-    /** @type {boolean} move right key state */
     RIGHT = false;
-
-    /** @type {boolean} jump key state (spacebar) */
+    UP = false;
+    DOWN = false;
     SPACE = false;
-
-    /** @type {boolean} action key state (D key) */
     D = false;
 
-    /**
-     * Creates a Keyboard instance and binds event listeners.
-     */
     constructor() {
         this.bindEvents();
     }
 
-    /**
-     * Binds keydown and keyup events to update key states.
-     */
     bindEvents() {
 
         window.addEventListener('keydown', (e) => {
-
-            if (e.keyCode == 39) this.RIGHT = true;
-            if (e.keyCode == 37) this.LEFT = true;
-            if (e.keyCode == 32) this.SPACE = true;
-            if (e.keyCode == 68) this.D = true;
+            this.setKeyState(e.code, true);
         });
 
         window.addEventListener('keyup', (e) => {
-
-            if (e.keyCode == 39) this.RIGHT = false;
-            if (e.keyCode == 37) this.LEFT = false;
-            if (e.keyCode == 32) this.SPACE = false;
-            if (e.keyCode == 68) this.D = false;
+            this.setKeyState(e.code, false);
         });
+    }
+
+    setKeyState(code, state) {
+
+        switch (code) {
+
+            case 'ArrowRight':
+                this.RIGHT = state;
+                break;
+
+            case 'ArrowLeft':
+                this.LEFT = state;
+                break;
+
+            case 'ArrowUp':
+                this.UP = state;
+                break;
+
+            case 'ArrowDown':
+                this.DOWN = state;
+                break;
+
+            case 'Space':
+                this.SPACE = state;
+                break;
+
+            case 'KeyD':
+                this.D = state;
+                break;
+        }
     }
 }

@@ -1,13 +1,33 @@
 /**
- * Represents a collectible bottle in the game world.
- * The bottle can be picked up or thrown by the player.
+ * Represents a collectible salsa bottle in the game world.
  */
 class Bottle extends MovableObject {
 
     /**
-     * Creates a bottle object at a given position.
-     * @param {number} x - X position of the bottle.
-     * @param {number} y - Y position of the bottle.
+     * Collision offset.
+     * Smaller hitbox = fairer pickup.
+     *
+     * Pepe collected bottles too early.
+     *
+     * @type {{
+     * top:number,
+     * left:number,
+     * right:number,
+     * bottom:number
+     * }}
+     */
+    offset = {
+        top: 25,
+        left: 25,
+        right: 25,
+        bottom: 25
+    };
+
+    /**
+     * Creates a collectible bottle.
+     *
+     * @param {number} x
+     * @param {number} y
      */
     constructor(x, y) {
         super();
@@ -15,9 +35,11 @@ class Bottle extends MovableObject {
         this.x = x;
         this.y = y;
 
-        this.width = 100;
-        this.height = 100;
+        this.width = 80;
+        this.height = 80;
 
-        this.loadImage('img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
+        this.loadImage(
+            'img/6_salsa_bottle/1_salsa_bottle_on_ground.png'
+        );
     }
 }

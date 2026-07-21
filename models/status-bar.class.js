@@ -1,11 +1,16 @@
 /**
- * StatusBar
- * Displays a visual status indicator (health, coins, bottles, boss health).
+ * Displays visual status information.
+ * Used for health, coins, bottles
+ * and endboss energy bars.
  */
 class StatusBar extends DrawableObject {
 
+    /** @type {number} */
     percentage = 100;
 
+    /**
+     * Creates a status bar.
+     */
     constructor(images, x, y) {
         super();
 
@@ -18,25 +23,35 @@ class StatusBar extends DrawableObject {
         this.width = 200;
         this.height = 60;
 
+        /**
+         * FIX: sofort korrektes Startbild setzen
+         */
         this.setPercentage(100);
     }
 
+    /**
+     * Updates displayed percentage.
+     * @param {number} p
+     */
     setPercentage(p) {
-        this.percentage = p;
+        this.percentage = Math.max(0, Math.min(100, p));
 
-        let path = this.images[this.resolve()];
+        const path = this.images[this.resolve()];
 
         if (this.imageCache && this.imageCache[path]) {
             this.img = this.imageCache[path];
         }
     }
 
+    /**
+     * SMOOTH FIX:
+     * keine 20%-Sprünge mehr, sondern echte Abstufung
+     */
     resolve() {
-        if (this.percentage >= 100) return 5;
-        if (this.percentage > 80) return 4;
-        if (this.percentage > 60) return 3;
-        if (this.percentage > 40) return 2;
-        if (this.percentage > 20) return 1;
-        return 0;
+        const index = Math.round(
+            (this.percentage / 100) * (this.images.length - 1)
+        );
+
+        return Math.max(0, Math.min(this.images.length - 1, index));
     }
 }

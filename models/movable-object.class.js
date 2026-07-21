@@ -1,120 +1,281 @@
 /**
  * Base class for all movable game objects.
- * Provides physics (gravity), movement, collision detection,
- * health system, and animation handling.
+ * Adds movement, gravity, collision detection,
+ * health system and animation support.
  */
 class MovableObject extends DrawableObject {
 
-    /** @type {number} horizontal movement speed */
+    /** @type {number} */
     speed = 0.15;
 
-    /** @type {number} vertical speed (used for jumping/falling) */
+    /** @type {number} vertical speed */
     speedY = 0;
 
-    /** @type {number} gravity acceleration applied each frame */
+    /** @type {number} gravity acceleration */
     acceleration = 2.5;
 
-    /** @type {number} current energy (health) */
+    /** @type {number} energy (health) */
     energy = 100;
 
-    /** @type {number} timestamp of last hit */
+    /** @type {number} last time object was hit */
     lastHit = 0;
 
+    /** @type {number} animation frame index */
+    currentImage = 0;
+
     /**
-     * Applies gravity to the object.
-     * Continuously updates vertical position and speed.
+     * Collision offset.
+     * Important for fair and accurate collisions.
+     */
+    offset = {
+        top: 10,
+        left: 10,
+        right: 10,
+        bottom: 10
+    };
+
+    /** @type {number|null} gravity interval id */
+    gravityInterval;
+
+    /**
+     * Applies gravity physics.
+     * Prevents unstable falling and jump jitter.
+     *
+     * @returns {void}
      */
     applyGravity() {
 
-        setInterval(() => {
+        if (this.gravityInterval) {
+            clearInterval(this.gravityInterval);
+        }
+
+        this.gravityInterval = setInterval(() => {
 
             if (this.isAboveGround() || this.speedY > 0) {
+
                 this.y -= this.speedY;
+
                 this.speedY -= this.acceleration;
+
+                /**
+                 * Prevents sinking below ground.
+                 */
+                if (!this.isAboveGround() && this.speedY < 0) {
+
+                    this.speedY = 0;
+                }
             }
 
         }, 1000 / 25);
     }
 
     /**
-     * Checks if the object is above ground level.
+     * Checks whether object is above ground.
+     * Throwable objects use different ground level.
+     *
      * @returns {boolean}
      */
     isAboveGround() {
+
+        /**
+         * Throwable bottles should fall
+         * much lower than Pepe.
+         */
+        if (this instanceof ThrowableObject) {
+
+            return this.y < 360;
+        }
+
         return this.y < 140;
     }
 
     /**
-     * Moves the object to the right.
+     * Moves object right.
+     *
+     * @returns {void}
      */
     moveRight() {
         this.x += this.speed;
     }
 
     /**
-     * Moves the object to the left.
+     * Moves object left.
+     *
+     * @returns {void}
      */
     moveLeft() {
         this.x -= this.speed;
     }
 
     /**
-     * Makes the object jump if it is on the ground.
+     * Makes object jump.
+     *
+     * @returns {void}
      */
     jump() {
+
         if (!this.isAboveGround()) {
+
             this.speedY = 32;
         }
     }
 
     /**
-     * Checks collision with another movable object.
-     * @param {MovableObject} mo - other object
-     * @returns {boolean} true if colliding
+     * Returns collision hitbox.
+     * Uses offset system for fair collisions.
+     *
+     * @returns {{
+     * x:number,
+     * y:number,
+     * width:number,
+     * height:number
+     * }}
      */
-    isColliding(mo) {
+    getHitbox() {
+
+        return {
+            x: this.x + this.offset.left,
+            y: this.y + this.offset.top,
+            width:
+                this.width -
+                this.offset.left -
+                this.offset.right,
+
+            height:
+                this.height -
+                this.offset.top -
+                this.offset.bottom
+        };
+    }
+
+    /**
+     * Checks collision with another object.
+     *
+     * @param {MovableObject} obj
+     * @returns {boolean}
+     */
+    isColliding(obj) {
+
+        if (!obj) return false;
+
+        let a = this.getHitbox();
+        let b = obj.getHitbox();
+
         return (
-            this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height
+            a.x < b.x + b.width &&
+            a.x + a.width > b.x &&
+            a.y < b.y + b.height &&
+            a.y + a.height > b.y
         );
     }
 
     /**
-     * Reduces energy when hit.
-     * Sets timestamp of last hit.
+     * Applies damage to object.
+     *
+     * @returns {void}
      */
     hit() {
+
+        if (this.energy <= 0) return;
+
         this.energy -= 5;
-        if (this.energy < 0) this.energy = 0;
-        this.lastHit = new Date().getTime();
+
+        if (this.energy < 0) {
+
+            this.energy = 0;
+        }
+
+        this.lastHit = Date.now();
     }
 
     /**
-     * Plays animation from an array of image paths.
-     * Ensures image is always set even if not cached yet.
-     * @param {string[]} images - animation frames
+     * Returns if object is hurt.
+     *
+     * @returns {boolean}
+     */
+    isHurt() {
+
+        return (
+            Date.now() - this.lastHit
+        ) < 600;
+    }
+
+    /**
+     * Returns if object is dead.
+     *
+     * @returns {boolean}
+     */
+    isDead() {
+
+        return this.energy <= 0;
+    }
+
+    /**
+     * Plays looping animation safely.
+     * Uses image caching system.
+     *
+     * @param {string[]} images
+     * @returns {void}
      */
     playAnimation(images) {
+
         let i = this.currentImage % images.length;
+
         let path = images[i];
 
-        this.img = this.imageCache[path] || new Image();
+        this.img = this.imageCache[path];
 
-        if (!this.imageCache[path]) {
+        if (!this.img) {
+
+            this.img = new Image();
+
             this.img.src = path;
+
+            this.imageCache[path] = this.img;
         }
 
         this.currentImage++;
     }
 
-    getHitbox() {
-    return {
-        x: this.x + 10,
-        y: this.y + 10,
-        width: this.width - 20,
-        height: this.height - 20
-    };
-}
+    /**
+     * Plays animation only once.
+     * Prevents jump animation glitches.
+     *
+     * @param {string[]} images
+     * @returns {void}
+     */
+    playAnimationOnce(images) {
+
+        if (this.currentImage >= images.length) return;
+
+        let path = images[this.currentImage];
+
+        this.img = this.imageCache[path];
+
+        if (!this.img) {
+
+            this.img = new Image();
+
+            this.img.src = path;
+
+            this.imageCache[path] = this.img;
+        }
+
+        this.currentImage++;
+    }
+
+    /**
+     * Stops gravity loop safely.
+     *
+     * @returns {void}
+     */
+    stopGravity() {
+
+        if (this.gravityInterval) {
+
+            clearInterval(this.gravityInterval);
+
+            this.gravityInterval = null;
+        }
+    }
 }

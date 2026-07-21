@@ -1,42 +1,90 @@
 /**
- * Represents a collectible coin in the game.
- * Extends MovableObject and handles animation.
+ * Represents a collectible coin.
  */
 class Coin extends MovableObject {
 
-    /** @type {string[]} animation frames for the coin */
+    /**
+     * Coin animation images.
+     * @type {string[]}
+     */
     IMAGES = [
         'img/8_coin/coin_1.png',
-        'img/8_coin/coin_2.png',
+        'img/8_coin/coin_2.png'
     ];
 
     /**
-     * Creates a Coin at a specific position.
-     * @param {number} x - x position of the coin
-     * @param {number} y - y position of the coin
+     * Collision offset.
+     * Smaller hitbox = fairer pickup.
+     *
+     * Marco feedback:
+     * Pepe collected coins too early.
+     *
+     * @type {{
+     * top:number,
+     * left:number,
+     * right:number,
+     * bottom:number
+     * }}
+     */
+    offset = {
+        top: 35,
+        left: 35,
+        right: 35,
+        bottom: 35
+    };
+
+    /**
+     * Animation interval id.
+     * @type {number}
+     */
+    animationInterval;
+
+    /**
+     * Creates a collectible coin.
+     *
+     * @param {number} x
+     * @param {number} y
      */
     constructor(x, y) {
         super();
 
         this.x = x;
-        this.y = y - 60;
+        this.y = y;
 
-        this.width = 150;
-        this.height = 150;
+        this.width = 120;
+        this.height = 120;
 
         this.loadImages(this.IMAGES);
-        this.currentImage = 0;
+        this.loadImage(this.IMAGES[0]);
 
         this.animate();
     }
 
     /**
-     * Starts coin animation loop.
-     * Cycles through animation frames.
+     * Starts coin animation.
+     *
+     * @returns {void}
      */
     animate() {
-        setInterval(() => {
+
+        this.animationInterval = setSafeInterval(() => {
+
+            if (!this.world || this.world.state !== "running") {
+                return;
+            }
+
             this.playAnimation(this.IMAGES);
+
         }, 200);
+    }
+
+    /**
+     * Stops all active intervals.
+     *
+     * @returns {void}
+     */
+    stopIntervals() {
+
+        clearInterval(this.animationInterval);
     }
 }

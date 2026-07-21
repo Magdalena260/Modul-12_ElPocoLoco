@@ -1,49 +1,31 @@
-/**
- * Represents a small chicken enemy in the game.
- * Extends MovableObject and handles movement, activation range,
- * animation states, and death behavior.
- */
 class SmallChicken extends MovableObject {
 
-    /** @type {number} vertical position */
+    offset = { top: 2, left: 8, right: 8, bottom: 4 };
+
     y = 370;
+    width = 70;
+    height = 75;
+    speed = 1.4;
 
-    /** @type {number} height of the chicken */
-    height = 50;
-
-    /** @type {number} width of the chicken */
-    width = 45;
-
-    /** @type {number} movement speed */
-    speed = 1.6;
-
-    /** @type {boolean} indicates whether chicken is dead */
     dead = false;
-
-    /** @type {boolean} flag for removal from world */
     removeFromWorld = false;
 
-    /** @type {boolean} becomes true when player is close enough */
+    activationX = 600;
     activated = false;
 
-    /** @type {number} activation distance for player detection */
-    activationX = 800;
+    movementInterval;
+    animationInterval;
 
-    /** @type {string[]} walking animation frames */
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
-        'img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
+        'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
     ];
 
-    /** @type {string[]} death animation frames */
     IMAGES_DEAD = [
         'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
 
-    /**
-     * Creates a SmallChicken instance and initializes animations.
-     */
     constructor() {
         super();
 
@@ -51,51 +33,39 @@ class SmallChicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
 
-        this.x = 400 + Math.random() * 800;
-
+        this.x = 500 + Math.random() * 1400;
         this.animate();
     }
 
-    /**
-     * Handles movement and animation loops.
-     * - Activates when player is close enough
-     * - Moves left when activated
-     * - Switches between walking and dead animation
-     */
     animate() {
 
-        setInterval(() => {
+        this.movementInterval = setSafeInterval(() => {
 
-            if (this.dead) return;
+            if (!this.world || this.dead) return;
+            if (this.world.state !== "running") return;
 
-            if (!this.activated && this.world?.character) {
-                let distance = Math.abs(this.world.character.x - this.x);
+            let dist = Math.abs(this.world.character.x - this.x);
 
-                if (distance < this.activationX) {
-                    this.activated = true;
-                }
-            }
+            if (dist < this.activationX) this.activated = true;
 
-            if (this.activated) {
-                this.moveLeft();
-            }
+            if (this.activated) this.moveLeft();
 
         }, 1000 / 60);
 
-        setInterval(() => {
+        this.animationInterval = setSafeInterval(() => {
+
+            if (!this.world || this.world.state !== "running") return;
 
             if (this.dead) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
+                this.loadImage(this.IMAGES_DEAD[0]);
+                return;
             }
 
-        }, 200);
+            this.playAnimation(this.IMAGES_WALKING);
+
+        }, 180);
     }
 
-    /**
-     * Kills the chicken and triggers removal after a delay.
-     */
     die() {
 
         if (this.dead) return;
@@ -105,8 +75,16 @@ class SmallChicken extends MovableObject {
 
         this.loadImage(this.IMAGES_DEAD[0]);
 
+        clearInterval(this.movementInterval);
+        clearInterval(this.animationInterval);
+
         setTimeout(() => {
             this.removeFromWorld = true;
-        }, 400);
+        }, 300);
+    }
+
+    stopIntervals() {
+        clearInterval(this.movementInterval);
+        clearInterval(this.animationInterval);
     }
 }

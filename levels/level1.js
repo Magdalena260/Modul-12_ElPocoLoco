@@ -1,123 +1,122 @@
 /**
- * Represents the first game level configuration.
- * Contains all enemies, clouds, background layers, coins, and bottles.
- * Defines the playable world structure.
+ * Stores the first game level instance.
  * @type {Level}
  */
-const level1 = new Level(
+let level1;
 
-    // ================= ENEMIES =================
-    [
-        new Chicken(),
-        new SmallChicken(),
-        new Chicken(),
-        new SmallChicken(),
-        new SmallChicken(),
-        new SmallChicken(),
-        new Chicken(),
-        new SmallChicken(),
-        new Chicken(),
-        new SmallChicken(),
-        new Chicken(),
-        new Chicken(),
-        new SmallChicken(),
-        new SmallChicken(),
-        new Chicken(),
-        new Endboss()
-    ],
+/**
+ * Creates and configures the first level.
+ * Contains enemies, clouds, background, coins and bottles.
+ *
+ * @returns {Level}
+ */
+function createLevel1() {
 
-    // ================= CLOUDS =================
-    [
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud(),
-        new Cloud()
-    ],
+    level1 = new Level(
 
-    // ================= BACKGROUND =================
-    [
-        new BackgroundObject('img/5_background/layers/air.png', -712),
-        new BackgroundObject('img/5_background/layers/3_third_layer/2.png', -712),
-        new BackgroundObject('img/5_background/layers/2_second_layer/2.png', -712),
-        new BackgroundObject('img/5_background/layers/1_first_layer/2.png', -712),
+        // ================= ENEMIES =================
+        [
+            new Chicken(),
+            new SmallChicken(),
+            new Chicken(),
 
-        new BackgroundObject('img/5_background/layers/air.png', 0),
-        new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
-        new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
-        new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
+            new SmallChicken(),
+            new Chicken(),
+            new SmallChicken(),
 
-        new BackgroundObject('img/5_background/layers/air.png', 712),
-        new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 712),
-        new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 712),
-        new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 712),
+            new Chicken(),
+            new SmallChicken(),
+            new Chicken(),
 
-        new BackgroundObject('img/5_background/layers/air.png', 712 * 2),
-        new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 712 * 2),
-        new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 712 * 2),
-        new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 712 * 2),
+            new Chicken(),
+            new SmallChicken(),
 
-        new BackgroundObject('img/5_background/layers/air.png', 712 * 3),
-        new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 712 * 3),
-        new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 712 * 3),
-        new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 712 * 3),
-      
-    ],
+            new Chicken(),
+            new SmallChicken(),
 
-    // ================= COINS =================
-    [
-        new Coin(300, 300),
-        new Coin(200, 300),
-        new Coin(400, 600),
-        new Coin(600, 300),
-        new Coin(800, 600),
-        new Coin(750, 300),
-        new Coin(600, 100),
-        new Coin(750, 200),
-        new Coin(600, 400),
-        new Coin(350, 700),
-        new Coin(150, 700),
-        new Coin(300, 500),
-        new Coin(350, 650),
-        new Coin(250, 800),
-        new Coin(600, 100),
-        new Coin(30, 600),
-        new Coin(30, 400),
-        new Coin(30, 600),
-        new Coin(600, 100),
-        new Coin(900, 650),
-        new Coin(1000, 100),
-        new Coin(1000, 300),
-        new Coin(1100, 100),
-        new Coin(1100, 300),
+            new Chicken(),
 
-        new Coin(1100, 400),
-        new Coin(1100, 450),
-        new Coin(1100, 550),
-    ],
+            new Endboss()
+        ],
 
-    // ================= BOTTLES =================
-    [
-       
-        new Bottle(150, 350),
-        new Bottle(250, 350),
-        new Bottle(500, 350),
-        new Bottle(650, 350),
-        new Bottle(400, 350),
-        new Bottle(830, 350),
-        new Bottle(950, 350),
-        new Bottle(1100, 350),
-        new Bottle(1000, 350),
-        new Bottle(1200, 350),
-    ]
-);
+        // ================= CLOUDS =================
+        Array.from({ length: 10 }, () => new Cloud()),
 
-// Define level end boundary
-level1.level_end_x = 712 * 3;
+        // ================= BACKGROUND =================
+        [
+            new BackgroundObject('img/5_background/layers/air.png', -719),
+            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', -719),
+            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', -719),
+            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', -719),
+
+            new BackgroundObject('img/5_background/layers/air.png', 0),
+            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
+            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
+            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
+
+            new BackgroundObject('img/5_background/layers/air.png', 719),
+            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 719),
+            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 719),
+            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 719),
+
+            new BackgroundObject('img/5_background/layers/air.png', 719 * 2),
+            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 719 * 2),
+            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 719 * 2),
+            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 719 * 2),
+
+            new BackgroundObject('img/5_background/layers/air.png', 719 * 3),
+            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 719 * 3),
+            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 719 * 3),
+            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 719 * 3),
+
+
+            new BackgroundObject('img/5_background/layers/air.png', 719 * 4),
+            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 719 * 4),
+            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 719 * 4),
+            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 719 * 4),
+        ],
+
+        // ================= COINS =================
+        [
+            new Coin(220, 220),
+            new Coin(380, 180),
+           
+
+            new Coin(720, 180),
+            new Coin(860, 220),
+
+            new Coin(1040, 180),
+            new Coin(1180, 220),
+
+            new Coin(1360, 180),
+            new Coin(1520, 220),
+
+            
+            new Coin(1900, 220),
+            new Coin(2100, 180)
+        ],
+
+        // ================= BOTTLES =================
+        [
+            new Bottle(180, 350),
+            new Bottle(340, 350),
+          
+
+            new Bottle(680, 350),
+            new Bottle(840, 350),
+
+            new Bottle(1000, 350),
+            new Bottle(1160, 350),
+
+            new Bottle(1320, 350),
+            new Bottle(1480, 350),
+
+            new Bottle(1680, 350),
+            new Bottle(1880, 350)
+        ]
+    );
+
+    level1.level_end_x = 719 * 4;
+
+    return level1;
+}

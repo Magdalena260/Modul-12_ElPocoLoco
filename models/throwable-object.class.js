@@ -1,62 +1,118 @@
 /**
- * ThrowableObject
- * Represents a thrown object (e.g. bottle) with physics-like movement.
- * Moves in a parabolic trajectory using speed and gravity.
+ * Throwable bottle object.
+ * Handles gravity, movement,
+ * collision hitbox and cleanup.
  */
 class ThrowableObject extends MovableObject {
 
+    /** @type {number} horizontal speed */
+    speedX = 8;
+
+    /** @type {number} movement interval id */
+    interval;
+
     /**
-     * Creates a throwable object
-     * @param {number} x - Initial x position
-     * @param {number} y - Initial y position
-     * @param {string} direction - Direction of throw ("left" or "right")
+     * Creates a throwable bottle.
+     *
+     * @param {number} x spawn x position
+     * @param {number} y spawn y position
+     * @param {"left"|"right"} direction throw direction
      */
     constructor(x, y, direction) {
         super();
 
-        /** Position */
         this.x = x;
         this.y = y;
 
-        /** Size */
-        this.width = 50;
-        this.height = 50;
+        /**
+         * Bigger size improves
+         * collision fairness.
+         */
+        this.width = 80;
+        this.height = 80;
 
-        /** Throw direction */
-        this.direction = direction;
+        this.speedX = direction === "left"
+            ? -8
+            : 8;
 
-        /** Horizontal speed based on direction */
-        this.speedX = direction === 'left' ? -12 : 12;
+        this.loadImage(
+            'img/6_salsa_bottle/salsa_bottle.png'
+        );
 
-        /** Initial upward force */
-        this.speedY = 6;
+        /**
+         * Lower throw arc.
+         * Better chicken collision.
+         */
+        this.speedY = 18;
 
-        /** Gravity affecting the object */
-        this.gravity = 0.5;
-
-        /** Image of the throwable object */
-        this.loadImage('img/6_salsa_bottle/salsa_bottle.png');
+        this.applyGravity();
 
         this.throw();
     }
 
     /**
-     * Starts movement simulation (throw trajectory)
-     * Updates position ~60 times per second
+     * Starts bottle movement.
+     * Gravity handles vertical motion.
+     *
+     * @returns {void}
      */
     throw() {
 
-        setInterval(() => {
+        this.interval = setInterval(() => {
 
-            // horizontal movement
             this.x += this.speedX;
 
-            // vertical movement (parabolic arc)
-            this.y -= this.speedY;
+            /**
+             * Cleanup when outside map.
+             */
+            if (this.x < -200 || this.x > 5000) {
 
-            // gravity effect
-            this.speedY -= this.gravity;
+                this.destroy();
+            }
 
         }, 1000 / 60);
+    }
+
+    /**
+     * Returns accurate collision hitbox.
+     * Smaller than sprite for fair hits.
+     *
+     * @returns {{
+     * x:number,
+     * y:number,
+     * width:number,
+     * height:number
+     * }}
+     */
+    getHitbox() {
+
+        return {
+            x: this.x + 10,
+            y: this.y + 10,
+            width: this.width - 20,
+            height: this.height - 20
+        };
+    }
+
+    /**
+     * Stops all bottle intervals safely.
+     *
+     * @returns {void}
+     */
+    destroy() {
+
+        clearInterval(this.interval);
+
+        this.stopGravity?.();
+    }
+
+    /**
+     * Global cleanup helper.
+     *
+     * @returns {void}
+     */
+    stopIntervals() {
+
+        this.destroy();
     }
 }
