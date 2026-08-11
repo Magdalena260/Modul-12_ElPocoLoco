@@ -1,22 +1,40 @@
 /**
- * Throwable bottle object.
- * Handles gravity, movement,
- * collision hitbox and cleanup.
+ * Represents a throwable salsa bottle.
+ * Handles movement, gravity, collision detection,
+ * splash animation and cleanup.
  */
 class ThrowableObject extends MovableObject {
 
-    /** @type {number} horizontal speed */
+    /** @type {number} Horizontal movement speed. */
     speedX = 8;
 
-    /** @type {number} movement interval id */
-    interval;
+    /** @type {number|null} ID of the movement interval. */
+    interval = null;
+
+    /** @type {number|null} ID of the splash animation interval. */
+    splashInterval = null;
+
+    /** @type {boolean} Marks the bottle for removal from the game world. */
+    removeFromWorld = false;
+
+    /** @type {boolean} Indicates whether the splash animation is running. */
+    isSplashing = false;
+
+IMAGES_SPLASH = [
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
+    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png'
+];
 
     /**
      * Creates a throwable bottle.
      *
-     * @param {number} x spawn x position
-     * @param {number} y spawn y position
-     * @param {"left"|"right"} direction throw direction
+     * @param {number} x - Spawn position on the x-axis.
+     * @param {number} y - Spawn position on the y-axis.
+     * @param {"left"|"right"} direction - Direction of the throw.
      */
     constructor(x, y, direction) {
         super();
@@ -24,49 +42,40 @@ class ThrowableObject extends MovableObject {
         this.x = x;
         this.y = y;
 
-        /**
-         * Bigger size improves
-         * collision fairness.
-         */
         this.width = 80;
         this.height = 80;
 
-        this.speedX = direction === "left"
-            ? -8
-            : 8;
+        this.speedX = direction === "left" ? -8 : 8;
 
         this.loadImage(
-            'img/6_salsa_bottle/salsa_bottle.png'
+            'assets/img/6_salsa_bottle/salsa_bottle.png'
         );
 
-        /**
-         * Lower throw arc.
-         * Better chicken collision.
-         */
+        this.loadImages(this.IMAGES_SPLASH);
+
         this.speedY = 18;
 
         this.applyGravity();
-
         this.throw();
     }
 
     /**
-     * Starts bottle movement.
-     * Gravity handles vertical motion.
+     * Starts the horizontal movement of the bottle
+     * and starts the splash animation when it hits the ground.
      *
      * @returns {void}
      */
     throw() {
-
         this.interval = setInterval(() => {
+
+            if (!this.isAboveGround() && this.speedY <= 0) {
+                this.startSplash();
+                return;
+            }
 
             this.x += this.speedX;
 
-            /**
-             * Cleanup when outside map.
-             */
             if (this.x < -200 || this.x > 5000) {
-
                 this.destroy();
             }
 
@@ -74,18 +83,53 @@ class ThrowableObject extends MovableObject {
     }
 
     /**
-     * Returns accurate collision hitbox.
-     * Smaller than sprite for fair hits.
+     * Starts the splash animation.
      *
-     * @returns {{
-     * x:number,
-     * y:number,
-     * width:number,
-     * height:number
-     * }}
+     * @returns {void}
+     */
+    startSplash() {
+        if (this.isSplashing) return;
+
+        this.isSplashing = true;
+
+        clearInterval(this.interval);
+        this.interval = null;
+
+        this.stopGravity();
+        this.currentImage = 0;
+
+        this.playSplashAnimation();
+    }
+
+    /**
+     * Plays the splash animation once
+     * and removes the bottle afterwards.
+     *
+     * @returns {void}
+     */
+    playSplashAnimation() {
+        this.splashInterval = setInterval(() => {
+
+            if (this.currentImage >= this.IMAGES_SPLASH.length) {
+                this.destroy();
+                return;
+            }
+
+            this.setAnimationImage(
+                this.IMAGES_SPLASH[this.currentImage]
+            );
+
+            this.currentImage++;
+
+        }, 80);
+    }
+
+    /**
+     * Returns the collision hitbox of the bottle.
+     *
+     * @returns {{x: number, y: number, width: number, height: number}}
      */
     getHitbox() {
-
         return {
             x: this.x + 10,
             y: this.y + 10,
@@ -95,24 +139,28 @@ class ThrowableObject extends MovableObject {
     }
 
     /**
-     * Stops all bottle intervals safely.
+     * Stops all bottle processes and marks it for removal.
      *
      * @returns {void}
      */
     destroy() {
-
         clearInterval(this.interval);
+        clearInterval(this.splashInterval);
 
-        this.stopGravity?.();
+        this.interval = null;
+        this.splashInterval = null;
+
+        this.stopGravity();
+
+        this.removeFromWorld = true;
     }
 
     /**
-     * Global cleanup helper.
+     * Stops all active intervals of the bottle.
      *
      * @returns {void}
      */
     stopIntervals() {
-
         this.destroy();
     }
 }

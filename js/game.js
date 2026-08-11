@@ -19,150 +19,201 @@ let keyboard;
 let gameStarted = false;
 
 /**
- * Stores all active interval IDs to allow full cleanup on restart.
+ * Stores all active interval IDs.
+ *
  * @type {number[]}
  */
 let activeIntervals = [];
 
 /**
  * Initializes the game application.
+ *
+ * @returns {void}
  */
 function init() {
-
     canvas = document.getElementById('canvas');
 
-    if (!canvas) {
-        console.error("Canvas not found!");
-        return;
-    }
+    if (!canvas) return;
 
     keyboard = new Keyboard();
 
     bindMobileControls();
-    checkOrientation();
+    bindWindowEvents();
 
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
-
-    AudioHub.unlockAudio();
     loadMuteState();
-
-    updateMobileControlsVisibility();
+    checkOrientation();
 }
 
 /**
- * Starts game
+ * Adds resize and orientation listeners.
+ *
+ * @returns {void}
+ */
+function bindWindowEvents() {
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+}
+
+/**
+ * Starts a new game.
+ *
+ * @returns {void}
  */
 function startGame() {
-
-    canvas = document.getElementById('canvas');
-    if (!canvas) return;
-
-    if (world) return;
+    if (!canvas || world) return;
 
     stopEverything();
     hideAllScreens();
-
-    createLevel1();
-
-    world = new World(canvas, keyboard);
+    createNewWorld();
 
     gameStarted = true;
 
     AudioHub.startMusic();
-
     updateMobileControlsVisibility();
 
     document.activeElement?.blur();
 }
 
 /**
- * Restart game
+ * Restarts the game without reloading the page.
+ *
+ * @returns {void}
  */
 function restartGame() {
-
     stopEverything();
-    hideAllScreens();
     clearAllIntervals();
+    hideAllScreens();
 
     AudioHub.resetAll();
 
-    createLevel1();
-
-    world = new World(canvas, keyboard);
+    createNewWorld();
 
     gameStarted = true;
 
     AudioHub.startMusic();
-
     updateMobileControlsVisibility();
 
     document.activeElement?.blur();
 }
 
 /**
- * Stop game
+ * Creates the level and a new world.
+ *
+ * @returns {void}
  */
-function stopEverything() {
+function createNewWorld() {
+    createLevel1();
 
-    if (!world) return;
-
-    world.state = "stopped";
-    world.stopAll();
-
-    world = null;
-
-    if (keyboard) {
-        keyboard.LEFT = false;
-        keyboard.RIGHT = false;
-        keyboard.UP = false;
-        keyboard.DOWN = false;
-        keyboard.SPACE = false;
-        keyboard.D = false;
-    }
-
-    window.focus();
+    world = new World(
+        canvas,
+        keyboard
+    );
 }
 
 /**
- * Safe interval
+ * Stops the current game.
+ *
+ * @returns {void}
+ */
+function stopEverything() {
+    if (!world) {
+        resetKeyboard();
+        return;
+    }
+
+    world.state = 'stopped';
+    world.stopAll();
+    world = null;
+
+    resetKeyboard();
+}
+
+/**
+ * Resets all keyboard states.
+ *
+ * @returns {void}
+ */
+function resetKeyboard() {
+    if (!keyboard) return;
+
+    keyboard.LEFT = false;
+    keyboard.RIGHT = false;
+    keyboard.UP = false;
+    keyboard.DOWN = false;
+    keyboard.SPACE = false;
+    keyboard.D = false;
+}
+
+/**
+ * Creates a safe interval.
+ *
+ * @param {Function} fn
+ * @param {number} time
+ * @returns {number}
  */
 function setSafeInterval(fn, time) {
     const id = setInterval(fn, time);
+
     activeIntervals.push(id);
+
     return id;
 }
 
 /**
- * Clear intervals
+ * Clears all registered intervals.
+ *
+ * @returns {void}
  */
 function clearAllIntervals() {
     activeIntervals.forEach(clearInterval);
+
     activeIntervals = [];
 }
 
 /**
- * Hide screens
+ * Hides all game screens.
+ *
+ * @returns {void}
  */
 function hideAllScreens() {
+    const screens = [
+        'startScreen',
+        'gameOverScreen',
+        'winScreen',
+        'howToPlayOverlay'
+    ];
 
-    ['startScreen', 'gameOverScreen', 'winScreen', 'howToPlayOverlay']
-        .forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        });
+    screens.forEach(hideScreen);
 }
 
 /**
- * Mute toggle
+ * Hides one screen.
+ *
+ * @param {string} id
+ * @returns {void}
+ */
+function hideScreen(id) {
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.style.display = 'none';
+    }
+}
+
+/**
+ * Toggles sound on and off.
+ *
+ * @returns {void}
  */
 function toggleMute() {
-
-    const muted = !AudioHub.MUSIC.muted;
+    const muted = !AudioHub.isMuted;
 
     AudioHub.setMuted(muted);
 
-    localStorage.setItem('polloMuted', muted);
+    localStorage.setItem(
+        'polloMuted',
+        muted
+    );
 
     updateMuteButton(muted);
 
@@ -170,47 +221,63 @@ function toggleMute() {
 }
 
 /**
- * Load mute
+ * Loads saved mute state.
+ *
+ * @returns {void}
  */
 function loadMuteState() {
-
-    const muted = localStorage.getItem('polloMuted') === 'true';
+    const muted =
+        localStorage.getItem('polloMuted') === 'true';
 
     AudioHub.setMuted(muted);
-
     updateMuteButton(muted);
 }
 
 /**
- * Update mute UI
+ * Updates the mute button text.
+ *
+ * @param {boolean} muted
+ * @returns {void}
  */
 function updateMuteButton(muted) {
+    const button =
+        document.getElementById('muteBtn');
 
-    const btn = document.getElementById('muteBtn');
-    if (!btn) return;
+    if (!button) return;
 
-    btn.innerText = muted ? 'Muted' : 'Sound';
+    button.innerText =
+        muted ? 'Muted' : 'Sound';
 }
 
 /**
- * Show help
+ * Opens the How-to-Play screen.
+ *
+ * @returns {void}
  */
 function showHowToPlay() {
-    document.getElementById('howToPlayOverlay')?.style.setProperty('display', 'flex');
+    const overlay =
+        document.getElementById('howToPlayOverlay');
+
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
 }
 
 /**
- * Close help
+ * Closes the How-to-Play screen.
+ *
+ * @returns {void}
  */
 function closeHowToPlay() {
-    document.getElementById('howToPlayOverlay')?.style.setProperty('display', 'none');
+    hideScreen('howToPlayOverlay');
 }
 
 /**
- * Back to menu
+ * Returns to the main menu.
+ *
+ * @returns {void}
  */
 function goToMenu() {
-
     stopEverything();
     clearAllIntervals();
     AudioHub.resetAll();
@@ -219,61 +286,156 @@ function goToMenu() {
 
     gameStarted = false;
 
-    const start = document.getElementById('startScreen');
-    if (start) start.style.display = 'flex';
-
+    showStartScreen();
     updateMobileControlsVisibility();
 
     document.activeElement?.blur();
 }
 
 /**
- * Bind mobile controls
+ * Displays the start screen.
+ *
+ * @returns {void}
+ */
+function showStartScreen() {
+    const start =
+        document.getElementById('startScreen');
+
+    if (start) {
+        start.style.display = 'flex';
+    }
+}
+
+/**
+ * Marks the game as finished.
+ * Used by win and game-over states.
+ *
+ * @returns {void}
+ */
+function finishGame() {
+    gameStarted = false;
+
+    resetKeyboard();
+    updateMobileControlsVisibility();
+}
+
+/**
+ * Prepares all mobile control buttons.
+ *
+ * @returns {void}
  */
 function bindMobileControls() {
-
-    document.querySelectorAll('.mobileBtn').forEach(btn => {
-
-        btn.addEventListener('contextmenu', e => e.preventDefault());
-
-        btn.addEventListener('touchstart', e => {
-            e.preventDefault();
-            btn.blur?.();
-        }, { passive: false });
-    });
+    document
+        .querySelectorAll('.mobileBtn')
+        .forEach(bindMobileButton);
 }
 
 /**
- * MOBILE FIX (FINAL SAFE VERSION)
+ * Prevents context menu and unwanted touch behaviour.
+ *
+ * @param {HTMLElement} button
+ * @returns {void}
  */
-function updateMobileControlsVisibility() {
+function bindMobileButton(button) {
+    button.addEventListener(
+        'contextmenu',
+        preventEvent
+    );
 
-    const controls = document.getElementById('mobileControls');
-    if (!controls) return;
-
-    const isSmallScreen = window.innerWidth <= 950;
-
-    const isTouchDevice =
-        window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-
-    const shouldShow = gameStarted && (isSmallScreen || isTouchDevice);
-
-    controls.style.display = shouldShow ? 'flex' : 'none';
+    button.addEventListener(
+        'touchstart',
+        handleTouchStart,
+        { passive: false }
+    );
 }
 
 /**
- * Orientation check
+ * Prevents the default browser event.
+ *
+ * @param {Event} event
+ * @returns {void}
  */
-function checkOrientation() {
+function preventEvent(event) {
+    event.preventDefault();
+}
 
-    const rotate = document.getElementById('rotateScreen');
-    if (!rotate) return;
-
-    if (window.innerWidth < 950 && window.innerHeight > window.innerWidth) {
-        rotate.style.display = 'flex';
-    } else {
-        rotate.style.display = 'none';
+/**
+ * Handles touch start on a mobile button.
+ *
+ * @param {TouchEvent} event
+ * @returns {void}
+ */
+function handleTouchStart(event) {
+    if (event.cancelable) {
+        event.preventDefault();
     }
 
+    event.currentTarget?.blur();
+}
+
+/**
+ * Updates visibility of mobile controls.
+ *
+ * @returns {void}
+ */
+function updateMobileControlsVisibility() {
+    const controls =
+        document.getElementById('mobileControls');
+
+    if (!controls) return;
+
+    const shouldShow =
+        gameStarted &&
+        isMobileGameView();
+
+    controls.style.display =
+        shouldShow ? 'flex' : 'none';
+}
+
+/**
+ * Checks whether mobile controls should be used.
+ *
+ * @returns {boolean}
+ */
+function isMobileGameView() {
+    const smallScreen =
+        window.innerWidth <= 950;
+
+    const touchDevice =
+        window.matchMedia(
+            '(hover: none) and (pointer: coarse)'
+        ).matches;
+
+    return smallScreen || touchDevice;
+}
+
+/**
+ * Checks device orientation.
+ *
+ * @returns {void}
+ */
+function checkOrientation() {
+    const rotate =
+        document.getElementById('rotateScreen');
+
+    if (!rotate) return;
+
+    rotate.style.display =
+        shouldShowRotateScreen()
+            ? 'flex'
+            : 'none';
+
     updateMobileControlsVisibility();
+}
+
+/**
+ * Checks whether the rotate message is required.
+ *
+ * @returns {boolean}
+ */
+function shouldShowRotateScreen() {
+    return (
+        window.innerWidth < 950 &&
+        window.innerHeight > window.innerWidth
+    );
 }

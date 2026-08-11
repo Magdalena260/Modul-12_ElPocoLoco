@@ -8,8 +8,8 @@ class Coin extends MovableObject {
      * @type {string[]}
      */
     IMAGES = [
-        'img/8_coin/coin_1.png',
-        'img/8_coin/coin_2.png'
+        'assets/img/8_coin/coin_1.png',
+        'assets/img/8_coin/coin_2.png'
     ];
 
     /**

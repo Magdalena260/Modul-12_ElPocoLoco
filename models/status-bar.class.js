@@ -22,10 +22,6 @@ class StatusBar extends DrawableObject {
 
         this.width = 200;
         this.height = 60;
-
-        /**
-         * FIX: sofort korrektes Startbild setzen
-         */
         this.setPercentage(100);
     }
 
@@ -43,10 +39,7 @@ class StatusBar extends DrawableObject {
         }
     }
 
-    /**
-     * SMOOTH FIX:
-     * keine 20%-Sprünge mehr, sondern echte Abstufung
-     */
+
     resolve() {
         const index = Math.round(
             (this.percentage / 100) * (this.images.length - 1)

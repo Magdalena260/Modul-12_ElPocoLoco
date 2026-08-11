@@ -1,6 +1,16 @@
+/**
+ * Represents a small chicken enemy.
+ * The chicken starts moving before entering
+ * the visible game area.
+ */
 class SmallChicken extends MovableObject {
 
-    offset = { top: 2, left: 8, right: 8, bottom: 4 };
+    offset = {
+        top: 2,
+        left: 8,
+        right: 8,
+        bottom: 4
+    };
 
     y = 370;
     width = 70;
@@ -10,22 +20,25 @@ class SmallChicken extends MovableObject {
     dead = false;
     removeFromWorld = false;
 
-    activationX = 600;
     activated = false;
+    activationX = 1000;
 
     movementInterval;
     animationInterval;
 
     IMAGES_WALKING = [
-        'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
-        'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
-        'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
+        'assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
+        'assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
+        'assets/img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
     ];
 
     IMAGES_DEAD = [
-        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
+        'assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
 
+    /**
+     * Creates a small chicken enemy.
+     */
     constructor() {
         super();
 
@@ -34,27 +47,74 @@ class SmallChicken extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
 
         this.x = 500 + Math.random() * 1400;
+
         this.animate();
     }
 
+    /**
+     * Starts movement and walking animation.
+     *
+     * @returns {void}
+     */
     animate() {
+
+        this.startMovement();
+        this.startAnimation();
+    }
+
+    /**
+     * Starts chicken movement.
+     *
+     * @returns {void}
+     */
+    startMovement() {
 
         this.movementInterval = setSafeInterval(() => {
 
-            if (!this.world || this.dead) return;
-            if (this.world.state !== "running") return;
+            if (!this.canMove()) return;
 
-            let dist = Math.abs(this.world.character.x - this.x);
+            const distance = Math.abs(
+                this.world.character.x - this.x
+            );
 
-            if (dist < this.activationX) this.activated = true;
+            if (distance < this.activationX) {
+                this.activated = true;
+            }
 
-            if (this.activated) this.moveLeft();
+            if (this.activated) {
+                this.moveLeft();
+            }
 
         }, 1000 / 60);
+    }
+
+    /**
+     * Checks whether the chicken may move.
+     *
+     * @returns {boolean}
+     */
+    canMove() {
+
+        return (
+            this.world &&
+            this.world.character &&
+            this.world.state === 'running' &&
+            !this.dead
+        );
+    }
+
+    /**
+     * Starts the walking animation.
+     *
+     * @returns {void}
+     */
+    startAnimation() {
 
         this.animationInterval = setSafeInterval(() => {
 
-            if (!this.world || this.world.state !== "running") return;
+            if (!this.world || this.world.state !== 'running') {
+                return;
+            }
 
             if (this.dead) {
                 this.loadImage(this.IMAGES_DEAD[0]);
@@ -66,6 +126,11 @@ class SmallChicken extends MovableObject {
         }, 180);
     }
 
+    /**
+     * Kills the chicken and removes it shortly afterwards.
+     *
+     * @returns {void}
+     */
     die() {
 
         if (this.dead) return;
@@ -75,15 +140,20 @@ class SmallChicken extends MovableObject {
 
         this.loadImage(this.IMAGES_DEAD[0]);
 
-        clearInterval(this.movementInterval);
-        clearInterval(this.animationInterval);
+        this.stopIntervals();
 
         setTimeout(() => {
             this.removeFromWorld = true;
         }, 300);
     }
 
+    /**
+     * Stops active chicken intervals.
+     *
+     * @returns {void}
+     */
     stopIntervals() {
+
         clearInterval(this.movementInterval);
         clearInterval(this.animationInterval);
     }
